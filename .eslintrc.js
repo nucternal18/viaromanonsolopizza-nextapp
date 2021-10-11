@@ -6,6 +6,8 @@ module.exports = {
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:jest/recommended",
     "plugin:jest/style",
+    "next",
+    "next/core-web-vitals",
   ],
   globals: {
     Atomics: "readonly",
