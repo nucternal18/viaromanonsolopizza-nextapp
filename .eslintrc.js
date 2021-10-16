@@ -1,4 +1,8 @@
 module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+  },
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
@@ -9,18 +13,13 @@ module.exports = {
     "next",
     "next/core-web-vitals",
   ],
-  globals: {
-    Atomics: "readonly",
-    SharedArrayBuffer: "readonly",
-  },
-
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: ["./tsconfig.json"],
+    project: "./tsconfig.json",
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 2018,
+    ecmaVersion: 13,
     sourceType: "module",
   },
   plugins: ["react", "@typescript-eslint"],
