@@ -30,9 +30,9 @@ export const db = getFirestore(app);
 
 type User = {
   uid: string;
-  displayName: string;
+  displayName?: string | null;
   email: string;
-  photoUrl: string;
+  photoUrl?: string | null;
   emailVerified: boolean;
 };
 // Google auth
@@ -128,11 +128,14 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       }
       const userData = {
         uid: user.uid,
-        displayName: user.displayName,
+        displayName: user.displayName ? user.displayName : "",
         email: user.email,
-        photoUrl: user.photoURL,
+        photoUrl: user.photoURL
+          ? user.photoURL
+          : "https://res.cloudinary.com/viaromanonsolopizza-com/image/upload/ar_1:1,b_rgb:262c35,bo_5px_solid_rgb:ff0000,c_fill,e_sharpen:100,g_auto,r_max,w_1000/v1634588859/success_gmoweo.webp",
         emailVerified: user.emailVerified,
       };
+      console.log(userData);
       dispatch({
         type: ActionType.FETCH_USER_SUCCESS,
         payload: userData,
@@ -157,28 +160,28 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     return () => clearInterval(handle);
   }, []);
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        const userData = {
-          uid: user.uid,
-          displayName: user.displayName,
-          email: user.email,
-          photoUrl: user.photoURL,
-          emailVerified: user.emailVerified,
-        };
-        dispatch({
-          type: ActionType.FETCH_USER_SUCCESS,
-          payload: userData,
-        });
-      } else {
-        dispatch({
-          type: ActionType.USER_LOGOUT_SUCCESS,
-        });
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       // User is signed in
+  //       const userData = {
+  //         uid: user.uid,
+  //         displayName: user.displayName,
+  //         email: user.email,
+  //         photoUrl: user.photoURL,
+  //         emailVerified: user.emailVerified,
+  //       };
+  //       dispatch({
+  //         type: ActionType.FETCH_USER_SUCCESS,
+  //         payload: userData,
+  //       });
+  //     } else {
+  //       dispatch({
+  //         type: ActionType.USER_LOGOUT_SUCCESS,
+  //       });
+  //     }
+  //   });
+  // }, []);
 
   /**
    * @description login User

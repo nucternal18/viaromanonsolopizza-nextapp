@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import ImageGrid from "../components/imageGrid";
-import Layout from "../components/Layout";
+import Layout from "../components/layout/Layout";
 import Modal from "../components/Modal";
 
 const Gallery = () => {

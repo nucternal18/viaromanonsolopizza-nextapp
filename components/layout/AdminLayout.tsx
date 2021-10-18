@@ -3,8 +3,9 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 
-import MainNavbar from "./Nav/MainNavBar";
-import Footer from "./Footer";
+import MainNavbar from "../Nav/MainNavBar";
+import Footer from "../Footer";
+import Sidebar from "../Nav/SideNavBar";
 
 interface ILayout {
   title?: string;
@@ -12,7 +13,7 @@ interface ILayout {
   children: React.ReactNode;
 }
 
-function Layout({ title, description, children }: ILayout): JSX.Element {
+function AdminLayout({ title, description, children }: ILayout): JSX.Element {
   const router = useRouter();
   return (
     <div className="flex flex-col justify-between h-screen">
@@ -43,25 +44,18 @@ function Layout({ title, description, children }: ILayout): JSX.Element {
         <meta name="theme-color" content="#000000" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <MainNavbar />
-      <main
-        className={`relative bg-gray-100 ${
-          router.asPath === "/" ? "mt-0" : "mt-20"
-        }`}
-      >
-        {children}
-      </main>
+      <Sidebar />
+      <main className={`relative bg-gray-100 md:ml-64`}>{children}</main>
       <ToastContainer autoClose={4000} />
-      <Footer />
     </div>
   );
 }
 
-Layout.defaultProps = {
+AdminLayout.defaultProps = {
   title: "Benvenuti da Via ",
   description:
     " ViaRomaNonSoloPizza nasce dalla passione per la pizza coltivata da un sogno alla realizzazione",
   keywords: "pizza",
 };
 
-export default Layout;
+export default AdminLayout;

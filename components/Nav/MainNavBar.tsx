@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
 import { useState, useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -41,7 +40,7 @@ const MainNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const [pos, setPos] = useState("top");
-  const { state, login, logout } = useAuth();
+  const { state, logout } = useAuth();
 
   // mobile nav bar ref
   const mobileNavRef = useRef<HTMLElement>();
@@ -194,21 +193,6 @@ const MainNavbar = () => {
                 ref={ref}
               >
                 <div>
-                  <button className="flex items-center px-4 py-2 space-x-2">
-                    <FaUser className="text-gray-400 " />
-                    <Link href={"/account/profile"}>
-                      <a
-                        className={`${
-                          router.asPath === "/account/login"
-                            ? "text-red-500"
-                            : "text-gray-200"
-                        } block text-lg font-medium  uppercase list-none cursor-pointer hover:text-yellow-400`}
-                      >
-                        Profile
-                      </a>
-                    </Link>
-                  </button>
-
                   <button className="flex items-center px-4 py-2 space-x-2">
                     <RiAdminFill className="text-gray-400 " />
                     <Link href={"/admin"}>

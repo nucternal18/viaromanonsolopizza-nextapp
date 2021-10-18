@@ -1,9 +1,12 @@
 import Image from "next/image";
-import Layout from "../components/Layout";
+import Layout from "../components/layout/Layout";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 import { useMenu } from "../context/menuContext";
 import Contact from "../components/PageComponents/Contact";
+import { motion } from "framer-motion";
+import Button from "../components/Button";
 const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
   ssr: false,
   loading: () => <p>Loading...</p>,
@@ -31,8 +34,35 @@ export default function Home() {
             />
             <span
               id="blackOverlay"
-              className="absolute w-full h-full bg-black opacity-50"
+              className="absolute w-full h-full bg-black opacity-40"
             ></span>
+          </div>
+          <div className="container relative mx-auto">
+            <div className="flex flex-wrap items-center justify-center ">
+              <motion.div
+                className="flex flex-col items-center opacity-75"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: { opacity: 1 },
+                }}
+                transition={{ duration: 2.0 }}
+              >
+                <p className="mb-2 text-lg font-thin text-gray-300  md:text-2xl ">
+                  Benvenuti in Via Roma | non Solo Pizza
+                </p>
+                <p className="mb-4 text-2xl text-center font-semibold text-gray-300 sm:text-3xl md:text-4xl lg:text-4xl">
+                  Dalla passione per la pizza coltivata da un sogno alla
+                  realizzazione
+                </p>
+                <Button type="button" color="warning">
+                  <Link href="/menu">
+                    <a>View Menu</a>
+                  </Link>
+                </Button>
+              </motion.div>
+            </div>
           </div>
         </section>
         {/* <Slider /> */}

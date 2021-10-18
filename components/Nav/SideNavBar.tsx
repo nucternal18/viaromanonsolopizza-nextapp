@@ -2,15 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  FaBars,
-  FaTimes,
-  FaNewspaper,
-  FaUserCircle,
-  FaImages,
-  FaShoppingBasket,
-  FaShippingFast,
-} from "react-icons/fa";
+import { FaBars, FaTimes, FaNewspaper, FaShoppingBasket } from "react-icons/fa";
 
 import { FiLogOut } from "react-icons/fi";
 import ActiveLink from "./ActiveLink";
@@ -40,15 +32,13 @@ const Sidebar = () => {
           </button>
           {/* Brand */}
           <Link href="/">
-            <a
-              href="#pablo"
-              className="inline-block p-2 px-0 mr-0 text-sm font-bold text-left text-gray-200 uppercase whitespace-no-wrap md:block md:pb-2"
-            >
+            <a href="#pablo" className="inline-block whitespace-no-wrap py-2">
               <Image
-                src={"/logo.svg"}
-                alt="blooms hair logo"
-                width={200}
-                height={100}
+                src={"/strisciaNoBG.jpg"}
+                alt="via roma non solo pizza logo"
+                width={230}
+                height={35}
+                quality={75}
               />
             </a>
           </Link>
@@ -81,7 +71,7 @@ const Sidebar = () => {
                         src={"/strisciaNoBG.jpg"}
                         alt="via roma non solo pizza logo"
                         width={200}
-                        height={100}
+                        height={35}
                       />
                     </a>
                   </Link>
@@ -124,6 +114,12 @@ const Sidebar = () => {
                 <ActiveLink href="/admin/menu">
                   <FaShoppingBasket className="mr-2 text-sm" />
                   Manage Menu
+                </ActiveLink>
+              </li>
+              <li className="items-center">
+                <ActiveLink href="/admin/gallery">
+                  <FaShoppingBasket className="mr-2 text-sm" />
+                  Manage Galleria
                 </ActiveLink>
               </li>
             </ul>

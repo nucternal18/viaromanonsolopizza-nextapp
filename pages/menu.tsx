@@ -1,17 +1,15 @@
-import dynamic from 'next/dynamic';
-import Layout from '../components/Layout';
+import dynamic from "next/dynamic";
+import Layout from "../components/layout/Layout";
 
-import { useMenu } from '../context/menuContext';
-const Menu = dynamic(() => import('../components/PageComponents/Menu'), {
-    ssr: false,
+import { useMenu } from "../context/menuContext";
+const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
+  ssr: false,
   loading: () => <p>Loading...</p>,
 });
 
-
-
 const MainMenu = () => {
-    const {state} = useMenu()
- 
+  const { state } = useMenu();
+
   return (
     <Layout>
       <Menu menu={state.menu} loading={state.loading} />
