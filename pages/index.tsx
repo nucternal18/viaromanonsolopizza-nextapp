@@ -52,7 +52,7 @@ export default function Home() {
                 <p className="mb-2 text-lg font-thin text-gray-300  md:text-2xl ">
                   Benvenuti in Via Roma | non Solo Pizza
                 </p>
-                <p className="mb-4 text-2xl text-center font-semibold text-gray-300 sm:text-3xl md:text-4xl lg:text-4xl">
+                <p className="mb-4 text-2xl text-center font-semibold text-gray-300 sm:text-3xl md:text-4xl ">
                   Dalla passione per la pizza coltivata da un sogno alla
                   realizzazione
                 </p>

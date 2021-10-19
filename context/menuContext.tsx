@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { convertCollectionsSnapshotToMap } from '../lib/convertSnapshotToMap';
-import { db } from '../context/authContext';
+import React, { createContext, useContext, useReducer, useEffect } from "react";
+import { collection, onSnapshot, Timestamp } from "firebase/firestore";
+import { convertCollectionsSnapshotToMap } from "../lib/convertSnapshotToMap";
+import { db } from "../context/authContext";
 
 export type MenuProps = {
   main: {
@@ -58,7 +58,7 @@ export type MenuProps = {
   };
 };
 
-interface InitialAuthState {
+interface InitialMenuState {
   loading: boolean;
   error: Error;
   menu: MenuProps;
@@ -66,59 +66,59 @@ interface InitialAuthState {
 }
 
 export enum ActionType {
-  MENU_ACTION_REQUEST = 'MENU_ACTION_REQUEST',
-  MENU_ACTION_FAIL = 'MENU_ACTION_FAIL',
-  MENU_ITEM_FETCH_SUCCESS = 'MENU_ITEM_FETCH_SUCCESS',
-  MENU_ITEM_UPDATE_SUCESS = 'MENU_ITEM_UPDATE_SUCESS',
-  MENU_ITEM_DELETE_SUCESS = 'MENU_ITEM_DELETE_SUCESS',
+  MENU_ACTION_REQUEST = "MENU_ACTION_REQUEST",
+  MENU_ACTION_FAIL = "MENU_ACTION_FAIL",
+  MENU_ITEM_FETCH_SUCCESS = "MENU_ITEM_FETCH_SUCCESS",
+  MENU_ITEM_UPDATE_SUCESS = "MENU_ITEM_UPDATE_SUCESS",
+  MENU_ITEM_DELETE_SUCESS = "MENU_ITEM_DELETE_SUCESS",
 }
 
 const initialState = {
   loading: false,
   error: null,
-    menu: {
-      main: {
-    id: '',
-    title: '',
-    items: []
+  menu: {
+    main: {
+      id: "",
+      title: "",
+      items: [],
+    },
+    desserts: {
+      id: "",
+      title: "",
+      items: [],
+    },
+    gourmetpizza: {
+      id: "",
+      title: "",
+      items: [],
+    },
+    pizzas: {
+      id: "",
+      title: "",
+      items: [],
+    },
+    cantina: {
+      id: "",
+      items: [],
+    },
+    bianche: {
+      id: "",
+      title: "",
+      items: [],
+    },
   },
-  desserts: {
-    id: '',
-    title: '',
-    items: [],
-  },
-  gourmetpizza: {
-    id: '',
-    title: '',
-    items:[],
-  },
-  pizzas: {
-    id: '',
-    title: '',
-    items: [],
-  },
-  cantina: {
-    id: '',
-    items: [],
-  },
-  bianche: {
-    id: '',
-    title: '',
-    items: [],
-  }
-  },
-  message: '',
+  message: "",
 };
 
 const MenuContext = createContext<{
-  state: InitialAuthState;
+  state: InitialMenuState;
   dispatch: React.Dispatch<any>;
 }>({
   state: initialState,
   dispatch: () => null,
 });
 
-const menuReducer = (state: InitialAuthState, action) => {
+const menuReducer = (state: InitialMenuState, action) => {
   switch (action.type) {
     case ActionType.MENU_ACTION_REQUEST:
       return { ...state, loading: true };
@@ -135,7 +135,7 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(menuReducer, initialState);
 
   useEffect(() => {
-    const q = collection(db, 'Menu');
+    const q = collection(db, "Menu");
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const collectionMap: MenuProps =

@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { useState, useEffect } from "react";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
-} from 'firebase/storage';
-import { db } from '../../context/authContext';
+} from "firebase/storage";
+import { db } from "../../context/authContext";
 
 const useStorage = (file) => {
   const [progress, setProgress] = useState(0);
@@ -17,13 +17,13 @@ const useStorage = (file) => {
     // Create a root reference
     const storage = getStorage();
     // references
-    const storageRef = ref(storage, 'images/' + file.name);
-    const docRef = doc(db, 'images');
+    const storageRef = ref(storage, "images/" + file.name);
+    const docRef = doc(db, "images");
     const uploadTask = uploadBytesResumable(storageRef, file);
     uploadTask.on(
-      'state_changed',
+      "state_changed",
       (snap) => {
-        let percentage = (snap.bytesTransferred / snap.totalBytes) * 100;
+        const percentage = (snap.bytesTransferred / snap.totalBytes) * 100;
         setProgress(percentage);
       },
       (err) => {

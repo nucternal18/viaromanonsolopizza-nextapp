@@ -1,0 +1,129 @@
+.tableContainer {
+  width: 100%;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.tableContainerTable {
+  width: 100%;
+}
+
+.tableContainerTable thead tr {
+  background: rgb(3, 175, 175);
+  color: #fff;
+}
+.tableContainerTable td,
+.tableContainerTable th {
+  padding: 10px;
+  text-align: center;
+}
+.tableContainerTable tbody tr td {
+  text-align: center;
+}
+
+.tableContainerTable tr:nth-child(even) {
+  background-color: #f1f1f1;
+}
+/* @media screen and (max-width: 991px) {
+  .tableContainerTableBreakLg thead {
+    display: none;
+  }
+  .tableContainerTableBreakLg tr {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .tableContainerTableBreakLg td {
+    display: block;
+    position: relative;
+    padding-left: 130px;
+    text-align: left;
+    border-bottom: 0;
+  }
+  .tableContainerTableBreakLg td:last-child {
+    border-bottom: 1px solid #ddd;
+  }
+  .tableContainerTableBreakLg td::before {
+    content: attr(data-heading);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0 5px;
+    justify-content: center;
+  }
+} */
+@media screen and (max-width: 768px) {
+  .tableContainerTable thead {
+    display: none;
+  }
+  .tableContainerTable tr {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .tableContainerTable td {
+    display: block;
+    position: relative;
+    padding-left: 130px;
+    text-align: left;
+    border-bottom: 0;
+  }
+  .tableContainerTable td:last-child {
+    border-bottom: 1px solid #ddd;
+  }
+  .tableContainerTable td::before {
+    content: attr(data-heading);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background-color: teal;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0 5px;
+    justify-content: center;
+  }
+}
+@media screen and (max-width: 575px) {
+  .tableContainerTable thead {
+    display: none;
+  }
+  .tableContainerTable tr {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .tableContainerTable td {
+    display: block;
+    position: relative;
+    padding-left: 130px;
+    text-align: left;
+    border-bottom: 0;
+  }
+  .tableContainerTable td:last-child {
+    border-bottom: 1px solid #ddd;
+  }
+  .tableContainerTable td::before {
+    content: attr(data-heading);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background-color: teal;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0 5px;
+    justify-content: center;
+  }
+}
