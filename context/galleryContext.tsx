@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useContext } from "react";
 import {
   doc,
   setDoc,
@@ -99,7 +99,7 @@ const galleryReducer = (state: InitialGalleryState, action) => {
   }
 };
 
-const GalleryContextProvider = ({ children }) => {
+const GalleryProvider = ({ children }) => {
   const [state, dispatch] = useReducer(galleryReducer, initialState);
 
   useEffect(() => {
@@ -134,14 +134,14 @@ const GalleryContextProvider = ({ children }) => {
    *
    * @param imageUrl
    */
-  const addPicture = async () => {
+  const addPicture = async (url: string) => {
     try {
       dispatch({
         type: ActionType.GALLERRIA_ITEM_ACTION_REQUEST,
       });
       const docRef = doc(db, "images");
       await setDoc(docRef, {
-        url: state.image.url,
+        url: url,
         createdAt: Timestamp.now(),
       });
       dispatch({
@@ -160,7 +160,7 @@ const GalleryContextProvider = ({ children }) => {
    *
    * @param id
    */
-  const deletePicture = async (id) => {
+  const deletePicture = async (id: string) => {
     try {
       dispatch({
         type: ActionType.GALLERRIA_ITEM_ACTION_REQUEST,
@@ -212,4 +212,8 @@ const GalleryContextProvider = ({ children }) => {
   );
 };
 
-export default GalleryContextProvider;
+const useGallery = () => {
+  return useContext(GalleryContext);
+};
+
+export { useGallery, GalleryProvider };

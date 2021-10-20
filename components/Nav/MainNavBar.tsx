@@ -106,35 +106,22 @@ const MainNavbar = () => {
           : "fixed shadow-2xl bg-white"
       }  navbar-expand-lg`}
     >
-      <div className="container flex items-center justify-between px-2 mx-auto font-light text-gray-600 md:relative sm:px-1 md:px-0 md:flex-row">
+      <div className="container flex items-center justify-between px-1 mx-auto max-w-screen-xl font-light text-gray-600 md:relative sm:px-1 md:px-0 md:flex-row">
         <Link href={"/"}>
           <a className="inline-block p-0 m-0 text-2xl font-bold cursor-pointer md:mr-4 ">
             <Image
               src={"/strisciaNoBG.jpg"}
               alt="blooms hair logo"
               height={60}
-              width={200}
+              width={250}
               layout="intrinsic"
               objectFit="contain"
             />
           </a>
         </Link>
         {/* Mobile Nav menu button */}
-        <div>
-          <button
-            type="button"
-            aria-expanded="false"
-            aria-disabled={isOpen}
-            disabled={isOpen}
-            aria-label="Toggle navigation"
-            className={`block float-right text-4xl ${
-              pos === "top" ? "text-gray-200" : "text-gray-800"
-            }  lg:hidden focus:outline-none focus:shadow-none`}
-            onClick={toggle}
-          >
-            &#8801;
-          </button>
-          <div className="flex items-center lg:hidden ">
+        <div className="flex items-center justify-center mb-2">
+          <div className="flex items-center lg:hidden mx-2">
             {state.isAuthenticated && (
               <button
                 className="flex items-center  bg-gray-200 border-2 border-yellow-500 rounded-full"
@@ -151,6 +138,19 @@ const MainNavbar = () => {
               </button>
             )}
           </div>
+          <button
+            type="button"
+            aria-expanded="false"
+            aria-disabled={isOpen}
+            disabled={isOpen}
+            aria-label="Toggle navigation"
+            className={`block float-right text-4xl ${
+              pos === "top" ? "text-gray-200" : "text-gray-800"
+            }  lg:hidden focus:outline-none focus:shadow-none`}
+            onClick={toggle}
+          >
+            &#8801;
+          </button>
         </div>
         {/* Main Nav links */}
         <ul className={position.right}>
@@ -234,7 +234,7 @@ const MainNavbar = () => {
             <div className="mr-12">
               <button
                 aria-label="Close"
-                className=" py-1  text-4xl text-gray-200 cursor-pointer focus:outline-none"
+                className=" py-1  text-4xl text-gray-900 cursor-pointer focus:outline-none"
                 onClick={toggle}
               >
                 &times;
@@ -254,7 +254,7 @@ const MainNavbar = () => {
                         router.asPath === link.link
                           ? "text-red-500"
                           : "text-gray-200"
-                      }flex items-center  ml-4 mb-2 cursor-pointer py-1.5  px-2   hover:text-yellow-400 text-lg font-medium list-none uppercase`}
+                      }flex items-center  ml-4 mb-2 cursor-pointer py-1.5  px-2   hover:text-red-500 text-lg font-medium list-none uppercase`}
                     >
                       {link.title}
                     </a>
@@ -265,31 +265,20 @@ const MainNavbar = () => {
                 <>
                   <li className="px-1 m-0 text-base list-none text-md">
                     <button className="flex items-center py-1.5  px-2 mb-2 ml-4 space-x-2">
-                      <FaUser className="text-gray-200 " />
-                      <Link href={"/account/profile"}>
-                        <a
-                          className={`${
-                            router.asPath === "/account/login"
-                              ? "text-red-500"
-                              : "text-gray-200"
-                          }flex items-center text-lg font-medium  uppercase list-none cursor-pointer hover:text-yellow-400`}
-                        >
-                          Profile
-                        </a>
-                      </Link>
-                    </button>
-                  </li>
-
-                  <li className="px-1 m-0 text-base list-none text-md">
-                    <button className="flex items-center py-1.5  px-2 mb-2 ml-4 space-x-2">
-                      <RiAdminFill className="text-gray-200 " />
+                      <RiAdminFill
+                        className={`${
+                          router.asPath === "/admin"
+                            ? "text-red-500"
+                            : "text-gray-900 hover:text-red-500"
+                        }`}
+                      />
                       <Link href={"/admin"}>
                         <a
                           className={`${
-                            router.asPath === "/account/login"
+                            router.asPath === "/admin"
                               ? "text-red-500"
-                              : "text-gray-200"
-                          } block text-lg font-medium  uppercase list-none cursor-pointer hover:text-yellow-400`}
+                              : "text-gray-900"
+                          } block text-lg font-medium  uppercase list-none cursor-pointer hover:text-red-500`}
                         >
                           admin
                         </a>
@@ -299,10 +288,10 @@ const MainNavbar = () => {
 
                   <li className="px-1 m-0 text-base list-none text-md">
                     <button
-                      className="flex items-center  ml-4 mb-4 cursor-pointer py-1.5  px-2  space-x-2 text-gray-200 hover:text-gray-400 text-lg font-medium list-none uppercase"
+                      className="flex items-center  ml-4 mb-4 cursor-pointer py-1.5  px-2  space-x-2 text-gray-900 hover:text-red-500 text-lg font-medium list-none uppercase"
                       onClick={logoutHandler}
                     >
-                      <FiLogOut className="text-gray-200 " />
+                      <FiLogOut className="text-gray-900 hover:text-red-500" />
                       <p>Logout </p>
                     </button>
                   </li>
@@ -317,7 +306,7 @@ const MainNavbar = () => {
                           router.asPath === "/auth/login"
                             ? "text-red-500"
                             : "text-gray-200"
-                        }py-1 text-lg font-medium  uppercase list-none cursor-pointer hover:text-yellow-400`}
+                        }py-1 text-lg font-medium  uppercase list-none cursor-pointer hover:text-red-500`}
                       >
                         Sign In
                       </a>
@@ -343,7 +332,7 @@ const position = {
 
 const classNames = {
   default: `lg:hidden flex h-screen fixed top-0 right-0 transition-all ease duration-200`,
-  enabled: `w-7/12 md:w-1/3 bg-gray-900 z-50  text-white overflow-y-hidden `,
+  enabled: `w-7/12 md:w-1/3 bg-gray-100 z-50  text-gray-900 overflow-y-hidden `,
   disabled: `w-0  bg-gray-800 text-white overflow-x-hidden`,
 };
 

@@ -11,10 +11,7 @@ const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
   ssr: false,
   loading: () => <p>Loading...</p>,
 });
-// const Slider = dynamic(() => import('../components/Slider/Slider'), {
-//   ssr: false,
-//   loading: () => <p>Loading...</p>,
-// });
+
 const url =
   "https://res.cloudinary.com/viaromanonsolopizza-com/image/upload/v1633902787/danielle-macinnes-logv9s7f67o-unsplash_c37kov.webp";
 export default function Home() {
@@ -49,7 +46,7 @@ export default function Home() {
                 }}
                 transition={{ duration: 2.0 }}
               >
-                <p className="mb-2 text-lg font-thin text-gray-300  md:text-2xl ">
+                <p className="mb-2 text-lg font-thin text-gray-300 text-center md:text-2xl ">
                   Benvenuti in Via Roma | non Solo Pizza
                 </p>
                 <p className="mb-4 text-2xl text-center font-semibold text-gray-300 sm:text-3xl md:text-4xl ">
@@ -65,7 +62,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-        {/* <Slider /> */}
 
         <Menu menu={state.menu} loading={state.loading} />
         <Contact />

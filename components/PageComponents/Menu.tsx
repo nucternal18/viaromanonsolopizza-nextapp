@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MenuProps } from "../../context/menuContext";
+import Loader from "../Loader";
 
 function Menu({
   menu,
@@ -115,7 +116,9 @@ function Menu({
 
       {/* Main Menu Card */}
       {loading ? (
-        <h1>Loading...</h1>
+        <div className="mx-auto w-full py-10">
+          <Loader classes="w-6 h-6" />
+        </div>
       ) : (
         <div
           id="v-main"
@@ -221,13 +224,15 @@ function Menu({
 
       {/* Pizza menu card */}
       {loading ? (
-        <h1>Loading...</h1>
+        <div className="mx-auto w-full py-10">
+          <Loader classes="w-6 h-6" />
+        </div>
       ) : (
         <div
           id="v-pizza"
           className={
             selectedPizza
-              ? "block container md:w-full mx-auto p-2 mb-4 overflow-hidden shadow-2xl bg-white"
+              ? "block container md:w-full mx-auto p-2 mb-4 overflow-hidden shadow-2xl max-w-screen-lg bg-white"
               : "hidden"
           }
         >
