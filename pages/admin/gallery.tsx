@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { toast } from "react-toastify";
 
 // Context
 import { useGallery } from "../../context/galleryContext";
 
 // Components
-import Table from "../../components/GalleryTable";
+import Table, {
+  ActionsCell,
+  ImageCell,
+  TimeCell,
+} from "../../components/GalleryTable";
 import AdminLayout from "../../components/layout/AdminLayout";
 import UploadForm from "../../components/UploadForm";
-import { uploadImage } from "../../lib/upload";
 
 type RowProps = {
   createdAt: {
@@ -29,6 +32,34 @@ function ManageGallery() {
     }
   };
 
+  const columns = useMemo(
+    () => [
+      {
+        Header: "ID",
+        Footer: "ID",
+        accessor: "id",
+      },
+      {
+        Header: "IMAGE",
+        Footer: "IMAGE",
+        accessor: "url",
+        Cell: ImageCell,
+      },
+      {
+        Header: "CREATED AT",
+        Footer: "CREATED AT",
+        accessor: "createdAt",
+        Cell: TimeCell,
+      },
+      {
+        Header: "ACTIONS",
+        Footer: "ACTIONS",
+        Cell: ({ value }) => ActionsCell(value, deleteHandler),
+      },
+    ],
+    []
+  );
+
   return (
     <AdminLayout>
       <section className=" flex-grow w-full h-screen p-4 mx-auto bg-gray-100 md:p-10">
@@ -40,14 +71,13 @@ function ManageGallery() {
             error={state.error}
             image={state.image.url}
           />
-          <div>
-            <div className="w-full mx-auto overscroll-auto">
-              <Table
-                tableData={state.images}
-                headingColumns={["ID", "IMAGE", "CREATED AT", "ACTIONS"]}
-                deleteHandler={deleteHandler}
-              />
-            </div>
+
+          <div className="w-full mx-auto overscroll-auto">
+            <Table
+              data={state.images}
+              columns={columns}
+              deleteHandler={deleteHandler}
+            />
           </div>
         </div>
       </section>

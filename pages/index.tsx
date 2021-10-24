@@ -6,10 +6,15 @@ import Link from "next/link";
 import { useMenu } from "../context/menuContext";
 import Contact from "../components/PageComponents/Contact";
 import { motion } from "framer-motion";
-import Button from "../components/Button";
+import Button from "../components/Button/GlobalButton";
+import Loader from "../components/Loader";
 const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
   ssr: false,
-  loading: () => <p>Loading...</p>,
+  loading: () => (
+    <div className="mx-auto w-full py-10">
+      <Loader classes="w-6 h-6" />
+    </div>
+  ),
 });
 
 const url =

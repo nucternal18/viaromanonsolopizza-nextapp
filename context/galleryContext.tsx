@@ -10,7 +10,6 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "../context/authContext";
-import { NEXT_URL } from "../config";
 
 // utils
 import { uploadImage } from "../lib/upload";

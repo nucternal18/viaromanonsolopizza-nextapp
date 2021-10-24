@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Layout from "../components/layout/Layout";
-import Button from "../components/Button";
+import Button from "../components/Button/GlobalButton";
 
 function NotFoundPage() {
   const router = useRouter();

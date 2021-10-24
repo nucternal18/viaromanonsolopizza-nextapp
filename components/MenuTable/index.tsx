@@ -1,42 +1,71 @@
 /* eslint-disable react/jsx-key */
-import {} from "react";
+import { useMemo } from "react";
 import PropTypes from "prop-types";
-import Image from "next/image";
-import { useTable, usePagination } from "react-table";
+import {
+  useTable,
+  usePagination,
+  useFilters,
+  useGroupBy,
+  useExpanded,
+} from "react-table";
 import { FaTrash } from "react-icons/fa";
-import { Timestamp } from "firebase/firestore";
 import {
   ChevronDoubleLeftIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronDoubleRightIcon,
 } from "@heroicons/react/solid";
-import { Button, PageButton } from "../Button/TableButtons";
+import { Timestamp } from "firebase/firestore";
 import styles from "../../styles/Table.module.css";
-
-type RowProps = {
-  createdAt: Timestamp;
-  url: string;
-  id: string;
-};
+import { Button, PageButton } from "../Button/TableButtons";
+// Context
+import { MenuProps } from "../../context/menuContext";
 
 interface ITable {
-  data: RowProps[];
+  data: any[];
   columns: any[];
-  deleteHandler: (id: string) => void;
+  deleteHandler?: (id: string) => void;
 }
 
-export function ImageCell({ value }) {
+// This is a custom filter UI for selecting
+// a unique option from a list
+export function SelectColumnFilter({
+  column: { filterValue, setFilter, preFilteredRows, id, render },
+}) {
+  console.log(preFilteredRows);
+  console.log(id);
+  // Calculate the options for filtering
+  // using the preFilteredRows
+  const options = useMemo(() => {
+    const options = new Set();
+
+    preFilteredRows.forEach((row) => {
+      options.add(row.values[id]);
+    });
+    return [...options.values()];
+  }, [id, preFilteredRows]);
+
+  // Render a multi-select box
   return (
-    <div>
-      <Image
-        src={value}
-        alt={""}
-        width={70}
-        height={70}
-        className="rounded-lg"
-      />
-    </div>
+    <label className="flex gap-x-2 items-baseline">
+      <span className="text-gray-700">{render("Header")}: </span>
+      <select
+        className="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        name={id}
+        id={id}
+        value={filterValue}
+        onChange={(e) => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        <option value="">All</option>
+        {options.map((option, i) => (
+          <option key={i} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
@@ -48,7 +77,7 @@ export function TimeCell({ value }) {
   );
 }
 
-export function ActionsCell(value, deleteHandler) {
+export function ActionsCell({ value, deleteHandler }) {
   return (
     <div>
       <button
@@ -61,7 +90,7 @@ export function ActionsCell(value, deleteHandler) {
   );
 }
 
-const Table = ({ data, columns, deleteHandler }: ITable) => {
+const Table = ({ data, columns }: ITable) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -80,9 +109,30 @@ const Table = ({ data, columns, deleteHandler }: ITable) => {
     previousPage,
     setPageSize,
     state,
-  } = useTable({ columns, data }, usePagination);
+    preGlobalFilteredRows,
+    setGlobalFilter,
+  } = useTable(
+    { columns, data },
+    useFilters,
+    useGroupBy,
+    useExpanded,
+    usePagination
+  );
   return (
     <>
+      {/* Filter */}
+      <div className="sm:flex sm:gap-x-2">
+        {headerGroups.map((headerGroup) =>
+          headerGroup.headers.map((column) =>
+            column.Filter ? (
+              <div className="mt-2 sm:mt-0" key={column.id}>
+                {column.render("Filter")}
+              </div>
+            ) : null
+          )
+        )}
+      </div>
+      {/* Table */}
       <div className={styles.tableContainer}>
         <table {...getTableProps()} className={styles.tableContainerTable}>
           <thead>
@@ -103,7 +153,9 @@ const Table = ({ data, columns, deleteHandler }: ITable) => {
                 <tr key={row.id} {...row.getRowProps()}>
                   {row.cells.map((cell) => {
                     return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                      <td {...cell.getCellProps()} role="cell">
+                        {cell.render("Cell")}
+                      </td>
                     );
                   })}
                 </tr>

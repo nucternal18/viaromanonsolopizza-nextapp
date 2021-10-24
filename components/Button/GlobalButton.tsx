@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode } from 'react';
+import React, { forwardRef, ReactNode } from "react";
 
 export type Ref = HTMLButtonElement;
 
@@ -6,10 +6,9 @@ type ButtonProps = {
   disabled?: boolean;
   className?: string;
   color: string;
-  type: 'submit' | 'button';
+  type: "submit" | "button";
   children?: ReactNode;
   props?: any;
-  onClick?: () => void;
 };
 
 const Button: React.FunctionComponent<
@@ -29,8 +28,9 @@ const Button: React.FunctionComponent<
       disabled={disabled}
       type={type}
       className={`${colors[color]} ${className} ${
-        disabled ? 'opacity-60 cursor-not-allowed' : ''
-      }  text-white focus:outline-none shadow rounded px-4 py-2 font-medium transition flex items-center justify-center ease-in duration-200`}>
+        disabled ? "opacity-60 cursor-not-allowed" : ""
+      }  text-white focus:outline-none shadow rounded px-4 py-2 font-medium transition flex items-center justify-center ease-in duration-200`}
+    >
       {children}
     </button>
   )
@@ -46,6 +46,6 @@ const colors = {
   yellow: `border-yellow-500 border text-yellow-500 active:bg-yellow-500 active:text-white text-center hover:bg-yellow-500 hover:text-white`,
 };
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
 export default Button;

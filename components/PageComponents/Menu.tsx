@@ -361,7 +361,9 @@ function Menu({
       )}
       {/* Desserts card */}
       {loading ? (
-        <h1>Loading...</h1>
+        <div className="mx-auto w-full py-10">
+          <Loader classes="w-6 h-6" />
+        </div>
       ) : (
         <div
           id="v-dessert"
@@ -400,7 +402,9 @@ function Menu({
       )}
       {/* Cantina Card */}
       {loading ? (
-        <h1>Loading...</h1>
+        <div className="mx-auto w-full py-10">
+          <Loader classes="w-6 h-6" />
+        </div>
       ) : (
         <div
           id="v-drinks"

@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { FaPlusCircle } from "react-icons/fa";
-import Button from "./Button";
+import Button from "./Button/GlobalButton";
 import Loader from "./Loader";
 
 const UploadForm = ({
@@ -47,7 +47,9 @@ const UploadForm = ({
         <div className="mb-4">
           <label className="flex justify-center mb-2 mr-2 text-base font-bold text-gray-700">
             {uploading ? (
-              <Loader classes="w-6 h-6" />
+              <div className="mx-auto w-full py-10">
+                <Loader classes="w-6 h-6" />
+              </div>
             ) : (
               <>
                 <FaPlusCircle className="text-4xl" />
