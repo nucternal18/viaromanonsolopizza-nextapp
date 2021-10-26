@@ -1,27 +1,31 @@
+import { GetStaticProps } from "next";
 import React, { useMemo } from "react";
 
 //components
 import AdminLayout from "../../components/layout/AdminLayout";
 import Table, { SelectColumnFilter } from "../../components/MenuTable";
+import { NEXT_URL } from "../../config";
 // Context
 import { useMenu } from "../../context/menuContext";
-import useFirestore from "../../lib/hooks/useFirestore";
 
-function ManageMenu() {
+function ManageMenu({ menu }) {
   const { state } = useMenu();
-  const { docs } = useFirestore("Menus");
+  console.log(menu);
   const data = useMemo(
     () => [
-      { main: state.menu.main },
-      { desserts: state.menu.desserts },
-      { gourmetpizza: state.menu.gourmetpizza },
-      { pizzas: state.menu.pizzas },
-      { cantina: state.menu.cantina },
-      { bianche: state.menu.bianche },
+      { antipasti: menu.antipasti },
+      { contorni: menu.contorni },
+      { letempure: menu.letempure },
+      { secondi: menu.secondi },
+      { desserts: menu.desserts },
+      { gourmetpizza: menu.gourmetpizza },
+      { pizzas: menu.pizzas },
+      { cantina: menu.cantina },
+      { bianche: menu.bianche },
     ],
-    [state.menu]
+    [menu]
   );
-  // console.log(data)
+  console.log(data);
   const columns = useMemo(
     () => [
       {
@@ -130,5 +134,21 @@ function ManageMenu() {
     </AdminLayout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const res = await fetch(`${NEXT_URL}/api/menu`);
+  const data = await res.json();
+
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: { menu: data },
+    revalidate: 5,
+  };
+};
 
 export default ManageMenu;

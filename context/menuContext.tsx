@@ -2,60 +2,63 @@ import React, { createContext, useContext, useReducer, useEffect } from "react";
 import { collection, onSnapshot, Timestamp } from "firebase/firestore";
 import { convertCollectionsSnapshotToMap } from "../lib/convertSnapshotToMap";
 import { db } from "../context/authContext";
+import { NEXT_URL } from "../config";
 
 export type MenuProps = {
-  main: {
-    id: string;
-    title: string;
-    items: {
-      Antipasti: { name: string; name_english: string; price: string }[];
-      Contorni: { name: string; name_english: string; price: string }[];
-      LETEMPURE: { name: string; name_english: string; price: string }[];
-      Secondi: { name: string; name_english: string; price: string }[];
-    }[];
-  };
+  antipasti: {
+    _id: string;
+    name: string;
+    name_english: string;
+    price: string;
+  }[];
+  contorni: {
+    _id: string;
+    name: string;
+    name_english: string;
+    price: string;
+  }[];
+  letempure: {
+    _id: string;
+    name: string;
+    name_english: string;
+    price: string;
+  }[];
+  secondi: {
+    _id: string;
+    name: string;
+    name_english: string;
+    price: string;
+  }[];
   desserts: {
-    id: string;
-    title: string;
-    items: {
-      price: string;
-      name: string;
-    }[];
-  };
-  gourmetpizza: {
-    id: string;
-    title: string;
-    items: {
-      price: string;
-      name: string;
-      ingredients: string[];
-    }[];
-  };
+    _id: string;
+    price: string;
+    name: string;
+  }[];
+  gourmetPizza: {
+    _id: string;
+    price: string;
+    name: string;
+    ingredients: string[];
+  }[];
   pizzas: {
-    id: string;
-    title: string;
-    items: {
-      price: string;
-      name: string;
-      ingredients: string[];
-    }[];
-  };
+    _id: string;
+    price: string;
+    name: string;
+    ingredients: string[];
+  }[];
+
   cantina: {
-    id: string;
-    items: {
-      subtitle: string;
-      types: { name: string; Bottiglia: string; Calice: string }[];
-    }[];
-  };
+    _id: string;
+    subtitle: string;
+    types: { name: string; Bottiglia: string; Calice: string }[];
+  }[];
+
   bianche: {
-    id: string;
-    title: string;
-    items: {
-      price: string;
-      name: string;
-      ingredients: string[];
-    }[];
-  };
+    _id: string;
+    price: string;
+    name: string;
+    ingredients: string[];
+  }[];
 };
 
 interface InitialMenuState {
@@ -77,35 +80,15 @@ const initialState = {
   loading: false,
   error: null,
   menu: {
-    main: {
-      id: "",
-      title: "",
-      items: [],
-    },
-    desserts: {
-      id: "",
-      title: "",
-      items: [],
-    },
-    gourmetpizza: {
-      id: "",
-      title: "",
-      items: [],
-    },
-    pizzas: {
-      id: "",
-      title: "",
-      items: [],
-    },
-    cantina: {
-      id: "",
-      items: [],
-    },
-    bianche: {
-      id: "",
-      title: "",
-      items: [],
-    },
+    antipasti: [],
+    contorni: [],
+    letempure: [],
+    secondi: [],
+    desserts: [],
+    gourmetPizza: [],
+    pizzas: [],
+    cantina: [],
+    bianche: [],
   },
   message: "",
 };
@@ -134,20 +117,20 @@ const menuReducer = (state: InitialMenuState, action) => {
 const MenuProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(menuReducer, initialState);
 
-  useEffect(() => {
-    const q = collection(db, "Menu");
+  // useEffect(() => {
+  //   const q = collection(db, 'Menu');
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const collectionMap: MenuProps =
-        convertCollectionsSnapshotToMap(snapshot);
-      dispatch({
-        type: ActionType.MENU_ITEM_FETCH_SUCCESS,
-        payload: collectionMap,
-      });
-    });
+  //   const unsubscribe = onSnapshot(q, (snapshot) => {
+  //     const collectionMap: MenuProps =
+  //       convertCollectionsSnapshotToMap(snapshot);
+  //     dispatch({
+  //       type: ActionType.MENU_ITEM_FETCH_SUCCESS,
+  //       payload: collectionMap,
+  //     });
+  //   });
 
-    return () => unsubscribe();
-  }, []);
+  //   return () => unsubscribe();
+  // }, []);
   return (
     <MenuContext.Provider value={{ state, dispatch }}>
       {children}

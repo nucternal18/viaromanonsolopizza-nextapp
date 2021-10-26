@@ -13,7 +13,7 @@ function Menu({
   const [selectedPizza, SetSelectedPizza] = useState(true);
   const [selectedDesserts, SetSelectedDesserts] = useState(false);
   const [selectedDrinks, SetSelectedDrinks] = useState(false);
-
+  console.log(menu);
   const handleSelectedMain = () => {
     setSelectedMain(true);
     SetSelectedPizza(false);
@@ -40,8 +40,6 @@ function Menu({
     SetSelectedPizza(false);
     SetSelectedDesserts(false);
   };
-
-  const { pizzas, main, desserts, cantina, gourmetpizza, bianche } = menu;
 
   return (
     <section className="px-2 sm:px-0">
@@ -131,94 +129,105 @@ function Menu({
           <h1 className="text-2xl md:text-3xl text-center font-light mb-8">
             LA CUCINA PROPONE
           </h1>
-          {main.items.map((m, i) => (
-            <div key={i} className="w-full">
-              <div>
-                <h1 className="text-2xl text-center font-light mb-6 border border-red-200">
-                  ANTIPASTI
-                </h1>
-                {m.Antipasti.map((ant, i) => (
-                  <div key={i} className=" w-full  flex justify-between  mb-4">
-                    <div className="rounded-b w-2/4 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r flex flex-col">
-                      <div className="mb-2">
-                        <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
-                          {ant.name}
-                        </div>
+
+          <div className="w-full">
+            <div>
+              <h1 className="text-2xl text-center font-light mb-6 border border-red-200">
+                ANTIPASTI
+              </h1>
+              {menu.antipasti?.map((ant) => (
+                <div
+                  key={ant._id}
+                  className=" w-full  flex justify-between  mb-4"
+                >
+                  <div className="rounded-b w-2/4 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r flex flex-col">
+                    <div className="mb-2">
+                      <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                        {ant.name}
                       </div>
                     </div>
-                    <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                      <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
-                        &euro; {ant.price}
-                      </h1>
-                    </div>
                   </div>
-                ))}
-              </div>
-              <div>
-                <h1 className="text-2xl  text-center font-light mb-6 border border-red-200">
-                  SECONDI COTTI ALLA BRACE
-                </h1>
-                {m.Secondi.map((sec, i) => (
-                  <div key={i} className=" w-full flex justify-between mb-4">
-                    <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
-                      <div className="mb-2">
-                        <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
-                          {sec.name}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                      <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
-                        &euro; {sec.price}
-                      </h1>
-                    </div>
+                  <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
+                    <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                      &euro; {ant.price}
+                    </h1>
                   </div>
-                ))}
-              </div>
-              <div>
-                <h1 className="text-2xl text-center font-light mb-6 border border-red-200">
-                  LE TEMPURE
-                </h1>
-                {m.LETEMPURE.map((sec, i) => (
-                  <div key={i} className=" w-full flex justify-between mb-4">
-                    <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
-                      <div className="mb-2">
-                        <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
-                          {sec.name}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                      <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
-                        &euro; {sec.price}
-                      </h1>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div>
-                <h1 className="text-2xl text-center font-light mb-6 border border-red-200">
-                  CONTORNI
-                </h1>
-                {m.Contorni.map((cont, i) => (
-                  <div key={i} className=" w-full flex justify-between mb-4">
-                    <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
-                      <div className="mb-2">
-                        <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
-                          {cont.name}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                      <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
-                        &euro; {cont.price}
-                      </h1>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          ))}
+            <div>
+              <h1 className="text-2xl  text-center font-light mb-6 border border-red-200">
+                SECONDI COTTI ALLA BRACE
+              </h1>
+              {menu.secondi?.map((sec, i) => (
+                <div
+                  key={sec._id}
+                  className=" w-full flex justify-between mb-4"
+                >
+                  <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
+                    <div className="mb-2">
+                      <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                        {sec.name}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
+                    <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                      &euro; {sec.price}
+                    </h1>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h1 className="text-2xl text-center font-light mb-6 border border-red-200">
+                LE TEMPURE
+              </h1>
+              {menu.letempure?.map((sec) => (
+                <div
+                  key={sec._id}
+                  className=" w-full flex justify-between mb-4"
+                >
+                  <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
+                    <div className="mb-2">
+                      <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                        {sec.name}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
+                    <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                      &euro; {sec.price}
+                    </h1>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h1 className="text-2xl text-center font-light mb-6 border border-red-200">
+                CONTORNI
+              </h1>
+              {menu.contorni?.map((cont, i) => (
+                <div
+                  key={cont._id}
+                  className=" w-full flex justify-between mb-4"
+                >
+                  <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
+                    <div className="mb-2">
+                      <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                        {cont.name}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
+                    <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                      &euro; {cont.price}
+                    </h1>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -243,9 +252,9 @@ function Menu({
             PIZZA GOURMET
           </h1>
           <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">
-            {gourmetpizza.items.map((pizza, i) => (
+            {menu.gourmetPizza?.map((pizza) => (
               <div
-                key={i}
+                key={pizza._id}
                 className=" w-full lg:w-3/6 flex justify-between px-1 mb-4"
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
@@ -277,18 +286,18 @@ function Menu({
             LE BIANCHE
           </h1>
           <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">
-            {bianche.items.map((pizza, i) => (
+            {menu.bianche.map((item) => (
               <div
-                key={i}
+                key={item._id}
                 className=" w-full lg:w-3/6 flex justify-between px-1 mb-4"
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                   <div className="mb-2">
                     <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
-                      {pizza.name}
+                      {item.name}
                     </div>
                     <div className="flex flex-row flex-wrap">
-                      {pizza.ingredients.map((ing, i) => (
+                      {item.ingredients.map((ing, i) => (
                         <p
                           key={i}
                           className="text-red-400 text-base mr-1 text-left"
@@ -301,7 +310,7 @@ function Menu({
                 </div>
                 <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
                   <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
-                    &euro; {pizza.price}
+                    &euro; {item.price}
                   </h1>
                 </div>
               </div>
@@ -311,9 +320,9 @@ function Menu({
             LE CLASSICHE
           </h1>
           <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">
-            {pizzas.items.map((pizza, i) => (
+            {menu.pizzas?.map((pizza, i) => (
               <div
-                key={i}
+                key={pizza._id}
                 className=" w-full lg:w-3/6 flex justify-between px-1 mb-4"
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
@@ -373,8 +382,11 @@ function Menu({
               : "hidden"
           }
         >
-          {desserts.items.map((dessert, i) => (
-            <div key={i} className=" w-full flex justify-between mb-4">
+          {menu.desserts?.map((dessert, i) => (
+            <div
+              key={dessert._id}
+              className=" w-full flex justify-between mb-4"
+            >
               <div className="rounded-b lg:rounded-b-none justify-start lg:rounded-r p-1 md:p-2 w-4/6">
                 <div className="mb-2">
                   <div className="text-gray-900 font-light text-lg md:text-xl mb-2 text-left break-all ">
@@ -419,9 +431,9 @@ function Menu({
             <p className=" py-2 ml-24 sm:ml-48 font-bold">Calice</p>
             <p className="px-2 py-2 font-bold">Bottiglia</p>
           </div>
-          {cantina.items.map((drink, i) => (
+          {menu.cantina?.map((drink, i) => (
             <div
-              key={i}
+              key={drink._id}
               className="w-full table flex-col justify-between table-auto px-1"
             >
               <div>
@@ -431,7 +443,7 @@ function Menu({
                   </p>
                 </div>
               </div>
-              {drink.types.map((bottle, i) => (
+              {drink.types?.map((bottle, i) => (
                 <div key={i} className="w-full flex  justify-between mb-4">
                   <p className="px-1 py-2 w-1/3 sm:w-1/2 text-lg md:text-xl">
                     {bottle.name}

@@ -8,6 +8,8 @@ import Contact from "../components/PageComponents/Contact";
 import { motion } from "framer-motion";
 import Button from "../components/Button/GlobalButton";
 import Loader from "../components/Loader";
+import { GetServerSideProps } from "next";
+import { NEXT_URL } from "../config";
 const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
   ssr: false,
   loading: () => (
@@ -19,7 +21,7 @@ const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
 
 const url =
   "https://res.cloudinary.com/viaromanonsolopizza-com/image/upload/v1633902787/danielle-macinnes-logv9s7f67o-unsplash_c37kov.webp";
-export default function Home() {
+export default function Home({ menu, loading }) {
   const { state } = useMenu();
   return (
     <Layout title="Home">
@@ -68,9 +70,24 @@ export default function Home() {
           </div>
         </section>
 
-        <Menu menu={state.menu} loading={state.loading} />
+        <Menu menu={menu} loading={loading} />
         <Contact />
       </main>
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const res = await fetch(`${NEXT_URL}/api/menu`);
+  const data = await res.json();
+
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: { menu: data, loading: !data ? true : false },
+  };
+};

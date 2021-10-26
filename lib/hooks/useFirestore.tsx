@@ -33,6 +33,7 @@ const useFirestore = (collections) => {
 
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
+        console.log(doc);
         console.log(doc.id, " => ", doc.data());
       });
     })();
@@ -43,7 +44,7 @@ const useFirestore = (collections) => {
     //   setDocs(documents);
     // });
 
-    // return () => unsubscribe();
+    return () => unsubscribe();
   }, [collections]);
 
   return { docs };

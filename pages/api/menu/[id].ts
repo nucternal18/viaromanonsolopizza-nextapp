@@ -1,6 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import db from "../../../lib/db";
-import Menu from "../../../models/menuModel";
+import {
+  Antipasti,
+  Contorni,
+  Letempure,
+  Secondi,
+  Desserts,
+  GourmetPizza,
+  Pizzas,
+  Cantina,
+  Bianche,
+} from "../../../models/menuModel";
 
 export default async function handler(
   req: NextApiRequest,
