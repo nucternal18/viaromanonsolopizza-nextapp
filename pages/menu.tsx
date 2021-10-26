@@ -1,9 +1,4 @@
-import {
-  GetServerSideProps,
-  GetServerSideProps,
-  GetServerSideProps,
-  GetStaticProps,
-} from "next";
+import { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
 import Layout from "../components/layout/Layout";
 import { NEXT_URL } from "../config";
