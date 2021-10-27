@@ -85,7 +85,7 @@ const cantinaSchema = new Schema(
     types: [
       {
         name: { type: String },
-        bottiglia: { type: String },
+        Bottiglia: { type: String },
         Calice: { type: String },
       },
     ],

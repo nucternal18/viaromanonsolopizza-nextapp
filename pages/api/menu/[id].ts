@@ -22,6 +22,12 @@ export default async function handler(
      * @route PUT /api/menu/:id
      * @access Private
      */
+  } else if (req.method === "DELETE") {
+    /**
+     * @desc delete a menu item
+     * @route DELETE /api/menu/:id
+     * @access Private
+     */
   } else {
     res.setHeader("Allow", ["GET"]);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
