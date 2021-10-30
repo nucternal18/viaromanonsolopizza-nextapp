@@ -131,6 +131,10 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
 
   //   return () => unsubscribe();
   // }, []);
+
+  // headers: {
+  //       Authorization: `Bearer ${userInfo.token}`,
+  //     }
   return (
     <MenuContext.Provider value={{ state, dispatch }}>
       {children}

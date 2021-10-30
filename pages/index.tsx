@@ -77,8 +77,13 @@ export default function Home({ menu, loading }) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch(`${NEXT_URL}/api/menu`);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const res = await fetch(`${NEXT_URL}/api/menu`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   const data = await res.json();
 
   if (!data) {

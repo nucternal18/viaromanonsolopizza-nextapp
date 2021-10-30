@@ -1,5 +1,7 @@
 import React, { useMemo } from "react";
 import { toast } from "react-toastify";
+import nookies from "nookies";
+import { GetServerSideProps } from "next";
 
 // Context
 import { useGallery } from "../../context/galleryContext";
@@ -12,15 +14,16 @@ import Table, {
 } from "../../components/GalleryTable";
 import AdminLayout from "../../components/layout/AdminLayout";
 import UploadForm from "../../components/UploadForm";
+import getUser from "../../lib/getUser";
 
-type RowProps = {
-  createdAt: {
-    seconds: number;
-    nanoseconds: number;
-  };
-  url: string;
-  id: string;
-};
+// type RowProps = {
+//   createdAt: {
+//     seconds: number;
+//     nanoseconds: number;
+//   };
+//   url: string;
+//   id: string;
+// };
 
 function ManageGallery() {
   const { state, addPicture, deletePicture, uploadGalleryImage } = useGallery();
@@ -84,5 +87,45 @@ function ManageGallery() {
     </AdminLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  try {
+    const cookies = nookies.get(ctx);
+
+    if (!cookies.token) {
+      return {
+        redirect: {
+          destination: "/auth/login",
+          permanent: false,
+        },
+      };
+    }
+    const { user } = await getUser(cookies.token);
+
+    if (!user.isAdmin) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+    return {
+      props: {},
+    };
+  } catch (error) {
+    // either the `token` cookie didn't exist
+    // or token verification failed
+    // either way: redirect to the login page
+    ctx.res.writeHead(302, { Location: "/auth/login" });
+    ctx.res.end();
+
+    // `as never` prevents inference issues
+    // with InferGetServerSidePropsType.
+    // The props returned here don't matter because we've
+    // already redirected the user.
+    return { props: {} as never };
+  }
+};
 
 export default ManageGallery;

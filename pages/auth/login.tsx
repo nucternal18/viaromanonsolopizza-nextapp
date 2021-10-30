@@ -27,7 +27,7 @@ const Login = (props) => {
   }
 
   return (
-    <Layout title="Admin logout">
+    <Layout title="Admin login">
       <section className="py-8">
         <div className="w-full mx-auto  max-w-lg">
           <h1 className="my-8 text-center text-3xl">

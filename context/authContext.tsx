@@ -10,6 +10,7 @@ import {
   sendPasswordResetEmail,
   onIdTokenChanged,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
@@ -71,12 +72,14 @@ const AuthContext = createContext<{
   state: InitialAuthState;
   dispatch: React.Dispatch<any>;
   login: (email: string, password: string) => void;
+  updateUserProfile: (dispatch: string, photoURL: string) => void;
   logout: () => void;
 }>({
   state: initialState,
   dispatch: () => null,
   login: () => {},
   logout: () => {},
+  updateUserProfile: () => {},
 });
 
 const authReducer = (state: InitialAuthState, action) => {
@@ -123,7 +126,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         dispatch({
           type: ActionType.USER_LOGOUT_SUCCESS,
         });
-        nookies.set(undefined, "token", "", {});
+        nookies.set(undefined, "token", "", { path: "/" });
         return;
       }
       const userData = {
@@ -135,7 +138,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
           : "https://res.cloudinary.com/viaromanonsolopizza-com/image/upload/ar_1:1,b_rgb:262c35,bo_5px_solid_rgb:ff0000,c_fill,e_sharpen:100,g_auto,r_max,w_1000/v1634588859/success_gmoweo.webp",
         emailVerified: user.emailVerified,
       };
-      console.log(userData);
+
       dispatch({
         type: ActionType.FETCH_USER_SUCCESS,
         payload: userData,
@@ -159,29 +162,6 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     // clean up setInterval
     return () => clearInterval(handle);
   }, []);
-
-  // useEffect(() => {
-  //   onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       // User is signed in
-  //       const userData = {
-  //         uid: user.uid,
-  //         displayName: user.displayName,
-  //         email: user.email,
-  //         photoUrl: user.photoURL,
-  //         emailVerified: user.emailVerified,
-  //       };
-  //       dispatch({
-  //         type: ActionType.FETCH_USER_SUCCESS,
-  //         payload: userData,
-  //       });
-  //     } else {
-  //       dispatch({
-  //         type: ActionType.USER_LOGOUT_SUCCESS,
-  //       });
-  //     }
-  //   });
-  // }, []);
 
   /**
    * @description login User
@@ -223,6 +203,27 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       });
   };
 
+  const updateUserProfile = async (
+    displayName: string,
+    photoURL: string
+  ): Promise<void> => {
+    try {
+      dispatch({
+        type: ActionType.USER_ACTION_REQUEST,
+      });
+      await updateProfile(auth.currentUser, {
+        displayName: displayName,
+        photoURL: photoURL,
+      });
+    } catch (error) {
+      const errorMessage = error.message;
+      dispatch({
+        type: ActionType.USER_ACTION_FAIL,
+        payload: errorMessage,
+      });
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -230,6 +231,7 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
         dispatch,
         login,
         logout,
+        updateUserProfile,
       }}
     >
       {children}
