@@ -24,12 +24,12 @@ const Button: React.FunctionComponent<
   ) => (
     <button
       ref={ref}
-      {...props}
       disabled={disabled}
       type={type}
       className={`${colors[color]} ${className} ${
         disabled ? "opacity-60 cursor-not-allowed" : ""
       }  text-white focus:outline-none shadow rounded px-4 py-2 font-medium transition flex items-center justify-center ease-in duration-200`}
+      {...props}
     >
       {children}
     </button>

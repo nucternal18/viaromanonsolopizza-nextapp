@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
 const withPWA = require("next-pwa");
+const { headers } = require("./headers.ts");
 
 module.exports = withPWA({
   reactStrictMode: true,
@@ -14,5 +14,13 @@ module.exports = withPWA({
   },
   eslint: {
     dirs: ["pages", "lib", "context", "components", "config"],
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers,
+      },
+    ];
   },
 });

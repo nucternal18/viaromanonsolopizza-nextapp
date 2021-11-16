@@ -47,16 +47,14 @@ export default async function handler(
       snapshot.exists ? (userData = snapshot.data()) : (userData = null);
 
       if (!userData.isAdmin) {
-        res.status(401).json({ message: "Invalid token. Not Authorized " });
+        res.status(401).json({ message: "Not Authorized " });
         return;
       }
     } catch (error) {
-      res
-        .status(401)
-        .json({
-          error: error.message,
-          message: "Invalid token. Not Authorized ",
-        });
+      res.status(401).json({
+        error: error.message,
+        message: "Invalid token. Not Authorized ",
+      });
       return;
     }
   } else if (req.method === "DELETE") {
@@ -73,12 +71,10 @@ export default async function handler(
         return;
       }
     } catch (error) {
-      res
-        .status(401)
-        .json({
-          error: error.message,
-          message: "Invalid token. Not Authorized ",
-        });
+      res.status(401).json({
+        error: error.message,
+        message: "Invalid token. Not Authorized ",
+      });
       return;
     }
   } else {
