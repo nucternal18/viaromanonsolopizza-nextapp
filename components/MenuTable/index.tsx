@@ -153,6 +153,7 @@ const Table = ({ data, columns }: ITable) => {
           <tbody {...getTableBodyProps()}>
             {page.map((row) => {
               prepareRow(row);
+              console.log(row);
               return (
                 <tr key={row.id} {...row.getRowProps()}>
                   {row.cells.map((cell) => {

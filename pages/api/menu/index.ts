@@ -16,50 +16,89 @@ import {
 
 import getUser from "../../../lib/getUser";
 
+type QueryObjProps = {
+  menuType?: string | string[];
+  sort?: string | string[];
+  page?: number;
+  position?: { $regex: string | string[]; $options: string };
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === "GET") {
+    const { sort, menuType }: Partial<QueryObjProps> = req.query;
     /**
      * @desc Fetch all menu items
      * @route GET /api/menu
      * @access Public
      */
+    const queryObj: QueryObjProps = {};
 
+    if (menuType && menuType !== "all") {
+      queryObj.menuType = menuType;
+    }
     await db.connectDB();
-    const antipasti = await Antipasti.find({});
-    const contorni = await Contorni.find({});
-    const letempure = await Letempure.find({});
-    const secondi = await Secondi.find({});
-    const desserts = await Desserts.find({});
-    const gourmetPizza = await GourmetPizza.find({});
-    const pizzas = await Pizzas.find({});
-    const cantina = await Cantina.find({});
-    const bianche = await Bianche.find({});
+    // if (search) {
+    //   queryObj.position = { $regex: search, $options: "i" };
+    // }
+
+    let result;
+    if (queryObj.menuType === "antipasti") {
+      result = Antipasti.find({});
+    }
+    if (queryObj.menuType === "contorni") {
+      result = Contorni.find({});
+    }
+    if (queryObj.menuType === "letempure") {
+      result = Letempure.find({});
+    }
+    if (queryObj.menuType === "secondi") {
+      result = Secondi.find({});
+    }
+
+    if (queryObj.menuType === "desserts") {
+      result = Desserts.find({});
+    }
+
+    if (queryObj.menuType === "gourmetPizza") {
+      result = GourmetPizza.find({});
+    }
+
+    if (queryObj.menuType === "pizzas") {
+      result = Pizzas.find({});
+    }
+    if (queryObj.menuType === "cantina") {
+      result = Cantina.find({});
+    }
+    if (queryObj.menuType === "bianche") {
+      result = Bianche.find({});
+    }
+    // Chain sort conditions
+    if (sort === "latest") {
+      result = result.sort("-createdAt");
+    }
+    if (sort === "oldest") {
+      result = result.sort("createdAt");
+    }
+    if (sort === "a-z") {
+      result = result.sort("position");
+    }
+    if (sort === "z-a") {
+      result = result.sort("-position");
+    }
+
+    const menu = await result;
+
     await db.disconnect();
-    res.status(200).json({
-      antipasti,
-      contorni,
-      letempure,
-      secondi,
-      desserts,
-      gourmetPizza,
-      pizzas,
-      cantina,
-      bianche,
-    });
+    res.status(200).json({ menu });
   } else if (req.method === "POST") {
     /**
      * @desc creat a new menu item
      * @route POST /api/menu/
      * @access Private
      */
-    if (!req.headers.cookie || !req.headers.cookie.startsWith("Bearer ")) {
-      res.status(403).json({ message: "No token provided. Not Authorized " });
-      return;
-    }
-
     try {
       /**
        * @desc Get user session

@@ -22,11 +22,11 @@ const Sidebar = () => {
 
   return (
     <>
-      <nav className="relative z-10 flex flex-wrap items-center justify-between px-6 py-4 bg-gray-800 shadow-xl md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-no-wrap md:overflow-hidden md:w-64">
+      <nav className="relative z-10 flex flex-wrap items-center justify-between px-6 py-4 bg-white text-gray-900 dark:text-gray-200 dark:bg-gray-900 shadow-xl md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-no-wrap md:overflow-hidden md:w-64">
         <div className="flex flex-wrap items-center justify-between w-full px-0 mx-auto md:flex-col md:items-stretch md:min-h-full md:flex-no-wrap">
           {/* Toggler */}
           <button
-            className="px-3 py-1 text-xl leading-none text-gray-200 bg-transparent border border-transparent border-solid rounded opacity-50 cursor-pointer md:hidden"
+            className="px-3 py-1 text-xl leading-none  bg-transparent border border-transparent border-solid rounded opacity-50 cursor-pointer md:hidden"
             type="button"
             onClick={() => setCollapseShow("bg-white m-2 py-3 px-6")}
           >
@@ -56,7 +56,7 @@ const Sidebar = () => {
           {/* Collapse */}
           <div
             className={
-              "md:flex md:flex-col md:items-stretch md:opacity-100 bg-gray-800  md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded " +
+              "md:flex md:flex-col md:items-stretch md:opacity-100    md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded " +
               collapseShow
             }
           >
@@ -67,7 +67,7 @@ const Sidebar = () => {
                   <Link href="/">
                     <a
                       href="#pablo"
-                      className="inline-block p-4 px-0 mr-0 text-sm font-bold text-left text-gray-200 uppercase whitespace-no-wrap md:block md:pb-2"
+                      className="inline-block p-4 px-0 mr-0 text-sm font-bold text-left  uppercase whitespace-no-wrap md:block md:pb-2"
                     >
                       <Image
                         src={"/strisciaNoBG.jpg"}
@@ -81,10 +81,10 @@ const Sidebar = () => {
                 <div className="flex justify-end w-6/12">
                   <button
                     type="button"
-                    className="px-3 py-1 text-xl leading-none text-gray-200 bg-transparent border border-transparent border-solid rounded opacity-50 cursor-pointer md:hidden"
+                    className="px-3 py-1 text-xl leading-none  bg-transparent border border-transparent border-solid rounded opacity-50 cursor-pointer md:hidden"
                     onClick={() => setCollapseShow("hidden")}
                   >
-                    <FaTimes className="text-gray-200" />
+                    <FaTimes fontSize={21} />
                   </button>
                 </div>
               </div>
@@ -95,7 +95,7 @@ const Sidebar = () => {
                 <input
                   type="text"
                   placeholder="Search"
-                  className="w-full h-12 px-3 py-2 text-base font-normal leading-snug text-gray-200 placeholder-gray-400 bg-gray-200 border border-gray-600 border-solid rounded shadow-none outline-none focus:outline-none"
+                  className="w-full h-12 px-3 py-2 text-base font-normal leading-snug  placeholder-gray-400 bg-gray-200 border border-gray-600 border-solid rounded shadow-none outline-none focus:outline-none"
                 />
               </div>
             </form>
@@ -104,24 +104,24 @@ const Sidebar = () => {
             <hr className="my-4 md:min-w-full" />
             {/* Navigation */}
 
-            <ul className="flex flex-col list-none md:flex-col md:min-w-full md:mb-4 ">
+            <ul className="flex flex-col list-none md:flex-col md:min-w-full md:mb-4  ">
               <li className="items-center justify-center">
                 <ActiveLink href="/admin">
-                  <FaNewspaper className="mr-2 text-sm" />
-                  Admin Home
+                  <FaNewspaper fontSize={18} />
+                  <span>Admin Home</span>
                 </ActiveLink>
               </li>
 
               <li className="items-center">
                 <ActiveLink href="/admin/menu">
-                  <FaShoppingBasket className="mr-2 text-sm" />
-                  Manage Menu
+                  <FaShoppingBasket fontSize={18} />
+                  <span>Manage Menu</span>
                 </ActiveLink>
               </li>
               <li className="items-center">
                 <ActiveLink href="/admin/gallery">
-                  <FaShoppingBasket className="mr-2 text-sm" />
-                  Manage Galleria
+                  <FaShoppingBasket fontSize={18} />
+                  <span>Manage Galleria</span>
                 </ActiveLink>
               </li>
             </ul>
@@ -131,7 +131,7 @@ const Sidebar = () => {
             <ul className="flex flex-col list-none md:flex-col md:min-w-full md:mb-4">
               <li className="items-center">
                 <button type="button" className="" onClick={handleLogout}>
-                  <p className="flex flex-row py-3 text-xs font-bold text-gray-200 uppercase hover:text-gray-400">
+                  <p className="flex flex-row py-3 text-xs font-bold  uppercase ">
                     <FiLogOut className="mr-2 text-sm" /> Logout
                   </p>
                 </button>

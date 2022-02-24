@@ -19,7 +19,7 @@ const MainMenu = ({ menu, loading }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const res = await fetch(`${NEXT_URL}/api/menu`, {
+  const res = await fetch(`${NEXT_URL}/api/menu/menu`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
