@@ -1,30 +1,51 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
+import { signIn, getSession } from "next-auth/react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
 
-import Messages from "../../components/Messages";
+import Layout from "../../components/layout/Layout";
+import LoginForm from "../../components/form/LoginForm";
 
 //context
-import { useAuth } from "../../context/authContext";
-import Layout from "../../components/layout/Layout";
+import { ActionType, useAuth } from "../../context/authContext";
+
+type IFormInputs = {
+  email: string;
+  password: string;
+};
 
 const Login = (props) => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const { state, login } = useAuth();
+  const { state, dispatch } = useAuth();
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    login(email, password);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<IFormInputs>();
 
-    setEmail("");
-    setPassword("");
+  const submitHandler: SubmitHandler<IFormInputs> = async (data) => {
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
+    if (result.error) {
+      toast.error("Invalid email or password");
+    }
+    if (result.ok) {
+      const session = await getSession();
+
+      dispatch({
+        type: ActionType.FETCH_USER_SUCCESS,
+        payload: session.user,
+      });
+      router.push("/admin");
+    }
   };
-
-  if (state.isAuthenticated) {
-    router.push("/admin");
-  }
 
   return (
     <Layout title="Admin login">
@@ -33,50 +54,12 @@ const Login = (props) => {
           <h1 className="my-8 text-center text-3xl">
             Account <span className="text-blue-700">Login</span>
           </h1>
-          <form
-            onSubmit={onSubmit}
-            className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-          >
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-gray-700 text-base font-bold mb-2"
-              >
-                Email Address
-              </label>
-              <input
-                className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-8">
-              <label
-                className="block text-gray-700 text-base font-bold mb-2"
-                htmlFor="password"
-              >
-                Password
-              </label>
-              <input
-                className="shadow-md appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            {state.error && <Messages variant="danger">{state.error}</Messages>}
-            <div className="flex items-center justify-between">
-              <button
-                className="bg-blue-500 w-2/5 mr-2 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="submit"
-              >
-                Login
-              </button>
-            </div>
-          </form>
+          <LoginForm
+            register={register}
+            handleSubmit={handleSubmit}
+            errors={errors}
+            submitHandler={submitHandler}
+          />
         </div>
       </section>
     </Layout>

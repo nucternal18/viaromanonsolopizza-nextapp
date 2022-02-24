@@ -15,6 +15,7 @@ import Table, {
 import AdminLayout from "../../components/layout/AdminLayout";
 import UploadForm from "../../components/UploadForm";
 import getUser from "../../lib/getUser";
+import { getSession } from "next-auth/react";
 
 // type RowProps = {
 //   createdAt: {
@@ -89,18 +90,19 @@ function ManageGallery() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const req = ctx.req;
+  const session = await getSession({ req });
+  if (!session) {
+    // If no token is present redirect user to the login page
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
   try {
-    const cookies = nookies.get(ctx);
-
-    if (!cookies.token) {
-      return {
-        redirect: {
-          destination: "/auth/login",
-          permanent: false,
-        },
-      };
-    }
-    const { user } = await getUser(cookies.token);
+    const user = await getUser(req);
 
     if (!user.isAdmin) {
       return {

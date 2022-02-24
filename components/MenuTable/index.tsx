@@ -15,11 +15,20 @@ import {
   ChevronRightIcon,
   ChevronDoubleRightIcon,
 } from "@heroicons/react/solid";
-import { Timestamp } from "firebase/firestore";
+
 import styles from "../../styles/Table.module.css";
-import { Button, PageButton } from "../Button/TableButtons";
-// Context
-import { MenuProps } from "../../context/menuContext";
+import { TableButton, PageButton } from "../Button/TableButtons";
+
+interface IFormData {
+  search: string;
+  company: string;
+  sort: string;
+  sortOptions: string[];
+  jobType: string;
+  jobTypeOptions: string[];
+  status: string;
+  statusOptions: string[];
+}
 
 interface ITable {
   data: any[];
@@ -162,12 +171,15 @@ const Table = ({ data, columns }: ITable) => {
       {/* Pagination */}
       <div className="py-3 flex items-center justify-between">
         <div className="flex-1 flex justify-between sm:hidden">
-          <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          <TableButton
+            onClick={() => previousPage()}
+            disabled={!canPreviousPage}
+          >
             Previous
-          </Button>
-          <Button onClick={() => nextPage()} disabled={!canNextPage}>
+          </TableButton>
+          <TableButton onClick={() => nextPage()} disabled={!canNextPage}>
             Next
-          </Button>
+          </TableButton>
         </div>
         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div className="flex gap-x-2 items-baseline">

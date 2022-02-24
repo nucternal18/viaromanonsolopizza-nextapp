@@ -15,7 +15,7 @@ export function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export const Button: FunctionComponent<
+export const TableButton: FunctionComponent<
   React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
@@ -61,5 +61,5 @@ export const PageButton: FunctionComponent<
   }
 );
 
-Button.displayName = "Button";
+TableButton.displayName = "Button";
 PageButton.displayName = "PageButton";

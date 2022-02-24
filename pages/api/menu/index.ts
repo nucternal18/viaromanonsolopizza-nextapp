@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getAuth } from "firebase-admin/auth";
+import { getSession } from "next-auth/react";
+
 import db from "../../../lib/db";
 import {
   Antipasti,
@@ -12,7 +13,8 @@ import {
   Cantina,
   Bianche,
 } from "../../../models/menuModel";
-import { defaultFirestore } from "../../../config/firebaseAdmin";
+
+import getUser from "../../../lib/getUser";
 
 export default async function handler(
   req: NextApiRequest,
@@ -53,35 +55,31 @@ export default async function handler(
      * @route POST /api/menu/
      * @access Private
      */
-    if (
-      !req.headers.authorization ||
-      !req.headers.authorization.startsWith("Bearer ")
-    ) {
-      console.error(
-        "No Firebase ID token was passed as a Bearer token in the Authorization header.",
-        "Make sure you authorize your request by providing the following HTTP header:",
-        "Authorization: Bearer <Firebase ID Token>"
-      );
+    if (!req.headers.cookie || !req.headers.cookie.startsWith("Bearer ")) {
       res.status(403).json({ message: "No token provided. Not Authorized " });
       return;
     }
-    const idToken = req.headers.authorization.split(" ")[1];
 
     try {
-      let userData;
-      const token = await getAuth().verifyIdToken(idToken);
+      /**
+       * @desc Get user session
+       */
+      const session = await getSession({ req });
+      /**
+       * @desc check to see if their is a user session
+       */
+      if (!session) {
+        res.status(401).json({ message: "Not Authorized" });
+        return;
+      }
 
-      const userRef = defaultFirestore.collection("users").doc(token.uid);
-      const snapshot = await userRef.get();
-      snapshot.exists ? (userData = snapshot.data()) : (userData = null);
+      const userData = await getUser(req);
 
       if (!userData.isAdmin) {
-        res
-          .status(401)
-          .json({
-            message:
-              "Not Authorized. You do not have permission to perform this operation.",
-          });
+        res.status(401).json({
+          message:
+            "Not Authorized. You do not have permission to perform this operation.",
+        });
         return;
       }
 
@@ -180,12 +178,10 @@ export default async function handler(
         res.status(200).json(createdBianche);
       }
     } catch (error) {
-      res
-        .status(401)
-        .json({
-          error: error.message,
-          message: "Invalid token. Not Authorized ",
-        });
+      res.status(401).json({
+        error: error.message,
+        message: "Invalid token. Not Authorized ",
+      });
       return;
     }
   } else {

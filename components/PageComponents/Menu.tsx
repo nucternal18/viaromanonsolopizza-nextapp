@@ -13,7 +13,7 @@ function Menu({
   const [selectedPizza, SetSelectedPizza] = useState(true);
   const [selectedDesserts, SetSelectedDesserts] = useState(false);
   const [selectedDrinks, SetSelectedDrinks] = useState(false);
-  console.log(menu);
+
   const handleSelectedMain = () => {
     setSelectedMain(true);
     SetSelectedPizza(false);

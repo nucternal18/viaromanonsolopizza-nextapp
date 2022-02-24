@@ -3,18 +3,20 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import { FaBars, FaTimes, FaNewspaper, FaShoppingBasket } from "react-icons/fa";
+import { signOut } from "next-auth/react";
 
 import { FiLogOut } from "react-icons/fi";
 import ActiveLink from "./ActiveLink";
-import { useAuth } from "../../context/authContext";
+import { ActionType, useAuth } from "../../context/authContext";
 
 const Sidebar = () => {
   const router = useRouter();
   const [collapseShow, setCollapseShow] = useState("hidden");
-  const { logout } = useAuth();
+  const { state, dispatch } = useAuth();
 
   const handleLogout = () => {
-    logout();
+    signOut();
+    dispatch({ type: ActionType.USER_LOGOUT_SUCCESS });
     router.push("/");
   };
 

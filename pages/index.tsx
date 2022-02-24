@@ -23,10 +23,11 @@ const url =
   "https://res.cloudinary.com/viaromanonsolopizza-com/image/upload/v1633902787/danielle-macinnes-logv9s7f67o-unsplash_c37kov.webp";
 export default function Home({ menu, loading }) {
   const { state } = useMenu();
+
   return (
     <Layout title="Home">
       <main>
-        <section className="relative flex items-center content-center justify-center h-screen pt-16 pb-32">
+        <section className="relative flex items-center content-center justify-center h-[700px] pt-16 pb-32">
           <div className="absolute top-0 w-full h-full bg-center bg-cover">
             <Image
               src={url}
@@ -54,11 +55,11 @@ export default function Home({ menu, loading }) {
                 transition={{ duration: 2.0 }}
               >
                 <p className="mb-2 text-lg font-thin text-gray-300 text-center md:text-2xl ">
-                  Benvenuti in Via Roma | non Solo Pizza
+                  Benvenuti in Via Roma | non Solo Pizza.
                 </p>
                 <p className="mb-4 text-2xl text-center font-semibold text-gray-300 sm:text-3xl md:text-4xl ">
                   Dalla passione per la pizza coltivata da un sogno alla
-                  realizzazione
+                  realizzazione.
                 </p>
                 <Button type="button" color="warning">
                   <Link href="/menu">

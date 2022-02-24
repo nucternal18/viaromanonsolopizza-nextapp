@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 import nookies from "nookies";
+import { getSession } from "next-auth/react";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -14,6 +15,7 @@ import {
 } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { NEXT_URL } from "../config";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -30,11 +32,11 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
 type User = {
-  uid: string;
-  displayName?: string | null;
+  _id: string;
+  name?: string | null;
   email: string;
-  photoUrl?: string | null;
-  emailVerified: boolean;
+  image?: string | null;
+  isAdmin: boolean;
 };
 // Google auth
 interface InitialAuthState {
@@ -120,48 +122,55 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    return onIdTokenChanged(auth, async (user) => {
-      if (!user) {
+    getSession().then((session) => {
+      if (session) {
         dispatch({
-          type: ActionType.USER_LOGOUT_SUCCESS,
+          type: ActionType.FETCH_USER_SUCCESS,
+          payload: session.user,
         });
-        nookies.set(undefined, "token", "", { path: "/" });
-        return;
       }
-      const userData = {
-        uid: user.uid,
-        displayName: user.displayName ? user.displayName : "",
-        email: user.email,
-        photoUrl: user.photoURL
-          ? user.photoURL
-          : "https://res.cloudinary.com/viaromanonsolopizza-com/image/upload/ar_1:1,b_rgb:262c35,bo_5px_solid_rgb:ff0000,c_fill,e_sharpen:100,g_auto,r_max,w_1000/v1634588859/success_gmoweo.webp",
-        emailVerified: user.emailVerified,
-      };
-
-      dispatch({
-        type: ActionType.FETCH_USER_SUCCESS,
-        payload: userData,
-      });
-      const token = await user.getIdToken();
-      nookies.set(undefined, "token", token, {
-        maxAge: 30 * 24 * 60 * 60,
-        sameSite: true,
-        path: "/",
-      });
     });
   }, []);
 
-  // force refresh the token every 10 minutes
-  useEffect(() => {
-    const handle = setInterval(async () => {
-      const user = auth.currentUser;
-      if (user) await user.getIdToken(true);
-    }, 10 * 60 * 1000);
+  // Authentication/User
+  const createAccount = async (
+    displayName: string,
+    email: string,
+    password: string
+  ) => {
+    try {
+      dispatch({
+        type: ActionType.USER_ACTION_REQUEST,
+      });
+      const res = await fetch(`${NEXT_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          displayName,
+          email,
+          password,
+          image:
+            "https://firebasestorage.googleapis.com/v0/b/aolausoro-tech.appspot.com/o/2C7EB02D-5902-4970-9807-43E09C9D5AED_1_201_a.jpeg?alt=media&token=52d9c142-99bc-4772-98db-a28c352d9deb",
+          isAdmin: true,
+        }),
+      });
 
-    // clean up setInterval
-    return () => clearInterval(handle);
-  }, []);
+      if (res.ok) {
+        dispatch({
+          type: ActionType.USER_REGISTER_SUCCESS,
+          payload: "Account created successfully",
+        });
+      }
+    } catch (error) {
+      const errorMessage = error.message;
+      dispatch({
+        type: ActionType.USER_ACTION_FAIL,
+        payload: errorMessage,
+      });
+    }
+  };
 
   /**
    * @description login User

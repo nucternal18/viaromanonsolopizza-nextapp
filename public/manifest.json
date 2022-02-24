@@ -1,0 +1,22 @@
+{
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "Via Roma | non Solo Pizza",
+  "short_name": "Via Roma | non Solo Pizza",
+  "description": "Benvenuti in Via Roma | non Solo Pizza. Dalla passione per la pizza coltivata da un sogno alla realizzazione.",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

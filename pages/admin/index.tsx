@@ -1,33 +1,33 @@
 import { GetServerSideProps } from "next";
-import { getAuth } from "firebase-admin/auth";
-import nookies from "nookies";
+import { getSession } from "next-auth/react";
+
 import AdminLayout from "../../components/layout/AdminLayout";
-import { defaultFirestore } from "../../config/firebaseAdmin";
 import getUser from "../../lib/getUser";
 
 function Admin() {
   return (
     <AdminLayout title="Admin Home">
       <section className="flex items-center justify-center flex-grow w-full h-screen px-4 mx-auto  md:px-10">
-        <h1 className="text-2xl">Welcome to Blooms hair</h1>
+        <h1 className="text-2xl">Welcome to Via Roma Non Solo Pizza</h1>
       </section>
     </AdminLayout>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const req = ctx.req;
+  const session = await getSession({ req });
+  if (!session) {
+    // If no token is present redirect user to the login page
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
   try {
-    const cookies = nookies.get(ctx);
-
-    if (!cookies.token) {
-      return {
-        redirect: {
-          destination: "/auth/login",
-          permanent: false,
-        },
-      };
-    }
-    const { user } = await getUser(cookies.token);
+    const user = await getUser(req);
 
     if (!user.isAdmin) {
       return {

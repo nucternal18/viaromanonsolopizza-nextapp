@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
-import { collection, onSnapshot, Timestamp } from "firebase/firestore";
-import { convertCollectionsSnapshotToMap } from "../lib/convertSnapshotToMap";
-import { db } from "../context/authContext";
+
 import { NEXT_URL } from "../config";
 
 export type MenuProps = {
@@ -10,47 +8,55 @@ export type MenuProps = {
     name: string;
     name_english: string;
     price: string;
+    type?: string;
   }[];
   contorni: {
     _id: string;
     name: string;
     name_english: string;
     price: string;
+    type?: string;
   }[];
   letempure: {
     _id: string;
     name: string;
     name_english: string;
     price: string;
+    type?: string;
   }[];
   secondi: {
     _id: string;
     name: string;
     name_english: string;
     price: string;
+    type?: string;
   }[];
   desserts: {
     _id: string;
     price: string;
     name: string;
+    type?: string;
   }[];
   gourmetPizza: {
     _id: string;
     price: string;
     name: string;
     ingredients: string[];
+    type?: string;
   }[];
   pizzas: {
     _id: string;
     price: string;
     name: string;
     ingredients: string[];
+    type?: string;
   }[];
 
   cantina: {
     _id: string;
     subtitle: string;
     types: { name: string; Bottiglia: string; Calice: string }[];
+    type?: string;
   }[];
 
   bianche: {
@@ -58,6 +64,7 @@ export type MenuProps = {
     price: string;
     name: string;
     ingredients: string[];
+    type?: string;
   }[];
 };
 
@@ -66,6 +73,11 @@ interface InitialMenuState {
   error: Error;
   menu: MenuProps;
   message: string;
+  sort: string;
+  sortOptions: string[];
+  page: number;
+  menuType: string;
+  menuTypeOptions: string[];
 }
 
 export enum ActionType {
@@ -91,6 +103,21 @@ const initialState = {
     bianche: [],
   },
   message: "",
+  sort: "latest",
+  sortOptions: ["latest", "oldest", "a-z", "z-a"],
+  menuTypeOptions: [
+    "antipasti",
+    "contorni",
+    "letempure",
+    "secondi",
+    "desserts",
+    "gourmetPizza",
+    "pizzas",
+    "cantina",
+    "bianche",
+  ],
+  menuType: "antipasti",
+  page: 1,
 };
 
 const MenuContext = createContext<{

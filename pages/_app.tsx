@@ -1,5 +1,6 @@
 import type { AppProps } from "next/app";
 import "tailwindcss/tailwind.css";
+import { ToastContainer } from "react-toastify";
 
 import { AuthProvider } from "../context/authContext";
 import { MenuProvider } from "../context/menuContext";

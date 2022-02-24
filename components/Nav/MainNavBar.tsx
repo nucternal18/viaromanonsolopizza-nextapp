@@ -6,9 +6,10 @@ import { useRouter } from "next/router";
 import { FaUser } from "react-icons/fa";
 import { FiLogIn, FiLogOut } from "react-icons/fi";
 import { RiAdminFill } from "react-icons/ri";
+import { signOut } from "next-auth/react";
 
 // context
-import { useAuth } from "../../context/authContext";
+import { ActionType, useAuth } from "../../context/authContext";
 
 // navlinks
 const navLink = [
@@ -36,11 +37,11 @@ const navLink = [
 
 const MainNavbar = () => {
   const router = useRouter();
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
-  const [pos, setPos] = useState("top");
-  const { state, logout } = useAuth();
+  const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
+  const [visible, setVisible] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
+  const { state, dispatch } = useAuth();
 
   // mobile nav bar ref
   const mobileNavRef = useRef<HTMLElement>();
@@ -48,40 +49,52 @@ const MainNavbar = () => {
   const ref = useRef<HTMLDivElement>();
 
   // Close user drop down list when user clicks outside event window
+  const handleOutsideClick = (event) => {
+    if (!ref.current?.contains(event.target)) {
+      if (!isDropDownOpen) return;
+      toggleUserDropdown();
+    }
+  };
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (!ref.current?.contains(event.target)) {
-        if (!isDropDownOpen) return;
-        toggleUserDropdown();
-      }
-    };
     window.addEventListener("mousedown", handleOutsideClick);
     return () => window.removeEventListener("mousedown", handleOutsideClick);
   }, [isDropDownOpen, ref]);
 
   // Close mobile nav drawer when user clicks outside event window
+  const handleMobileOutsideClick = (event) => {
+    if (!mobileNavRef.current?.contains(event.target)) {
+      if (!isOpen) return;
+      toggle();
+    }
+  };
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (!mobileNavRef.current?.contains(event.target)) {
-        if (!isOpen) return;
-        toggle();
-      }
-    };
-    window.addEventListener("mousedown", handleOutsideClick);
-    return () => window.removeEventListener("mousedown", handleOutsideClick);
+    window.addEventListener("mousedown", handleMobileOutsideClick);
+    return () =>
+      window.removeEventListener("mousedown", handleMobileOutsideClick);
   }, [isOpen, mobileNavRef]);
 
   // Check the top position of the navigation in the window
+  const handleScroll2 = () => {
+    // find current scroll position
+    const currentScrollPos = window.pageYOffset;
+
+    // set state based on location info (explained in more detail below)
+    setVisible(
+      (prevScrollPos > currentScrollPos &&
+        prevScrollPos - currentScrollPos > 70) ||
+        currentScrollPos < 10
+    );
+
+    // set state to new scroll position
+    setPrevScrollPos(currentScrollPos);
+  };
+
+  // new useEffect:
   useEffect(() => {
-    document.addEventListener("scroll", (e) => {
-      const scrolled = document.scrollingElement.scrollTop;
-      if (scrolled >= 5) {
-        setPos("moved");
-      } else {
-        setPos("top");
-      }
-    });
-  }, []);
+    window.addEventListener("scroll", handleScroll2);
+
+    return () => window.removeEventListener("scroll", handleScroll2);
+  }, [prevScrollPos, visible, handleScroll2]);
 
   // toggle the mobile navigation bar and the user dropdown list
   const toggle = () => {
@@ -93,22 +106,24 @@ const MainNavbar = () => {
 
   // logout handler
   const logoutHandler = () => {
-    logout();
+    signOut();
+    dispatch({ type: ActionType.USER_LOGOUT_SUCCESS });
+    router.push("/");
   };
 
   return (
     <nav
-      className={` top-0 z-50 flex flex-wrap items-center justify-between w-full px-2 py-2  ${
-        router.asPath === "/" && pos === "top"
+      className={` top-0 z-50 flex flex-wrap items-center justify-between w-full px-2 py-2 transition-all delay-75 ease-in-out  ${
+        router.asPath === "/" && visible
           ? "bg-transparent absolute"
-          : pos === "top"
+          : visible
           ? "absolute bg-gray-100"
           : "fixed shadow-2xl bg-white"
-      }  navbar-expand-lg`}
+      }  navbar-expand-lg `}
     >
-      <div className="container flex items-center justify-between px-1 mx-auto max-w-screen-xl font-light text-gray-600 md:relative sm:px-1 md:px-0 md:flex-row">
+      <div className="container flex items-center justify-between px-1 mx-auto font-light text-gray-600 md:relative sm:px-1 md:px-0 md:flex-row max-w-screen-lg">
         <Link href={"/"}>
-          <a className="inline-block p-0 m-0 text-2xl font-bold cursor-pointer md:mr-4 ">
+          <a className="inline-block p-0 m-0 text-2xl font-bold cursor-pointer md:mr-4 rounded-2xl ">
             <Image
               src={"/strisciaNoBG.jpg"}
               alt="blooms hair logo"
@@ -116,6 +131,7 @@ const MainNavbar = () => {
               width={250}
               layout="intrinsic"
               objectFit="contain"
+              className="rounded-2xl"
             />
           </a>
         </Link>
@@ -128,8 +144,8 @@ const MainNavbar = () => {
                 disabled
               >
                 <Image
-                  src={state.userData.photoUrl}
-                  alt={state.userData.displayName}
+                  src={state.userData?.image}
+                  alt={state.userData?.name}
                   width={30}
                   height={30}
                   className="rounded-full"
@@ -145,7 +161,7 @@ const MainNavbar = () => {
             disabled={isOpen}
             aria-label="Toggle navigation"
             className={`block float-right text-4xl ${
-              pos === "top" ? "text-gray-200" : "text-gray-800"
+              visible ? "text-gray-200" : "text-gray-800"
             }  lg:hidden focus:outline-none focus:shadow-none`}
             onClick={toggle}
           >
@@ -176,14 +192,15 @@ const MainNavbar = () => {
                 onClick={toggleUserDropdown}
               >
                 <Image
-                  src={state.userData.photoUrl}
-                  alt={state.userData.displayName}
+                  src={state.userData?.image}
+                  alt={state.userData?.name}
                   width={30}
                   height={30}
                   className="rounded-full"
                   objectFit="cover"
                 />
               </button>
+              {/* Drop down */}
               <div
                 className={
                   isDropDownOpen
@@ -193,25 +210,21 @@ const MainNavbar = () => {
                 ref={ref}
               >
                 <div>
-                  <button className="flex items-center px-4 py-2 space-x-2">
-                    <RiAdminFill className="text-gray-400 " />
+                  <button className="flex items-center px-4 py-2 space-x-2 text-gray-200 hover:text-red-400">
+                    <RiAdminFill fontSize={21} />
                     <Link href={"/admin"}>
                       <a
-                        className={`${
-                          router.asPath === "/account/login"
-                            ? "text-red-500"
-                            : "text-gray-200"
-                        } block text-lg font-medium  uppercase list-none cursor-pointer hover:text-yellow-400`}
+                        className={` block text-lg font-medium  capitalize list-none cursor-pointer `}
                       >
                         admin
                       </a>
                     </Link>
                   </button>
                   <button
-                    className="flex items-center px-4 py-2 space-x-2 text-lg text-gray-400 hover:text-yellow-500"
+                    className="flex items-center px-4 py-2 space-x-2 text-lg text-gray-200 hover:text-red-400"
                     onClick={logoutHandler}
                   >
-                    <FiLogOut className="text-gray-200 " />
+                    <FiLogOut fontSize={21} />
                     <p>Logout </p>
                   </button>
                 </div>
@@ -220,7 +233,7 @@ const MainNavbar = () => {
           )}
         </ul>
       </div>
-
+      {/* Mobile SideBar */}
       <aside
         className={
           isOpen
@@ -299,14 +312,10 @@ const MainNavbar = () => {
               ) : (
                 <li className="flex items-center px-1 m-0 text-base list-none text-md">
                   <button className="flex items-center">
-                    <FiLogIn className="ml-5 mr-1 text-gray-200 " />
+                    <FiLogIn fontSize={18} className="ml-5 mr-1  " />
                     <Link href={"/account/login"}>
                       <a
-                        className={`${
-                          router.asPath === "/auth/login"
-                            ? "text-red-500"
-                            : "text-gray-200"
-                        }py-1 text-lg font-medium  uppercase list-none cursor-pointer hover:text-red-500`}
+                        className={`py-1 text-lg font-medium  uppercase list-none cursor-pointer hover:text-red-500`}
                       >
                         Sign In
                       </a>
@@ -331,7 +340,7 @@ const position = {
 };
 
 const classNames = {
-  default: `lg:hidden flex h-screen fixed top-0 right-0 transition-all ease duration-200`,
+  default: `lg:hidden flex h-screen fixed top-0 right-0 transition-all ease-in-out duration-300`,
   enabled: `w-7/12 md:w-1/3 bg-gray-100 z-50  text-gray-900 overflow-y-hidden `,
   disabled: `w-0  bg-gray-800 text-white overflow-x-hidden`,
 };
