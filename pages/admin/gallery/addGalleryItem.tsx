@@ -1,16 +1,29 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 
-import AdminLayout from "../../components/layout/AdminLayout";
-import getUser from "../../lib/getUser";
+// components
+import AdminLayout from "../../../components/layout/AdminLayout";
+import UploadForm from "../../../components/UploadForm";
 
-function Admin() {
+import getUser from "../../../lib/getUser";
+
+// Context
+import { useGallery } from "../../../context/galleryContext";
+
+function AddGalleryItem() {
+  const { state, addPicture, deletePicture, uploadGalleryImage } = useGallery();
   return (
-    <AdminLayout title="Admin Home">
-      <section className="flex items-center justify-center flex-grow w-full h-screen px-4 mx-auto  md:px-10">
-        <h1 className="text-2xl capitalize">
-          Benvenuto nella pagina di amministrazione di Via Roma non solo pizza
-        </h1>
+    <AdminLayout>
+      <section className=" flex-grow w-full h-screen p-4 mx-auto bg-gray-100 md:p-10">
+        <div className="bg-white w-full p-4 justify-center shadow-2xl">
+          <UploadForm
+            addPicture={addPicture}
+            uploadGalleryImage={uploadGalleryImage}
+            uploading={state.uploading}
+            error={state.error}
+            image={state.image.url}
+          />
+        </div>
       </section>
     </AdminLayout>
   );
@@ -57,4 +70,4 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 };
 
-export default Admin;
+export default AddGalleryItem;

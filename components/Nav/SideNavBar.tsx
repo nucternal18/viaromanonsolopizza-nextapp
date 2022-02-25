@@ -4,8 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaBars, FaTimes, FaNewspaper, FaShoppingBasket } from "react-icons/fa";
 import { signOut } from "next-auth/react";
-
 import { FiLogOut } from "react-icons/fi";
+import { MdRestaurantMenu, MdLibraryAdd } from "react-icons/md";
+import { GrGallery } from "react-icons/gr";
+
 import ActiveLink from "./ActiveLink";
 import { ActionType, useAuth } from "../../context/authContext";
 
@@ -104,39 +106,48 @@ const Sidebar = () => {
             <hr className="my-4 md:min-w-full" />
             {/* Navigation */}
 
-            <ul className="flex flex-col list-none md:flex-col md:min-w-full md:mb-4  ">
-              <li className="items-center justify-center">
+            <div className="flex flex-col list-none md:flex-col md:min-w-full md:mb-4  ">
+              <div className="items-center justify-center">
                 <ActiveLink href="/admin">
                   <FaNewspaper fontSize={18} />
                   <span>Admin Home</span>
                 </ActiveLink>
-              </li>
-
-              <li className="items-center">
+              </div>
+              <hr className="my-4 md:min-w-full" />
+              <div className="items-center">
                 <ActiveLink href="/admin/menu">
-                  <FaShoppingBasket fontSize={18} />
-                  <span>Manage Menu</span>
+                  <MdRestaurantMenu fontSize={18} />
+                  <span>Gestisci menu</span>
                 </ActiveLink>
-              </li>
-              <li className="items-center">
+                <ActiveLink href="/admin/menu/addMenuItem">
+                  <MdLibraryAdd fontSize={18} />
+                  <span>Aggiungi Menu</span>
+                </ActiveLink>
+              </div>
+              <hr className="my-4 md:min-w-full" />
+              <div className="items-center">
                 <ActiveLink href="/admin/gallery">
-                  <FaShoppingBasket fontSize={18} />
-                  <span>Manage Galleria</span>
+                  <GrGallery fontSize={18} />
+                  <span>Gestisci immagini</span>
                 </ActiveLink>
-              </li>
-            </ul>
+                <ActiveLink href="/admin/gallery/addGalleryItem">
+                  <MdLibraryAdd fontSize={18} />
+                  <span>Aggiungi immagine</span>
+                </ActiveLink>
+              </div>
+            </div>
 
             {/* Divider */}
             <hr className="my-4 md:min-w-full" />
-            <ul className="flex flex-col list-none md:flex-col md:min-w-full md:mb-4">
-              <li className="items-center">
+            <div className="flex flex-col list-none md:flex-col md:min-w-divl md:mb-4">
+              <div className="items-center">
                 <button type="button" className="" onClick={handleLogout}>
                   <p className="flex flex-row py-3 text-xs font-bold  uppercase ">
                     <FiLogOut className="mr-2 text-sm" /> Logout
                   </p>
                 </button>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
       </nav>

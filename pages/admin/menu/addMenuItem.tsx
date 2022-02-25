@@ -1,19 +1,11 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 
-import AdminLayout from "../../components/layout/AdminLayout";
-import getUser from "../../lib/getUser";
+import AdminLayout from "../../../components/layout/AdminLayout";
+import getUser from "../../../lib/getUser";
 
-function Admin() {
-  return (
-    <AdminLayout title="Admin Home">
-      <section className="flex items-center justify-center flex-grow w-full h-screen px-4 mx-auto  md:px-10">
-        <h1 className="text-2xl capitalize">
-          Benvenuto nella pagina di amministrazione di Via Roma non solo pizza
-        </h1>
-      </section>
-    </AdminLayout>
-  );
+function AddMenuItem() {
+  return <AdminLayout>AddItem</AdminLayout>;
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -57,4 +49,4 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 };
 
-export default Admin;
+export default AddMenuItem;

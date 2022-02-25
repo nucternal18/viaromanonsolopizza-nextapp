@@ -1,9 +1,22 @@
 import React from "react";
 import { FormRowSelect } from "..";
-import { useMenu } from "../../context/menuContext";
+import { ActionType, useMenu } from "../../context/menuContext";
 
 const MenuFilterForm = ({ register, errors, reset }) => {
-  const { state } = useMenu();
+  const { state, dispatch } = useMenu();
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    dispatch({
+      type: ActionType.MENU_ITEM_UPDATE_SORT,
+      payload: e.target.value,
+    });
+  };
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    dispatch({
+      type: ActionType.MENU_ITEM_UPDATE_TYPE,
+      payload: e.target.value,
+    });
+  };
   return (
     <form>
       <div className="relative p-2  max-w-screen-xl  bg-white font-mono dark:bg-gray-900 shadow-xl mt-5 mx-2 md:mx-auto md:p-4">
@@ -12,18 +25,14 @@ const MenuFilterForm = ({ register, errors, reset }) => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
           <FormRowSelect
-            name="Menu Type"
-            type="menuType"
-            register={register}
-            errors={errors.menuType}
-            list={["all", ...state.menuTypeOptions]}
+            label="Menu Type"
+            list={state.menuTypeOptions}
+            {...register("menuType", { onChange: handleTypeChange })}
           />
           <FormRowSelect
-            name="Sort"
-            type="sort"
-            register={register}
-            errors={errors.sort}
+            label="Sort"
             list={state.sortOptions}
+            {...register("sort", { onChange: handleSortChange })}
           />
 
           <button

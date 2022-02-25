@@ -12,6 +12,7 @@ import { NEXT_URL } from "../../../config";
 import { useMenu } from "../../../context/menuContext";
 import getUser from "../../../lib/getUser";
 import { MenuFilterForm } from "../../../components";
+import CantinaTable from "../../../components/MenuTable/cantinaTable";
 
 interface IFormData {
   sort: string;
@@ -23,7 +24,7 @@ interface IFormData {
 function ManageMenu({ menu }) {
   const router = useRouter();
   const { state } = useMenu();
-  // const antiPastiMenuData = useMemo(() => [...menu], [menu]);
+  console.log(state.sort);
   const page = state.page;
   const {
     register,
@@ -47,35 +48,18 @@ function ManageMenu({ menu }) {
     return () => subscribe.unsubscribe();
   }, [watch, page]);
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Id",
-        accessor: "_id",
-      },
-      {
-        Header: "Name",
-        accessor: "name",
-      },
-      {
-        Header: "Name_English",
-        accessor: "name_english",
-      },
-      {
-        Header: "Price",
-        accessor: "price",
-      },
-    ],
-    []
-  );
   return (
     <AdminLayout title="Manage menu">
-      <section className=" flex-grow w-full h-screen p-4 mx-auto bg-gray-100 md:p-10">
+      <section className=" flex-grow w-full  mx-auto bg-white dark:bg-gray-900 md:p-4">
         <MenuFilterForm register={register} errors={errors} reset={reset} />
-        <div className="bg-white w-full  shadow-2xl mt-4 p-4">
-          <h1 className="text-xl mb-4 font-mono">Manage Menu</h1>
+        <div className="my-4 mx-auto sm:max-w-screen-xl">
+          <h1 className="text-xl mb-4 font-mono ml-2">Manage Menu</h1>
           <div>
-            <Table columns={columns} data={menu} />
+            {state.menuType === "cantina" ? (
+              <CantinaTable data={menu} />
+            ) : (
+              <Table data={menu} />
+            )}
           </div>
         </div>
       </section>
@@ -108,8 +92,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  const url = `/menu?page=${page || 1}&sort=${sort || "all"}&menuType=${
-    menuType || "all"
+  const url = `/menu?page=${page || 1}&sort=${sort || "latest"}&menuType=${
+    menuType || "antipasti"
   }`;
 
   const res = await fetch(`${NEXT_URL}/api/${url}`, {

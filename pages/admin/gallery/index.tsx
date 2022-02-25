@@ -2,20 +2,20 @@ import React, { useMemo } from "react";
 import { toast } from "react-toastify";
 import nookies from "nookies";
 import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
 
 // Context
-import { useGallery } from "../../context/galleryContext";
+import { useGallery } from "../../../context/galleryContext";
 
 // Components
 import Table, {
   ActionsCell,
   ImageCell,
   TimeCell,
-} from "../../components/GalleryTable";
-import AdminLayout from "../../components/layout/AdminLayout";
-import UploadForm from "../../components/UploadForm";
-import getUser from "../../lib/getUser";
-import { getSession } from "next-auth/react";
+} from "../../../components/GalleryTable";
+import AdminLayout from "../../../components/layout/AdminLayout";
+import UploadForm from "../../../components/UploadForm";
+import getUser from "../../../lib/getUser";
 
 // type RowProps = {
 //   createdAt: {
@@ -68,14 +68,6 @@ function ManageGallery() {
     <AdminLayout>
       <section className=" flex-grow w-full h-screen p-4 mx-auto bg-gray-100 md:p-10">
         <div className="bg-white w-full min-h-full p-4 justify-center shadow-2xl">
-          <UploadForm
-            addPicture={addPicture}
-            uploadGalleryImage={uploadGalleryImage}
-            uploading={state.uploading}
-            error={state.error}
-            image={state.image.url}
-          />
-
           <div className="w-full mx-auto overscroll-auto">
             <Table
               data={state.images}

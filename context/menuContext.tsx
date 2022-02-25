@@ -85,8 +85,25 @@ export enum ActionType {
   MENU_ACTION_FAIL = "MENU_ACTION_FAIL",
   MENU_ITEM_FETCH_SUCCESS = "MENU_ITEM_FETCH_SUCCESS",
   MENU_ITEM_UPDATE_SUCESS = "MENU_ITEM_UPDATE_SUCESS",
+  MENU_ITEM_UPDATE_TYPE = "MENU_ITEM_UPDATE_TYPE",
+  MENU_ITEM_UPDATE_SORT = "MENU_ITEM_UPDATE_SORT",
   MENU_ITEM_DELETE_SUCESS = "MENU_ITEM_DELETE_SUCESS",
 }
+
+// Fetch sort option from localStorage
+const sortItemFromStorage =
+  typeof window !== "undefined"
+    ? localStorage.getItem("sort")
+      ? JSON.parse(localStorage.getItem("sort"))
+      : "latest"
+    : "latest";
+// Fetch menu type from local storage
+const menuTypeItemFromStorage =
+  typeof window !== "undefined"
+    ? localStorage.getItem("menuType")
+      ? JSON.parse(localStorage.getItem("menuType"))
+      : "antipasti"
+    : "antipasti";
 
 const initialState = {
   loading: false,
@@ -103,7 +120,7 @@ const initialState = {
     bianche: [],
   },
   message: "",
-  sort: "latest",
+  sort: sortItemFromStorage,
   sortOptions: ["latest", "oldest", "a-z", "z-a"],
   menuTypeOptions: [
     "antipasti",
@@ -116,7 +133,7 @@ const initialState = {
     "cantina",
     "bianche",
   ],
-  menuType: "antipasti",
+  menuType: menuTypeItemFromStorage,
   page: 1,
 };
 
@@ -136,6 +153,14 @@ const menuReducer = (state: InitialMenuState, action) => {
       return { ...state, loading: false, error: action.payload };
     case ActionType.MENU_ITEM_FETCH_SUCCESS:
       return { ...state, loading: false, menu: action.payload };
+    case ActionType.MENU_ITEM_UPDATE_TYPE: {
+      localStorage.setItem("menuType", JSON.stringify(action.payload));
+      return { ...state, loading: false, menuType: action.payload };
+    }
+    case ActionType.MENU_ITEM_UPDATE_SORT: {
+      localStorage.setItem("sort", JSON.stringify(action.payload));
+      return { ...state, loading: false, sort: action.payload };
+    }
     default:
       state;
   }
@@ -144,24 +169,6 @@ const menuReducer = (state: InitialMenuState, action) => {
 const MenuProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(menuReducer, initialState);
 
-  // useEffect(() => {
-  //   const q = collection(db, 'Menu');
-
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     const collectionMap: MenuProps =
-  //       convertCollectionsSnapshotToMap(snapshot);
-  //     dispatch({
-  //       type: ActionType.MENU_ITEM_FETCH_SUCCESS,
-  //       payload: collectionMap,
-  //     });
-  //   });
-
-  //   return () => unsubscribe();
-  // }, []);
-
-  // headers: {
-  //       Authorization: `Bearer ${userInfo.token}`,
-  //     }
   return (
     <MenuContext.Provider value={{ state, dispatch }}>
       {children}
