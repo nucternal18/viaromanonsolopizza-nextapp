@@ -34,6 +34,10 @@ jobs:
           echo CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }} >> .env.local
           echo CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} >> .env.local
           echo CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} >> .env.local
+          echo MONGODB_URI=${{ secrets.MONGODB_URI }} >> .env.local
+          echo NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} >> .env.local
+          echo NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} >> .env.local
+          echo JWT_SIGNING_PRIVATE_KEY=${{ secrets.JWT_SIGNING_PRIVATE_KEY }} >> .env.local
           cat .env.local
       - name: Cache multiple paths
         uses: actions/cache@v2

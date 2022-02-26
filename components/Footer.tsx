@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 
 const Footer = () => {
+  const year = new Date().getFullYear();
   return (
     <>
       <footer className=" w-full bg-gray-900 py-6 text-white bottom-0 left-0 mb-0">
@@ -111,7 +112,8 @@ const Footer = () => {
         <div className="flex flex-col sm:flex-row justify-center">
           <div>
             <p className="text-center text-gray-500 text-xs">
-              &copy;2020 via ROMA | non solo pizza. All rights reserved.
+              &copy; Copyright {year} via ROMA | non solo pizza. All rights
+              reserved.
             </p>
           </div>
           <div>

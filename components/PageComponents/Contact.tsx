@@ -14,12 +14,7 @@ function Contact() {
           <p className="mb-4 font-thin">+39 0331 913574</p>
         </div>
         <div className="w-full md:w-3/5">
-          <WrappedMap
-            googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&v=3.exp&libraries=geometry,drawing,places`}
-            loadingElement={<div style={{ height: `100%` }} />}
-            containerElement={<div style={{ height: `500px` }} />}
-            mapElement={<div style={{ height: `100%` }} />}
-          />
+          <WrappedMap />
         </div>
       </div>
     </section>
