@@ -73,14 +73,10 @@ const initialState = {
 const AuthContext = createContext<{
   state: InitialAuthState;
   dispatch: React.Dispatch<any>;
-  login: (email: string, password: string) => void;
   updateUserProfile: (dispatch: string, photoURL: string) => void;
-  logout: () => void;
 }>({
   state: initialState,
   dispatch: () => null,
-  login: () => {},
-  logout: () => {},
   updateUserProfile: () => {},
 });
 
@@ -172,46 +168,6 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     }
   };
 
-  /**
-   * @description login User
-   * @param email
-   * @param password
-   */
-  const login = async (email: string, password: string) => {
-    try {
-      dispatch({
-        type: ActionType.USER_ACTION_REQUEST,
-      });
-      await signInWithEmailAndPassword(auth, email, password);
-      dispatch({});
-    } catch (error) {
-      const errorMessage = error.message;
-      dispatch({
-        type: ActionType.USER_ACTION_FAIL,
-        payload: errorMessage,
-      });
-    }
-  };
-
-  /**
-   * @description logout User
-   */
-  const logout = async () => {
-    signOut(auth)
-      .then(() => {
-        dispatch({
-          type: ActionType.USER_LOGOUT_SUCCESS,
-        });
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        dispatch({
-          type: ActionType.USER_ACTION_FAIL,
-          payload: errorMessage,
-        });
-      });
-  };
-
   const updateUserProfile = async (
     displayName: string,
     photoURL: string
@@ -219,10 +175,6 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
     try {
       dispatch({
         type: ActionType.USER_ACTION_REQUEST,
-      });
-      await updateProfile(auth.currentUser, {
-        displayName: displayName,
-        photoURL: photoURL,
       });
     } catch (error) {
       const errorMessage = error.message;
@@ -238,8 +190,6 @@ const AuthProvider = ({ children }: { children: JSX.Element }) => {
       value={{
         state,
         dispatch,
-        login,
-        logout,
         updateUserProfile,
       }}
     >

@@ -14,20 +14,11 @@ import Table, {
   TimeCell,
 } from "../../../components/GalleryTable";
 import AdminLayout from "../../../components/layout/AdminLayout";
-import UploadForm from "../../../components/UploadForm";
 import getUser from "../../../lib/getUser";
+import { NEXT_URL } from "../../../config";
 
-// type RowProps = {
-//   createdAt: {
-//     seconds: number;
-//     nanoseconds: number;
-//   };
-//   url: string;
-//   id: string;
-// };
-
-function ManageGallery() {
-  const { state, addPicture, deletePicture, uploadGalleryImage } = useGallery();
+function ManageGallery({ pictures, loading }) {
+  const { state, deletePicture } = useGallery();
 
   const deleteHandler = (id: string) => {
     deletePicture(id);
@@ -66,8 +57,8 @@ function ManageGallery() {
 
   return (
     <AdminLayout>
-      <section className=" flex-grow w-full h-screen p-4 mx-auto bg-gray-100 md:p-10">
-        <div className="bg-white w-full min-h-full p-4 justify-center shadow-2xl">
+      <section className=" flex-grow w-full h-screen p-4 mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-10">
+        <div className=" w-full min-h-full p-4 justify-center shadow-2xl">
           <div className="w-full mx-auto overscroll-auto">
             <Table
               data={state.images}
@@ -104,8 +95,21 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         },
       };
     }
+    const res = await fetch(`${NEXT_URL}/api/gallery`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
+    if (!data) {
+      return {
+        notFound: true,
+      };
+    }
+
     return {
-      props: {},
+      props: { pictures: data, loading: !data ? true : false },
     };
   } catch (error) {
     // either the `token` cookie didn't exist

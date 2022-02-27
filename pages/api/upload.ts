@@ -3,7 +3,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import cloudinary from "../../lib/cloudinary";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-
   if (req.method == "POST") {
     /**
      * @desc Upload image to cloudinary
@@ -14,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const fileStr = req.body.data;
       const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
-        upload_preset: "blooms_hair_products",
+        upload_preset: "gallery_items",
       });
       res.status(201).json(uploadedResponse);
     } catch (error) {

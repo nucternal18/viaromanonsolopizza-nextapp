@@ -9,8 +9,8 @@ const ImageGrid = ({ setSelectedImg, images }) => {
         images.map((doc) => (
           <ImageCards
             setSelectedImg={setSelectedImg}
-            image={doc}
-            key={doc.id}
+            image={doc.image}
+            key={doc._id}
           />
         ))}
     </div>

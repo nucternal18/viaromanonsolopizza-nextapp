@@ -26,12 +26,12 @@ const MenuFilterForm = ({ register, errors, reset }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
           <FormRowSelect
             label="Menu Type"
-            list={state.menuTypeOptions}
+            list={state?.menuTypeOptions}
             {...register("menuType", { onChange: handleTypeChange })}
           />
           <FormRowSelect
             label="Sort"
-            list={state.sortOptions}
+            list={state?.sortOptions}
             {...register("sort", { onChange: handleSortChange })}
           />
 

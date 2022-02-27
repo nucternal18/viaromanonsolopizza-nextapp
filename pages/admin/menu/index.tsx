@@ -21,11 +21,11 @@ interface IFormData {
   menuTypeOptions: string[];
 }
 
-function ManageMenu({ menu }) {
+function ManageMenu({ menu, cookie }) {
   const router = useRouter();
-  const { state } = useMenu();
-  console.log(state.sort);
-  const page = state.page;
+  const { state, deleteCantinaMenuItem } = useMenu();
+
+  const page = state?.page || 1;
   const {
     register,
     reset,
@@ -33,8 +33,8 @@ function ManageMenu({ menu }) {
     formState: { errors },
   } = useForm<IFormData>({
     defaultValues: {
-      sort: state.sort,
-      menuType: state.menuType,
+      sort: state?.sort,
+      menuType: state?.menuType,
     },
   });
 
@@ -50,13 +50,17 @@ function ManageMenu({ menu }) {
 
   return (
     <AdminLayout title="Manage menu">
-      <section className=" flex-grow w-full  mx-auto bg-white dark:bg-gray-900 md:p-4">
+      <section className=" flex-grow w-full h-screen mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-4">
         <MenuFilterForm register={register} errors={errors} reset={reset} />
         <div className="my-4 mx-auto sm:max-w-screen-xl">
           <h1 className="text-xl mb-4 font-mono ml-2">Manage Menu</h1>
           <div>
-            {state.menuType === "cantina" ? (
-              <CantinaTable data={menu} />
+            {state?.menuType === "cantina" ? (
+              <CantinaTable
+                data={menu}
+                deleteItem={deleteCantinaMenuItem}
+                cookie={cookie}
+              />
             ) : (
               <Table data={menu} />
             )}
@@ -112,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return {
-    props: { menu: data },
+    props: { menu: data, cookie: req.headers.cookie },
   };
 };
 

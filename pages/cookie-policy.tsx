@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 const CookiePolicy = () => {
   return (
-    <div className="w-full">
+    <div className="w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
       <div className="container mx-auto my-4 p-6 text-justify">
         <h2 className="mb-4 font-bold text-xl">INTRODUZIONE</h2>
         <p className="mb-4 font-light">

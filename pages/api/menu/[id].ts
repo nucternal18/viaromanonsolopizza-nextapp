@@ -18,17 +18,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (
-    !req.headers.authorization ||
-    !req.headers.authorization.startsWith("Bearer ")
-  ) {
-    res.status(403).json({ error: "Unauthorized" });
-    return;
-  }
   /**
    * @desc Get user session
    */
   const session = await getSession({ req });
+
   /**
    * @desc check to see if their is a user session
    */
@@ -42,114 +36,211 @@ export default async function handler(
     res.status(401).json({ message: "Not Authorized " });
     return;
   }
-
-  if (req.method === "PUT") {
+  const { id, type, typesId } = req.query;
+  console.log(type);
+  if (req.method === "GET") {
     /**
-     * @desc update a menu item
-     * @route PUT /api/menu/:id
-     * @access Private
+     * @desc Get a menu item
+     * @route GET /api/menu/:id
+     * @access Private/admin
      */
-    const { id } = req.query;
     try {
       await db.connectDB();
-      const { type, name, name_english, price, ingredients, types, subtitle } =
-        req.body;
-      await db.connectDB();
-      if (type === "Antipasti") {
-        const antipasti = new Antipasti({
-          name: name,
-          name_english: name_english,
-          price: price,
-        });
-        const createdAntipasti = await antipasti.save();
+      if (type === "antipasti") {
+        const antipasti = await Antipasti.findById(id);
         await db.disconnect();
-        res.status(200).json(createdAntipasti);
+        res.status(200).json(antipasti);
       }
-      if (type === "Contorni") {
-        const contorni = new Contorni({
-          name: name,
-          name_english: name_english,
-          price: price,
-        });
-        const createdContorni = await contorni.save();
+      if (type === "contorni") {
+        const contorni = await Contorni.findById(id);
         await db.disconnect();
-        res.status(200).json(createdContorni);
-      }
-      if (type === "Letempure") {
-        const letempure = new Letempure({
-          name: name,
-          name_english: name_english,
-          price: price,
-        });
-        const createdLetempure = await letempure.save();
-        await db.disconnect();
-        res.status(200).json(createdLetempure);
-      }
-      if (type === "Secondi") {
-        const secondi = new Secondi({
-          name: name,
-          name_english: name_english,
-          price: price,
-        });
-        const createdSecondi = await secondi.save();
-        await db.disconnect();
-        res.status(200).json(createdSecondi);
+        res.status(200).json(contorni);
       }
 
-      if (type === "Desserts") {
-        const desserts = new Desserts({
-          name: name,
-          price: price,
-        });
-        const createdDesserts = await desserts.save();
+      if (type === "letempure") {
+        const letempure = await Letempure.findById(id);
         await db.disconnect();
-        res.status(200).json(createdDesserts);
+        res.status(200).json(letempure);
       }
-
-      if (type === "GourmetPizza") {
-        const gourmetPizza = new GourmetPizza({
-          name: name,
-          price: price,
-          ingredients: ingredients,
-        });
-        const createdGourmetPizza = await gourmetPizza.save();
+      if (type === "secondi") {
+        const secondi = await Secondi.findById(id);
         await db.disconnect();
-        res.status(200).json(createdGourmetPizza);
+        res.status(200).json(secondi);
       }
-
-      if (type === "Pizzas") {
-        const pizzas = new Pizzas({
-          name: name,
-          price: price,
-          ingredients: ingredients,
-        });
-        const createdPizzas = await pizzas.save();
+      if (type === "desserts") {
+        const desserts = await Desserts.findById(id);
         await db.disconnect();
-        res.status(200).json(createdPizzas);
+        res.status(200).json(desserts);
+      }
+      if (type === "gourmetPizza") {
+        const gourmetPizza = await GourmetPizza.findById(id);
+        await db.disconnect();
+        res.status(200).json(gourmetPizza);
+      }
+      if (type === "pizzas") {
+        const pizzas = await Pizzas.findById(id);
+        await db.disconnect();
+        res.status(200).json(pizzas);
       }
       if (type === "Cantina") {
-        const cantina = new Cantina({
-          subtitle: subtitle,
-          types: types,
+        console.log("searching...");
+        const cantina = await Cantina.aggregate([
+          {
+            $match: {
+              _id: id,
+            },
+          },
+          { $unwind: "$types" },
+          { $match: { "types._id": typesId } },
+        ]).exec((err, result) => {
+          if (err) {
+            throw err;
+          }
+          console.log(result);
+          res.status(200).json(result);
         });
-        const createdCantina = await cantina.save();
+        console.log("Success...");
         await db.disconnect();
-        res.status(200).json(createdCantina);
       }
-      if (type === "Bianche") {
-        const bianche = new Bianche({
-          name: name,
-          price: price,
-          ingredients: ingredients,
-        });
-        const createdBianche = await bianche.save();
+      if (type === "bianche") {
+        const bianche = await Bianche.findById(id);
         await db.disconnect();
-        res.status(200).json(createdBianche);
+        res.status(200).json(bianche);
       }
     } catch (error) {
       res.status(401).json({
         error: error.message,
-        message: "Invalid token. Not Authorized ",
+        message: "Unable to get menu item",
+      });
+      return;
+    }
+  } else if (req.method === "PUT") {
+    /**
+     * @desc update a menu item
+     * @route PUT /api/menu/:id
+     * @access Private/admin
+     */
+    try {
+      await db.connectDB();
+      const { menuDetails } = req.body;
+      await db.connectDB();
+      if (type === "Antipasti") {
+        const antipasti = await Antipasti.findById(id);
+        if (antipasti) {
+          antipasti.name = menuDetails.name;
+          antipasti.name_english = menuDetails.name_english;
+          antipasti.price = menuDetails.price;
+          await antipasti.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+      }
+      if (type === "Contorni") {
+        const contorni = await Contorni.findById(id);
+        if (contorni) {
+          contorni.name = menuDetails.name;
+          contorni.name_english = menuDetails.name_english;
+          contorni.price = menuDetails.price;
+          await contorni.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+      }
+      if (type === "Letempure") {
+        const letempure = await Letempure.findById(id);
+        if (letempure) {
+          letempure.name = menuDetails.name;
+          letempure.name_english = menuDetails.name_english;
+          letempure.price = menuDetails.price;
+          await letempure.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+      }
+      if (type === "Secondi") {
+        const secondi = await Secondi.findById(id);
+        if (secondi) {
+          secondi.name = menuDetails.name;
+          secondi.name_english = menuDetails.name_english;
+          secondi.price = menuDetails.price;
+          await secondi.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+      }
+
+      if (type === "Desserts") {
+        const desserts = await Desserts.findById(id);
+        if (desserts) {
+          desserts.name = menuDetails.name;
+          desserts.price = menuDetails.price;
+          await desserts.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+      }
+
+      if (type === "GourmetPizza") {
+        const gourmetPizza = await GourmetPizza.findById(id);
+        if (gourmetPizza) {
+          gourmetPizza.name = menuDetails.name;
+          gourmetPizza.name_english = menuDetails.name_english;
+          gourmetPizza.price = menuDetails.price;
+          await gourmetPizza.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+      }
+
+      if (type === "Pizzas") {
+        const pizzas = await Pizzas.findById(id);
+        if (pizzas) {
+          pizzas.name = menuDetails.name;
+          pizzas.name_english = menuDetails.name_english;
+          pizzas.price = menuDetails.price;
+          await pizzas.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+        await db.disconnect();
+      }
+      if (type === "Cantina") {
+        await Cantina.findOneAndUpdate(
+          { _id: id },
+          {
+            $set: { [`types.$[outer]`]: menuDetails },
+          },
+          {
+            arrayFilters: [{ "outer._id": typesId }],
+          },
+          (err, doc) => {
+            if (err) {
+              res.status(401).json({
+                error: err.message,
+                message: "Unable to update menu item",
+              });
+              return;
+            }
+            res.status(201).json({ message: "Menu item updated successfully" });
+          }
+        );
+        await db.disconnect();
+      }
+      if (type === "Bianche") {
+        const bianche = await Bianche.findById(id);
+        if (bianche) {
+          bianche.name = menuDetails.name;
+          bianche.name_english = menuDetails.name_english;
+          bianche.price = menuDetails.price;
+          await bianche.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+      }
+    } catch (error) {
+      res.status(401).json({
+        error: error.message,
+        message: "Unable to update menu item",
       });
       return;
     }
@@ -157,108 +248,92 @@ export default async function handler(
     /**
      * @desc delete a menu item
      * @route DELETE /api/menu/:id
-     * @access Private
+     * @access Private/admin
      */
     try {
       await db.connectDB();
-      const { type, name, name_english, price, ingredients, types, subtitle } =
-        req.body;
-      await db.connectDB();
       if (type === "Antipasti") {
-        const antipasti = new Antipasti({
-          name: name,
-          name_english: name_english,
-          price: price,
-        });
-        const createdAntipasti = await antipasti.save();
-        await db.disconnect();
-        res.status(200).json(createdAntipasti);
+        const antipasti = await Antipasti.findById(id);
+        if (antipasti) {
+          await antipasti.remove();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item deleted successfully" });
+        }
       }
       if (type === "Contorni") {
-        const contorni = new Contorni({
-          name: name,
-          name_english: name_english,
-          price: price,
-        });
-        const createdContorni = await contorni.save();
-        await db.disconnect();
-        res.status(200).json(createdContorni);
+        const contorni = await Contorni.findById(id);
+        if (contorni) {
+          await contorni.remove();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item deleted successfully" });
+        }
       }
       if (type === "Letempure") {
-        const letempure = new Letempure({
-          name: name,
-          name_english: name_english,
-          price: price,
-        });
-        const createdLetempure = await letempure.save();
-        await db.disconnect();
-        res.status(200).json(createdLetempure);
+        const letempure = await Letempure.findById(id);
+        if (letempure) {
+          await letempure.remove();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item deleted successfully" });
+        }
       }
       if (type === "Secondi") {
-        const secondi = new Secondi({
-          name: name,
-          name_english: name_english,
-          price: price,
-        });
-        const createdSecondi = await secondi.save();
-        await db.disconnect();
-        res.status(200).json(createdSecondi);
+        const secondi = await Secondi.findById(id);
+        if (secondi) {
+          await secondi.remove();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item deleted successfully" });
+        }
       }
 
       if (type === "Desserts") {
-        const desserts = new Desserts({
-          name: name,
-          price: price,
-        });
-        const createdDesserts = await desserts.save();
-        await db.disconnect();
-        res.status(200).json(createdDesserts);
+        const desserts = await Desserts.findById(id);
+        if (desserts) {
+          await desserts.remove();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item deleted successfully" });
+        }
       }
 
       if (type === "GourmetPizza") {
-        const gourmetPizza = new GourmetPizza({
-          name: name,
-          price: price,
-          ingredients: ingredients,
-        });
-        const createdGourmetPizza = await gourmetPizza.save();
-        await db.disconnect();
-        res.status(200).json(createdGourmetPizza);
+        const gourmetPizza = await GourmetPizza.findById(id);
+        if (gourmetPizza) {
+          await gourmetPizza.remove();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item deleted successfully" });
+        }
       }
 
       if (type === "Pizzas") {
-        const pizzas = new Pizzas({
-          name: name,
-          price: price,
-          ingredients: ingredients,
-        });
-        const createdPizzas = await pizzas.save();
-        await db.disconnect();
-        res.status(200).json(createdPizzas);
+        const pizzas = await Pizzas.findById(id);
+        if (pizzas) {
+          await pizzas.remove();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item deleted successfully" });
+        }
       }
       if (type === "Cantina") {
-        const cantina = new Cantina({
-          subtitle: subtitle,
-          types: types,
-        });
-        const createdCantina = await cantina.save();
+        await Cantina.findOneAndUpdate(
+          { _id: id },
+          {
+            $pull: { types: { _id: typesId } },
+          },
+          { new: true }
+        );
+        res.status(201).json({ message: "Menu item deleted successfully" });
         await db.disconnect();
-        res.status(200).json(createdCantina);
       }
       if (type === "Bianche") {
-        const bianche = new Bianche({
-          name: name,
-          price: price,
-          ingredients: ingredients,
-        });
-        const createdBianche = await bianche.save();
-        await db.disconnect();
-        res.status(200).json(createdBianche);
+        const bianche = await Bianche.findById(id);
+        if (bianche) {
+          await bianche.remove();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item deleted successfully" });
+        }
       }
     } catch (error) {
       res.status(401).json({
         error: error.message,
-        message: "Invalid token. Not Authorized ",
+        message: "unable to delete menu item",
       });
       return;
     }

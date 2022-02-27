@@ -6,11 +6,11 @@ const ImageCards = ({ image, setSelectedImg }) => {
     <motion.div
       layout
       whileHover={{ opacity: 1 }}
-      onClick={() => setSelectedImg(image.url)}
+      onClick={() => setSelectedImg(image)}
       className=" h-64 shadow-lg opacity-75"
     >
       <motion.img
-        src={image.url}
+        src={image}
         alt=""
         className="h-full w-full object-cover"
         initial={{ opacity: 0 }}

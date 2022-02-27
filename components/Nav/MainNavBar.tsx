@@ -113,12 +113,12 @@ const MainNavbar = () => {
 
   return (
     <nav
-      className={` top-0 z-50 flex flex-wrap items-center justify-between w-full px-2 py-2 transition-all delay-75 ease-in-out  ${
+      className={` top-0 z-50 flex flex-wrap items-center justify-between w-full px-2 py-2 transition-all delay-75 ease-in-out  text-gray-900 dark:text-gray-200  ${
         router.asPath === "/" && visible
           ? "bg-transparent absolute"
           : visible
-          ? "absolute bg-gray-100"
-          : "fixed shadow-2xl bg-white"
+          ? "absolute bg-white dark:bg-gray-900"
+          : "fixed shadow-2xl bg-white dark:bg-gray-900"
       }  navbar-expand-lg `}
     >
       <div className="container flex items-center justify-between px-1 mx-auto font-light text-gray-600 md:relative sm:px-1 md:px-0 md:flex-row max-w-screen-lg">

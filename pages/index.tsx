@@ -1,15 +1,18 @@
+import { useEffect } from "react";
 import Image from "next/image";
 import Layout from "../components/layout/Layout";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-
-import { useMenu } from "../context/menuContext";
-import Contact from "../components/PageComponents/Contact";
+import { GetServerSideProps } from "next";
 import { motion } from "framer-motion";
+
+import { NEXT_URL } from "../config";
+
+// components
+import Contact from "../components/PageComponents/Contact";
 import Button from "../components/Button/GlobalButton";
 import Loader from "../components/Loader";
-import { GetServerSideProps } from "next";
-import { NEXT_URL } from "../config";
+import { seedDocuments } from "../lib/seedDatabase";
 const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
   ssr: false,
   loading: () => (
@@ -22,11 +25,9 @@ const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
 const url =
   "https://res.cloudinary.com/viaromanonsolopizza-com/image/upload/v1633902787/danielle-macinnes-logv9s7f67o-unsplash_c37kov.webp";
 export default function Home({ menu, loading }) {
-  const { state } = useMenu();
-
   return (
     <Layout title="Home">
-      <main>
+      <main className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
         <section className="relative flex items-center content-center justify-center h-[700px] pt-16 pb-32">
           <div className="absolute top-0 w-full h-full bg-center bg-cover">
             <Image
@@ -86,7 +87,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   });
   const data = await res.json();
-
   if (!data) {
     return {
       notFound: true,

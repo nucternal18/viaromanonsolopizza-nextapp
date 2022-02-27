@@ -68,6 +68,14 @@ export type MenuProps = {
   }[];
 };
 
+type MenuDetails = {
+  name: string;
+  price: string;
+  Bottiglia: string;
+  Calice: string;
+  name_english: string;
+};
+
 interface InitialMenuState {
   loading: boolean;
   error: Error;
@@ -140,9 +148,20 @@ const initialState = {
 const MenuContext = createContext<{
   state: InitialMenuState;
   dispatch: React.Dispatch<any>;
+  updateMenuItem: (menuType: string, id: string, menuDetails) => void;
+  deleteMenuItem: (menuType: string, id: string) => void;
+  deleteCantinaMenuItem: (
+    menuType: string,
+    id: string,
+    typesId: string,
+    cookie: string
+  ) => void;
 }>({
   state: initialState,
   dispatch: () => null,
+  updateMenuItem: () => {},
+  deleteMenuItem: () => {},
+  deleteCantinaMenuItem: () => {},
 });
 
 const menuReducer = (state: InitialMenuState, action) => {
@@ -153,6 +172,8 @@ const menuReducer = (state: InitialMenuState, action) => {
       return { ...state, loading: false, error: action.payload };
     case ActionType.MENU_ITEM_FETCH_SUCCESS:
       return { ...state, loading: false, menu: action.payload };
+    case ActionType.MENU_ITEM_UPDATE_SUCESS:
+      return { ...state, loading: false, message: action.payload };
     case ActionType.MENU_ITEM_UPDATE_TYPE: {
       localStorage.setItem("menuType", JSON.stringify(action.payload));
       return { ...state, loading: false, menuType: action.payload };
@@ -169,8 +190,85 @@ const menuReducer = (state: InitialMenuState, action) => {
 const MenuProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(menuReducer, initialState);
 
+  const updateMenuItem = async (
+    menuType: string,
+    id: string,
+    menuDetails: Partial<MenuDetails>
+  ): Promise<void> => {
+    try {
+      dispatch({ type: ActionType.MENU_ACTION_REQUEST });
+      const res = await fetch(`${NEXT_URL}/api/menu/${id}?type=${menuType}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(menuDetails),
+      });
+      const data = await res.json();
+      dispatch({
+        type: ActionType.MENU_ITEM_UPDATE_SUCESS,
+        payload: data.message,
+      });
+    } catch (error) {
+      dispatch({ type: ActionType.MENU_ACTION_FAIL, payload: error });
+    }
+  };
+  const deleteMenuItem = async (
+    menuType: string,
+    id: string
+  ): Promise<void> => {
+    try {
+      dispatch({ type: ActionType.MENU_ACTION_REQUEST });
+      const res = await fetch(`${NEXT_URL}/api/menu/${id}?type=${menuType}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      dispatch({
+        type: ActionType.MENU_ITEM_DELETE_SUCESS,
+        payload: data.message,
+      });
+    } catch (error) {
+      dispatch({ type: ActionType.MENU_ACTION_FAIL, payload: error });
+    }
+  };
+  const deleteCantinaMenuItem = async (
+    id: string,
+    menuType: string,
+    typesId: string,
+    cookie: string
+  ): Promise<void> => {
+    console.log(id, menuType, typesId);
+    try {
+      dispatch({ type: ActionType.MENU_ACTION_REQUEST });
+      const res = await fetch(
+        `${NEXT_URL}/api/menu/${id}?type=${menuType}&typesId=${typesId}`,
+        {
+          method: "DELETE",
+          headers: {
+            cookie: cookie,
+          },
+        }
+      );
+      const data = await res.json();
+      dispatch({
+        type: ActionType.MENU_ITEM_DELETE_SUCESS,
+        payload: data.message,
+      });
+    } catch (error) {
+      dispatch({ type: ActionType.MENU_ACTION_FAIL, payload: error });
+    }
+  };
+
   return (
-    <MenuContext.Provider value={{ state, dispatch }}>
+    <MenuContext.Provider
+      value={{
+        state,
+        dispatch,
+        updateMenuItem,
+        deleteMenuItem,
+        deleteCantinaMenuItem,
+      }}
+    >
       {children}
     </MenuContext.Provider>
   );

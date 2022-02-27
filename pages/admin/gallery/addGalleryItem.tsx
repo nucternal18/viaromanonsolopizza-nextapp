@@ -3,7 +3,7 @@ import { getSession } from "next-auth/react";
 
 // components
 import AdminLayout from "../../../components/layout/AdminLayout";
-import UploadForm from "../../../components/UploadForm";
+import UploadForm from "../../../components/form/UploadForm";
 
 import getUser from "../../../lib/getUser";
 
@@ -14,8 +14,8 @@ function AddGalleryItem() {
   const { state, addPicture, deletePicture, uploadGalleryImage } = useGallery();
   return (
     <AdminLayout>
-      <section className=" flex-grow w-full h-screen p-4 mx-auto bg-gray-100 md:p-10">
-        <div className="bg-white w-full p-4 justify-center shadow-2xl">
+      <section className=" flex-grow w-full h-screen p-4 mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-10">
+        <div className=" w-full p-4 justify-center shadow-2xl">
           <UploadForm
             addPicture={addPicture}
             uploadGalleryImage={uploadGalleryImage}

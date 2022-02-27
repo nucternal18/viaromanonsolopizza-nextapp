@@ -7,7 +7,7 @@ import getUser from "../../lib/getUser";
 function Admin() {
   return (
     <AdminLayout title="Admin Home">
-      <section className="flex items-center justify-center flex-grow w-full h-screen px-4 mx-auto  md:px-10">
+      <section className="flex items-center justify-center flex-grow w-full h-screen px-4 mx-auto  md:px-10 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
         <h1 className="text-2xl capitalize">
           Benvenuto nella pagina di amministrazione di Via Roma non solo pizza
         </h1>

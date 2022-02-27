@@ -42,14 +42,14 @@ function Menu({
   };
 
   return (
-    <section className="px-2 sm:px-0">
-      <div className="w-full my-8 flex flex-col flex-grow overflow-scroll">
+    <section className="px-2 sm:px-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+      <div className="w-full py-8 flex flex-col flex-grow overflow-scroll">
         <div className="container w-full mx-auto">
           <div className="container-md mb-8">
             <h1 className="text-2xl md:text-3xl mx-auto mb-4 text-center w-3/5 sm:w-2/6 border-b border-red-200">
               Scopri il nostro menu
             </h1>
-            <p className="max-w-xl justify-center font-thin mx-auto px-2 my-2 text-justify">
+            <p className="max-w-xl justify-center font-thin mx-auto px-2 my-2 text-center">
               Poche cose si avvicinano alla gioia della Pizza cucinata
               semplicemente con tenero amore e cura e il meglio ingredienti.
             </p>
@@ -60,7 +60,7 @@ function Menu({
               onClick={handleSelectedMain}
               className={
                 selectedMain
-                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-sm  focus:outline-none  w-3/4"
+                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 drop-shadow-xl  focus:outline-none  w-3/4"
                   : "bg-white hover:bg-red-700 hover:text-white text-gray-800 font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-md  focus:outline-none  w-3/4"
               }
               role="tab"
@@ -73,7 +73,7 @@ function Menu({
               onClick={handleSelectedPizza}
               className={
                 selectedPizza
-                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-sm  focus:outline-none  w-3/4"
+                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 drop-shadow-xl  focus:outline-none  w-3/4"
                   : "bg-white hover:bg-red-700 hover:text-white text-gray-800 font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-md  focus:outline-none  w-3/4"
               }
               role="tab"
@@ -86,7 +86,7 @@ function Menu({
               onClick={handleSelectedDesserts}
               className={
                 selectedDesserts
-                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-sm  focus:outline-none  w-3/4"
+                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 drop-shadow-xl  focus:outline-none  w-3/4"
                   : "bg-white hover:bg-red-700 hover:text-white text-gray-800 font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-md  focus:outline-none  w-3/4"
               }
               role="tab"
@@ -99,7 +99,7 @@ function Menu({
               onClick={handleSelectedDrinks}
               className={
                 selectedDrinks
-                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-sm  focus:outline-none  w-3/4"
+                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 drop-shadow-xl  focus:outline-none  w-3/4"
                   : "bg-white hover:bg-red-700 hover:text-white text-gray-800 font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-md  focus:outline-none  w-3/4"
               }
               role="tab"
@@ -122,7 +122,7 @@ function Menu({
           id="v-main"
           className={
             selectedMain
-              ? "block sm:w-3/5   text-left mx-auto p-2 mb-4 overflow-hidden shadow-2xl bg-white"
+              ? "block sm:w-3/5   text-left mx-auto p-2  overflow-hidden drop-shadow-2xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
               : "hidden"
           }
         >
@@ -241,7 +241,7 @@ function Menu({
           id="v-pizza"
           className={
             selectedPizza
-              ? "block container md:w-full mx-auto p-2 mb-4 overflow-hidden shadow-2xl max-w-screen-lg bg-white"
+              ? "block container md:w-full mx-auto p-2  overflow-hidden drop-shadow-2xl max-w-screen-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
               : "hidden"
           }
         >
@@ -378,7 +378,7 @@ function Menu({
           id="v-dessert"
           className={
             selectedDesserts
-              ? "block w-11/12 md:w-3/5   text-left mx-auto p-2 mb-4 overflow-hidden shadow-2xl bg-white"
+              ? "block w-11/12 md:w-3/5   text-left mx-auto p-2  overflow-hidden drop-shadow-2xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
               : "hidden"
           }
         >
@@ -422,7 +422,7 @@ function Menu({
           id="v-drinks"
           className={
             selectedDrinks
-              ? "block container-md  md:w-3/5   p-2 mx-auto mb-4 overflow-hidden shadow-2xl bg-white"
+              ? "block container-md  md:w-3/5   p-2 mx-auto overflow-hidden drop-shadow-2xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
               : "hidden"
           }
         >

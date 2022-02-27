@@ -2,8 +2,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { FaPlusCircle } from "react-icons/fa";
-import Button from "./Button/GlobalButton";
-import Loader from "./Loader";
+import Button from "../Button/GlobalButton";
+import Loader from "../Loader";
 
 const UploadForm = ({
   addPicture,
@@ -42,7 +42,7 @@ const UploadForm = ({
     <div>
       <form
         onSubmit={submitHandler}
-        className="flex flex-col justify-center px-2 py-2 mx-2 my-2 bg-transparent"
+        className="flex flex-col justify-center px-2 py-2 mx-2 my-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
       >
         <div className="mb-4">
           <label className="flex justify-center mb-2 mr-2 text-base font-bold text-gray-700">

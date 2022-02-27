@@ -1,17 +1,22 @@
-import Image from "next/image";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/router";
 
-function CantinaTable({ data }) {
+function CantinaTable({ data, deleteItem, cookie }) {
   const router = useRouter();
+  const handleDelete = (id, typesId) => {
+    deleteItem(id, "Cantina", typesId, cookie);
+    router.replace("/admin/menu?page=1&sort=latest&menuType=cantina");
+  };
   return (
     <div>
-      {data?.menu?.map((item) => (
+      {data?.menu?.map((cantinaItem) => (
         <div
-          key={item._id}
+          key={cantinaItem._id}
           className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 p-2 w-full sm:shadow-xl sm:rounded-2xl my-4"
         >
-          <h1 className="text-xl font-mono ml-2 mb-2">{item.subtitle}</h1>
+          <h1 className="text-xl font-mono ml-2 mb-2">
+            {cantinaItem.subtitle}
+          </h1>
           <table className="w-full md:table">
             <thead className="bg-gray-50 dark:bg-yellow-500  hidden md:table-header-group">
               <tr className="md:table-row absolute  -top-full md:top-auto gap-2 -left-full md:left-auto  md:relative">
@@ -76,7 +81,7 @@ function CantinaTable({ data }) {
               </tr>
             </thead>
             <tbody className=" block px-1 md:px-0  md:table-row-group">
-              {item?.types?.map((item) => (
+              {cantinaItem?.types?.map((item) => (
                 <tr
                   key={item._id}
                   className="bg-white text-gray-900 max-w-fill  sm:w-full dark:text-gray-200 shadow-md md:shadow-none dark:bg-gray-900 rounded md:rounded-none overflow-hidden  mb-2 md:mb-0 md:border-none block md:table-row"
@@ -125,11 +130,19 @@ function CantinaTable({ data }) {
                       <button
                         type="button"
                         className="text-blue-500 mr-4 md:mr-0"
-                        onClick={() => router.push(`/admin/menu/${item._id}`)}
+                        onClick={() =>
+                          router.push(
+                            `/admin/menu/${cantinaItem._id}/${item._id}?type=Cantina`
+                          )
+                        }
                       >
                         <FaEdit fontSize={21} />
                       </button>
-                      <button type="button" className="text-red-500">
+                      <button
+                        type="button"
+                        className="text-red-500"
+                        onClick={() => handleDelete(cantinaItem._id, item._id)}
+                      >
                         <FaTrash fontSize={20} />
                       </button>
                     </div>
