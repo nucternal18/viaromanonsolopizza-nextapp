@@ -27,12 +27,7 @@ const Gallery = ({ pictures }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const res = await fetch(`${NEXT_URL}/api/gallery`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const res = await fetch(`${NEXT_URL}/api/gallery`);
   const data = await res.json();
   if (!data) {
     return {
