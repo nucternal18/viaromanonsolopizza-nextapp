@@ -7,7 +7,7 @@ export default function NextErrorComponent({
 }: NextErrorComponentProps) {
   return (
     <Layout title={`${statusCode} error on server`}>
-      <div className="flex flex-col items-center mt-20">
+      <div className="flex flex-col items-center mt-20 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
         <h1 className="my-5 text-6xl">Whoops!</h1>
         <h2 className="mb-5 text-4xl text-gray-500">
           {statusCode
