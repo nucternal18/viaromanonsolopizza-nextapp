@@ -142,13 +142,13 @@ function Menu({
                 >
                   <div className="rounded-b w-2/4 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r flex flex-col">
                     <div className="mb-2">
-                      <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                      <div className="font-light text-base sm:text-xl mb-2 text-left ">
                         {ant.name}
                       </div>
                     </div>
                   </div>
                   <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                    <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                    <h1 className="font-light text-base sm:text-xl inline">
                       &euro; {ant.price}
                     </h1>
                   </div>
@@ -166,13 +166,13 @@ function Menu({
                 >
                   <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                     <div className="mb-2">
-                      <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                      <div className="font-light text-base sm:text-xl mb-2 text-left ">
                         {sec.name}
                       </div>
                     </div>
                   </div>
                   <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                    <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                    <h1 className="font-light text-base sm:text-xl inline">
                       &euro; {sec.price}
                     </h1>
                   </div>
@@ -190,13 +190,13 @@ function Menu({
                 >
                   <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                     <div className="mb-2">
-                      <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                      <div className="font-light text-base sm:text-xl mb-2 text-left ">
                         {sec.name}
                       </div>
                     </div>
                   </div>
                   <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                    <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                    <h1 className="font-light text-base sm:text-xl inline">
                       &euro; {sec.price}
                     </h1>
                   </div>
@@ -214,13 +214,13 @@ function Menu({
                 >
                   <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                     <div className="mb-2">
-                      <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                      <div className="font-light text-base sm:text-xl mb-2 text-left ">
                         {cont.name}
                       </div>
                     </div>
                   </div>
                   <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                    <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                    <h1 className="font-light text-base sm:text-xl inline">
                       &euro; {cont.price}
                     </h1>
                   </div>
@@ -389,24 +389,24 @@ function Menu({
             >
               <div className="rounded-b lg:rounded-b-none justify-start lg:rounded-r p-1 md:p-2 w-4/6">
                 <div className="mb-2">
-                  <div className="text-gray-900 font-light text-lg md:text-xl mb-2 text-left break-all ">
+                  <div className=" font-light text-lg md:text-xl mb-2 text-left break-all ">
                     {dessert.name}
                   </div>
                 </div>
               </div>
               <div className="rounded-b lg:rounded-b-none lg:rounded-r p-1 md:p-2 mx-2 leading-normal">
-                <h2 className="text-gray-900 font-light text-base sm:text-xl inline text-justify">
+                <h2 className=" font-light text-base sm:text-xl inline text-justify">
                   &euro; {dessert.price}
                 </h2>
               </div>
             </div>
           ))}
           <div className="p-2">
-            <p className="text-gray-900 font-light text-lg md:text-xl mb-2  text-left">
+            <p className=" font-light text-lg md:text-xl mb-2  text-left">
               A tutti i nostri dessert possono essere aggiunti caffe&apos; o
               alcolici &euro;1,00{" "}
             </p>
-            <p className="text-gray-900 font-light text-lg md:text-xl mb-2  text-left">
+            <p className=" font-light text-lg md:text-xl mb-2  text-left">
               Coperto &euro;2,00
             </p>
           </div>

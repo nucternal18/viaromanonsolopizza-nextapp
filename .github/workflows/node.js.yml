@@ -48,6 +48,7 @@ jobs:
       - run: yarn lint
         # - run: yarn test:ci
       - run: yarn build
-      - run: pm2 reload viaromanonsolopizza-nextapp
+      - run: pm2 start npm --name "viaromanonsolopizza-nextapp" --start
+      # - run: pm2 reload viaromanonsolopizza-nextapp
     env:
       CI: true

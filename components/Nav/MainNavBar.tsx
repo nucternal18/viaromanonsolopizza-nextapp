@@ -140,7 +140,7 @@ const MainNavbar = () => {
           <div className="flex items-center lg:hidden mx-2">
             {state.isAuthenticated && (
               <button
-                className="flex items-center  bg-gray-200 border-2 border-yellow-500 rounded-full"
+                className="flex items-center  bg-gray-200 border-2 border-red-500 rounded-full"
                 disabled
               >
                 <Image
