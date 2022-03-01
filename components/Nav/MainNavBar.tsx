@@ -3,10 +3,11 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FaUser } from "react-icons/fa";
-import { FiLogIn, FiLogOut } from "react-icons/fi";
+import { FaTimes, FaUser } from "react-icons/fa";
+import { FiLogIn, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
 import { RiAdminFill } from "react-icons/ri";
 import { signOut } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 // context
 import { ActionType, useAuth } from "../../context/authContext";
@@ -37,6 +38,7 @@ const navLink = [
 
 const MainNavbar = () => {
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
   const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -161,8 +163,12 @@ const MainNavbar = () => {
             disabled={isOpen}
             aria-label="Toggle navigation"
             className={`block float-right text-4xl ${
-              visible ? "text-gray-200" : "text-gray-800"
-            }  lg:hidden focus:outline-none focus:shadow-none`}
+              router.asPath === "/" && visible
+                ? "text-gray-200"
+                : visible
+                ? "text-gray-900 dark:text-gray-200"
+                : "text-gray-900 dark:text-gray-200"
+            }   lg:hidden focus:outline-none focus:shadow-none`}
             onClick={toggle}
           >
             &#8801;
@@ -185,6 +191,19 @@ const MainNavbar = () => {
               </Link>
             </li>
           ))}
+          <li className="flex px-1 m-0 list-none ">
+            <button
+              type="button"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="flex p-1 ml-4 font-medium list-none border-2 border-current rounded-full cursor-pointer md:block lg:ml-0 lg:mb-0 lg:p-1 lg:px-1 focus:outline-none focus:ring-2 focus:ring-current dark:focus:ring-red-500 focus:border-transparent"
+            >
+              {theme === "light" ? (
+                <FiSun fontSize={21} className="font-bold " />
+              ) : (
+                <FiMoon fontSize={21} className="font-semibold " />
+              )}
+            </button>
+          </li>
           {state.isAuthenticated && (
             <li className="px-1 m-0 text-base list-none">
               <button
@@ -243,14 +262,27 @@ const MainNavbar = () => {
         ref={mobileNavRef}
       >
         <div className="flex flex-col">
-          <div className="flex items-center px-3 py-2 ml-4">
-            <div className="mr-12">
+          <div className="flex flex-row items-center gap-32 w-full px-3 py-2 ">
+            <div>
               <button
                 aria-label="Close"
                 className=" py-1  text-4xl text-gray-900 cursor-pointer focus:outline-none"
                 onClick={toggle}
               >
-                &times;
+                <FaTimes fontSize={21} />
+              </button>
+            </div>
+            <div className=" ">
+              <button
+                type="button"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="flex p-1 text-gray-900 font-medium list-none border-2 border-current rounded-full cursor-pointer md:block lg:ml-0 lg:mb-0 lg:p-1 lg:px-1 focus:outline-none focus:ring-2 focus:ring-current dark:focus:ring-red-500 focus:border-transparent"
+              >
+                {theme === "light" ? (
+                  <FiSun fontSize={18} className="font-bold " />
+                ) : (
+                  <FiMoon fontSize={18} className="font-semibold " />
+                )}
               </button>
             </div>
           </div>
@@ -259,7 +291,7 @@ const MainNavbar = () => {
               {navLink.map((link) => (
                 <li
                   key={link.id}
-                  className="flex px-1 m-0 text-base list-none sm:text-xs md:text-sm text-md"
+                  className="flex px-1 m-0 text-base list-none text-md"
                 >
                   <Link href={link.link}>
                     <a
@@ -274,6 +306,7 @@ const MainNavbar = () => {
                   </Link>
                 </li>
               ))}
+
               {state.isAuthenticated ? (
                 <>
                   <li className="px-1 m-0 text-base list-none text-md">

@@ -112,8 +112,6 @@ const authReducer = (state: InitialAuthState, action) => {
   }
 };
 
-const auth = getAuth();
-
 const AuthProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 

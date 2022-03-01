@@ -43,7 +43,7 @@ function Menu({
 
   return (
     <section className="px-2 sm:px-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
-      <div className="w-full py-8 flex flex-col flex-grow overflow-scroll">
+      <div className="w-full py-8 flex flex-col flex-grow overflow-hidden">
         <div className="container w-full mx-auto">
           <div className="container-md mb-8">
             <h1 className="text-2xl md:text-3xl mx-auto mb-4 text-center w-3/5 sm:w-2/6 border-b border-red-200">
@@ -259,15 +259,12 @@ function Menu({
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                   <div className="mb-2">
-                    <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                    <div className=" font-light text-base sm:text-xl mb-2 text-left ">
                       {pizza.name}
                     </div>
                     <div className="flex flex-row flex-wrap">
                       {pizza.ingredients.map((ing, i) => (
-                        <p
-                          key={i}
-                          className="text-red-400 text-base mr-1 text-left"
-                        >
+                        <p key={i} className=" text-base mr-1 text-left">
                           {ing}
                         </p>
                       ))}
@@ -275,7 +272,7 @@ function Menu({
                   </div>
                 </div>
                 <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                  <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                  <h1 className=" font-light text-base sm:text-xl inline">
                     &euro; {pizza.price}
                   </h1>
                 </div>
@@ -293,15 +290,12 @@ function Menu({
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                   <div className="mb-2">
-                    <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                    <div className=" font-light text-base sm:text-xl mb-2 text-left ">
                       {item.name}
                     </div>
                     <div className="flex flex-row flex-wrap">
                       {item.ingredients.map((ing, i) => (
-                        <p
-                          key={i}
-                          className="text-red-400 text-base mr-1 text-left"
-                        >
+                        <p key={i} className=" text-base mr-1 text-left">
                           {ing}
                         </p>
                       ))}
@@ -309,7 +303,7 @@ function Menu({
                   </div>
                 </div>
                 <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                  <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                  <h1 className=" font-light text-base sm:text-xl inline">
                     &euro; {item.price}
                   </h1>
                 </div>
@@ -327,15 +321,12 @@ function Menu({
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                   <div className="mb-2">
-                    <div className="text-gray-900 font-light text-base sm:text-xl mb-2 text-left ">
+                    <div className=" font-light text-base sm:text-xl mb-2 text-left ">
                       {pizza.name}
                     </div>
                     <div className="flex flex-row flex-wrap">
                       {pizza.ingredients.map((ing, i) => (
-                        <p
-                          key={i}
-                          className="text-red-400 text-base mr-1 text-left"
-                        >
+                        <p key={i} className="text-base mr-1 text-left">
                           {ing}
                         </p>
                       ))}
@@ -343,7 +334,7 @@ function Menu({
                   </div>
                 </div>
                 <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
-                  <h1 className="text-gray-900 font-light text-base sm:text-xl inline">
+                  <h1 className=" font-light text-base sm:text-xl inline">
                     &euro; {pizza.price}
                   </h1>
                 </div>
@@ -351,16 +342,16 @@ function Menu({
             ))}
           </div>
           <div className="p-2">
-            <p className="text-gray-900 font-light text-base sm:text-xl mb-4  text-left">
+            <p className=" font-light text-base sm:text-xl mb-4  text-left">
               L&apos;impiego di farine speciali, la lievitazione di 72 ore danno
               al nosto impasto leggerezza e digeribilita&apos;
             </p>
-            <p className="text-gray-900 font-light text-base sm:text-xl mb-4  text-left">
+            <p className=" font-light text-base sm:text-xl mb-4  text-left">
               Tutte le nostre pizze possono essere prodotte con impasto per
               celiaci +2,00 Ingredienti extra da &euro; 2,00 a &euro; 3,00
             </p>
 
-            <p className="text-gray-900 font-light text-base sm:text-xl mb-2  text-left">
+            <p className=" font-light text-base sm:text-xl mb-2  text-left">
               A lato degli ingredienti sono riportati i codici degli allergeni
               presenti in ogni preparazione (la lista si trova nell&apos;ultima
               pagina del menu&apos;)
@@ -449,12 +440,12 @@ function Menu({
                     {bottle.name}
                   </p>
                   <div className="px-2 py-2 sm:w-1/4">
-                    <h2 className="text-gray-900 font-bold text-base md:text-xl ">
+                    <h2 className=" font-bold text-base md:text-xl ">
                       {bottle.Calice && `€ ${bottle.Calice}`}
                     </h2>
                   </div>
                   <div className="px-1 py-2 w-1/4 text-right">
-                    <h2 className="text-gray-900 font-bold text-base md:text-xl inline text-justify">
+                    <h2 className=" font-bold text-base md:text-xl inline text-justify">
                       &euro; {bottle.Bottiglia}
                     </h2>
                   </div>
