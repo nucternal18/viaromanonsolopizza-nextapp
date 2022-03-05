@@ -84,22 +84,9 @@ export default async function handler(
       }
       if (type === "Cantina") {
         console.log("searching...");
-        const cantina = await Cantina.aggregate([
-          {
-            $match: {
-              _id: id,
-            },
-          },
-          { $unwind: "$types" },
-          { $match: { "types._id": typesId } },
-        ]).exec((err, result) => {
-          if (err) {
-            throw err;
-          }
-          console.log(result);
-          res.status(200).json(result);
-        });
-        console.log("Success...");
+        const cantina = await Cantina.findById(id);
+        const doc = cantina.types.id(typesId);
+        res.status(200).json(doc);
         await db.disconnect();
       }
       if (type === "bianche") {
@@ -205,26 +192,15 @@ export default async function handler(
         await db.disconnect();
       }
       if (type === "Cantina") {
-        await Cantina.findOneAndUpdate(
-          { _id: id },
-          {
-            $set: { [`types.$[outer]`]: menuDetails },
-          },
-          {
-            arrayFilters: [{ "outer._id": typesId }],
-          },
-          (err, doc) => {
-            if (err) {
-              res.status(401).json({
-                error: err.message,
-                message: "Unable to update menu item",
-              });
-              return;
-            }
-            res.status(201).json({ message: "Menu item updated successfully" });
-          }
-        );
-        await db.disconnect();
+        const cantina = await Cantina.findById(id);
+        if (cantina) {
+          cantina.types.id(typesId).name = menuDetails.name;
+          cantina.types.id(typesId).Bottiglia = menuDetails.Bottiglia;
+          cantina.types.id(typesId).Calice = menuDetails.name;
+          await cantina.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
       }
       if (type === "Bianche") {
         const bianche = await Bianche.findById(id);

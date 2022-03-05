@@ -280,6 +280,37 @@ function Menu({
             ))}
           </div>
           <h1 className="text-2xl md:text-3xl text-center mx-auto font-light mb-8">
+            LE SPECIALI
+          </h1>
+          <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">
+            {menu.pizzaSpeciali?.map((pizza) => (
+              <div
+                key={pizza._id}
+                className=" w-full lg:w-3/6 flex justify-between px-1 mb-4"
+              >
+                <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
+                  <div className="mb-2">
+                    <div className=" font-light text-base sm:text-xl mb-2 text-left ">
+                      {pizza.name}
+                    </div>
+                    <div className="flex flex-row flex-wrap">
+                      {pizza.ingredients.map((ing, i) => (
+                        <p key={i} className=" text-base mr-1 text-left">
+                          {ing}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-b lg:rounded-b-none lg:rounded-r p-2  leading-normal">
+                  <h1 className=" font-light text-base sm:text-xl inline">
+                    &euro; {pizza.price}
+                  </h1>
+                </div>
+              </div>
+            ))}
+          </div>
+          <h1 className="text-2xl md:text-3xl text-center mx-auto font-light mb-8">
             LE BIANCHE
           </h1>
           <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">

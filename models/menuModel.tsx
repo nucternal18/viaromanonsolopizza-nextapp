@@ -66,6 +66,16 @@ const gourmetPizzaSchema = new Schema(
     timestamps: true,
   }
 );
+const pizzaSpecialiSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    price: { type: String, required: true },
+    ingredients: { type: [String], required: true },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const pizzasSchema = new Schema(
   {
@@ -118,6 +128,9 @@ export const Desserts =
 export const GourmetPizza =
   mongoose.models.GourmetPizza ||
   mongoose.model("GourmetPizza", gourmetPizzaSchema);
+export const PizzaSpeciali =
+  mongoose.models.PizzaSpeciali ||
+  mongoose.model("PizzaSpeciali", pizzaSpecialiSchema);
 export const Pizzas =
   mongoose.models.Pizzas || mongoose.model("Pizzas", pizzasSchema);
 export const Cantina =

@@ -7,19 +7,16 @@ import { useRouter } from "next/router";
 //components
 import AdminLayout from "../../../components/layout/AdminLayout";
 import Table from "../../../components/MenuTable";
-import { NEXT_URL } from "../../../config";
-// Context
-import { useMenu } from "../../../context/menuContext";
-import getUser from "../../../lib/getUser";
 import { MenuFilterForm } from "../../../components";
 import CantinaTable from "../../../components/MenuTable/cantinaTable";
 
-interface IFormData {
-  sort: string;
-  sortOptions: string[];
-  menuType: string;
-  menuTypeOptions: string[];
-}
+// Context
+import { useMenu } from "../../../context/menuContext";
+
+// utils
+import { NEXT_URL } from "../../../config";
+import getUser from "../../../lib/getUser";
+import { IFormData } from "../../../lib/types";
 
 function ManageMenu({ menu, cookie }) {
   const router = useRouter();
@@ -31,7 +28,7 @@ function ManageMenu({ menu, cookie }) {
     reset,
     watch,
     formState: { errors },
-  } = useForm<IFormData>({
+  } = useForm<Partial<IFormData>>({
     defaultValues: {
       sort: state?.sort,
       menuType: state?.menuType,
@@ -62,7 +59,7 @@ function ManageMenu({ menu, cookie }) {
                 cookie={cookie}
               />
             ) : (
-              <Table data={menu} />
+              <Table data={menu} menuType={state?.menuType} />
             )}
           </div>
         </div>

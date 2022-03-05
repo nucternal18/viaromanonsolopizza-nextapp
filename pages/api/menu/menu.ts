@@ -12,6 +12,7 @@ import {
   Pizzas,
   Cantina,
   Bianche,
+  PizzaSpeciali,
 } from "../../../models/menuModel";
 
 export default async function handler(
@@ -35,6 +36,7 @@ export default async function handler(
     const pizzas = await Pizzas.find({});
     const cantina = await Cantina.find({});
     const bianche = await Bianche.find({});
+    const pizzaSpeciali = await PizzaSpeciali.find({});
     await db.disconnect();
     res.status(200).json({
       antipasti,
@@ -46,6 +48,7 @@ export default async function handler(
       pizzas,
       cantina,
       bianche,
+      pizzaSpeciali,
     });
   } else {
     res.setHeader("Allow", ["GET"]);

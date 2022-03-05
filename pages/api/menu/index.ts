@@ -12,6 +12,7 @@ import {
   Pizzas,
   Cantina,
   Bianche,
+  PizzaSpeciali,
 } from "../../../models/menuModel";
 
 import getUser from "../../../lib/getUser";
@@ -64,6 +65,9 @@ export default async function handler(
 
     if (queryObj.menuType === "gourmetPizza") {
       result = GourmetPizza.find({});
+    }
+    if (queryObj.menuType === "pizzaSpeciali") {
+      result = PizzaSpeciali.find({});
     }
 
     if (queryObj.menuType === "pizzas") {
@@ -122,95 +126,105 @@ export default async function handler(
         return;
       }
 
-      const { type, name, name_english, price, ingredients, types, subtitle } =
-        req.body;
+      const { menuDetails } = req.body;
       await db.connectDB();
-      if (type === "Antipasti") {
+      if (menuDetails.type === "antipasti") {
         const antipasti = new Antipasti({
-          name: name,
-          name_english: name_english,
-          price: price,
+          name: menuDetails.name,
+          name_english: menuDetails.name_english,
+          price: menuDetails.price,
         });
         const createdAntipasti = await antipasti.save();
         await db.disconnect();
         res.status(200).json(createdAntipasti);
       }
-      if (type === "Contorni") {
+      if (menuDetails.type === "contorni") {
         const contorni = new Contorni({
-          name: name,
-          name_english: name_english,
-          price: price,
+          name: menuDetails.name,
+          name_english: menuDetails.name_english,
+          price: menuDetails.price,
         });
         const createdContorni = await contorni.save();
         await db.disconnect();
         res.status(200).json(createdContorni);
       }
-      if (type === "Letempure") {
+      if (menuDetails.type === "letempure") {
         const letempure = new Letempure({
-          name: name,
-          name_english: name_english,
-          price: price,
+          name: menuDetails.name,
+          name_english: menuDetails.name_english,
+          price: menuDetails.price,
         });
         const createdLetempure = await letempure.save();
         await db.disconnect();
         res.status(200).json(createdLetempure);
       }
-      if (type === "Secondi") {
+      if (menuDetails.type === "secondi") {
         const secondi = new Secondi({
-          name: name,
-          name_english: name_english,
-          price: price,
+          name: menuDetails.name,
+          name_english: menuDetails.name_english,
+          price: menuDetails.price,
         });
         const createdSecondi = await secondi.save();
         await db.disconnect();
         res.status(200).json(createdSecondi);
       }
 
-      if (type === "Desserts") {
+      if (menuDetails.type === "desserts") {
         const desserts = new Desserts({
-          name: name,
-          price: price,
+          name: menuDetails.name,
+          price: menuDetails.price,
         });
         const createdDesserts = await desserts.save();
         await db.disconnect();
         res.status(200).json(createdDesserts);
       }
 
-      if (type === "GourmetPizza") {
+      if (menuDetails.type === "gourmetPizza") {
         const gourmetPizza = new GourmetPizza({
-          name: name,
-          price: price,
-          ingredients: ingredients,
+          name: menuDetails.name,
+          price: menuDetails.price,
+          ingredients: menuDetails.ingredients,
         });
         const createdGourmetPizza = await gourmetPizza.save();
         await db.disconnect();
         res.status(200).json(createdGourmetPizza);
       }
 
-      if (type === "Pizzas") {
+      if (menuDetails.type === "pizzaSpeciali") {
+        const pizzaSpeciali = new PizzaSpeciali({
+          name: menuDetails.name,
+          price: menuDetails.price,
+          ingredients: menuDetails.ingredients,
+        });
+        const createdPizzaSpeciali = await pizzaSpeciali.save();
+        await db.disconnect();
+        res.status(200).json(createdPizzaSpeciali);
+      }
+
+      if (menuDetails.type === "pizzas") {
         const pizzas = new Pizzas({
-          name: name,
-          price: price,
-          ingredients: ingredients,
+          name: menuDetails.name,
+          price: menuDetails.price,
+          ingredients: menuDetails.ingredients,
         });
         const createdPizzas = await pizzas.save();
         await db.disconnect();
         res.status(200).json(createdPizzas);
       }
-      if (type === "Cantina") {
+      if (menuDetails.type === "cantina") {
         const cantina = new Cantina({
-          subtitle: subtitle,
-          types: types,
+          subtitle: menuDetails.subtitle,
+          types: menuDetails.types,
         });
         const createdCantina = await cantina.save();
         await db.disconnect();
         res.status(200).json(createdCantina);
       }
-      if (type === "Bianche") {
+      if (menuDetails.type === "bianche") {
         const bianche = new Bianche({
-          name: name,
-          price: price,
-          ingredients: ingredients,
+          name: menuDetails.name,
+          price: menuDetails.price,
+          ingredients: menuDetails.ingredients,
         });
         const createdBianche = await bianche.save();
         await db.disconnect();

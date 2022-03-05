@@ -1,12 +1,56 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
+import { useForm, SubmitHandler } from "react-hook-form";
 
+// components
 import AdminLayout from "../../../components/layout/AdminLayout";
-import { NEXT_URL } from "../../../config";
+
+// context
+import { useMenu } from "../../../context/menuContext";
+
+// utils
 import getUser from "../../../lib/getUser";
 
-function AddMenuItem({ menuItem, loading }) {
-  console.log(menuItem);
+type TypesProps = {
+  name: string;
+  Bottiglia: string;
+  Calice: string;
+};
+
+interface IFormData {
+  name: string;
+  name_english: string;
+  ingredients: string;
+  subtitle: string;
+  price: string;
+  types: TypesProps[];
+  menuType: string;
+  menuTypeOptions: string[];
+}
+
+function AddMenuItem() {
+  const { state, addMenuItem } = useMenu();
+
+  const {
+    register,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<IFormData>();
+
+  const onSubmit: SubmitHandler<Partial<IFormData>> = async (data) => {
+    const menuDetails = {
+      name: data.name,
+      name_english: data.name_english,
+      ingredients: data.ingredients,
+      subtitle: data.subtitle,
+      price: data.price,
+      types: data.types,
+      menuType: data.menuType,
+    };
+    addMenuItem(menuDetails);
+  };
+
   return (
     <AdminLayout>
       <section className=" flex-grow w-full  mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-4">
@@ -19,7 +63,6 @@ function AddMenuItem({ menuItem, loading }) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const req = ctx.req;
   const session = await getSession({ req });
-  const { id } = ctx.query;
   if (!session) {
     // If no token is present redirect user to the login page
     return {
@@ -40,21 +83,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         },
       };
     }
-    const res = await fetch(`${NEXT_URL}/api/menu/${id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await res.json();
-    if (!data) {
-      return {
-        notFound: true,
-      };
-    }
 
     return {
-      props: { menuItem: data, loading: !data ? true : false },
+      props: {},
     };
   } catch (error) {
     // either the `token` cookie didn't exist

@@ -44,6 +44,13 @@ export type MenuProps = {
     ingredients: string[];
     type?: string;
   }[];
+  pizzaSpeciali: {
+    _id: string;
+    price: string;
+    name: string;
+    ingredients: string[];
+    type?: string;
+  }[];
   pizzas: {
     _id: string;
     price: string;
@@ -74,11 +81,15 @@ type MenuDetails = {
   Bottiglia: string;
   Calice: string;
   name_english: string;
+  ingredients: string[];
+  typesId: string | string[];
+  menuType: string;
 };
 
 interface InitialMenuState {
   loading: boolean;
   error: Error;
+  success: boolean;
   menu: MenuProps;
   message: string;
   sort: string;
@@ -123,11 +134,13 @@ const initialState = {
     secondi: [],
     desserts: [],
     gourmetPizza: [],
+    pizzaSpeciali: [],
     pizzas: [],
     cantina: [],
     bianche: [],
   },
   message: "",
+  success: false,
   sort: sortItemFromStorage,
   sortOptions: ["latest", "oldest", "a-z", "z-a"],
   menuTypeOptions: [
@@ -137,6 +150,7 @@ const initialState = {
     "secondi",
     "desserts",
     "gourmetPizza",
+    "pizzaSpeciali",
     "pizzas",
     "cantina",
     "bianche",
@@ -148,6 +162,7 @@ const initialState = {
 const MenuContext = createContext<{
   state: InitialMenuState;
   dispatch: React.Dispatch<any>;
+  addMenuItem: (menuDetails) => void;
   updateMenuItem: (menuType: string, id: string, menuDetails) => void;
   deleteMenuItem: (menuType: string, id: string) => void;
   deleteCantinaMenuItem: (
@@ -159,6 +174,7 @@ const MenuContext = createContext<{
 }>({
   state: initialState,
   dispatch: () => null,
+  addMenuItem: () => {},
   updateMenuItem: () => {},
   deleteMenuItem: () => {},
   deleteCantinaMenuItem: () => {},
@@ -171,9 +187,21 @@ const menuReducer = (state: InitialMenuState, action) => {
     case ActionType.MENU_ACTION_FAIL:
       return { ...state, loading: false, error: action.payload };
     case ActionType.MENU_ITEM_FETCH_SUCCESS:
-      return { ...state, loading: false, menu: action.payload };
+      return { ...state, loading: false, menu: action.payload, success: true };
     case ActionType.MENU_ITEM_UPDATE_SUCESS:
-      return { ...state, loading: false, message: action.payload };
+      return {
+        ...state,
+        loading: false,
+        message: action.payload,
+        success: true,
+      };
+    case ActionType.MENU_ITEM_DELETE_SUCESS:
+      return {
+        ...state,
+        loading: false,
+        message: action.payload,
+        success: true,
+      };
     case ActionType.MENU_ITEM_UPDATE_TYPE: {
       localStorage.setItem("menuType", JSON.stringify(action.payload));
       return { ...state, loading: false, menuType: action.payload };
@@ -190,6 +218,27 @@ const menuReducer = (state: InitialMenuState, action) => {
 const MenuProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(menuReducer, initialState);
 
+  const addMenuItem = async (
+    menuDetails: Partial<MenuDetails>
+  ): Promise<void> => {
+    try {
+      dispatch({ type: ActionType.MENU_ACTION_REQUEST });
+      const res = await fetch(`${NEXT_URL}/api/menu`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(menuDetails),
+      });
+      const data = await res.json();
+      dispatch({
+        type: ActionType.MENU_ITEM_UPDATE_SUCESS,
+        payload: data.message,
+      });
+    } catch (error) {
+      dispatch({ type: ActionType.MENU_ACTION_FAIL, payload: error });
+    }
+  };
   const updateMenuItem = async (
     menuType: string,
     id: string,
@@ -197,13 +246,16 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
   ): Promise<void> => {
     try {
       dispatch({ type: ActionType.MENU_ACTION_REQUEST });
-      const res = await fetch(`${NEXT_URL}/api/menu/${id}?type=${menuType}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(menuDetails),
-      });
+      const res = await fetch(
+        `${NEXT_URL}/api/menu/${id}?type=${menuType}&typesId=${menuDetails.typesId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(menuDetails),
+        }
+      );
       const data = await res.json();
       dispatch({
         type: ActionType.MENU_ITEM_UPDATE_SUCESS,
@@ -264,6 +316,7 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
       value={{
         state,
         dispatch,
+        addMenuItem,
         updateMenuItem,
         deleteMenuItem,
         deleteCantinaMenuItem,

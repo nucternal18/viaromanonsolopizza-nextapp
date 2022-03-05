@@ -1,7 +1,7 @@
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/router";
 
-function Table({ data }) {
+function Table({ data, menuType }) {
   const router = useRouter();
 
   return (
@@ -156,7 +156,9 @@ function Table({ data }) {
                 <button
                   type="button"
                   className="text-blue-500 mr-4 md:mr-0"
-                  onClick={() => router.push(`/admin/menu/${item._id}`)}
+                  onClick={() =>
+                    router.push(`/admin/menu/${item._id}?type=${menuType}`)
+                  }
                 >
                   <FaEdit fontSize={21} />
                 </button>
