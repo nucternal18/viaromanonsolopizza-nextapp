@@ -1,5 +1,4 @@
 import React from "react";
-import useFirestore from "../lib/hooks/useFirestore";
 import ImageCards from "./ImageCards";
 
 const ImageGrid = ({ setSelectedImg, images }) => {
