@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { MenuProps } from "../../context/menuContext";
+import { MenuProps } from "../../lib/types";
+
 import Loader from "../Loader";
 
 function Menu({
