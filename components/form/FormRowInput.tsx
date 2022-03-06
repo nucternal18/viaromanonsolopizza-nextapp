@@ -3,7 +3,7 @@ import React from "react";
 type InputProps = React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
   HTMLInputElement
-> & { label: string };
+> & { label?: string };
 
 const FormRowInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ onChange, onBlur, name, label, ...props }, ref) => {

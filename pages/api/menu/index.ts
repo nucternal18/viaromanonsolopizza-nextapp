@@ -103,128 +103,134 @@ export default async function handler(
      * @route POST /api/menu/
      * @access Private
      */
+    /**
+     * @desc Get user session
+     */
+    const session = await getSession({ req });
+
+    /**
+     * @desc check to see if their is a user session
+     */
+    if (!session) {
+      console.log("no session");
+      res.status(401).json({ message: "Not Authorized" });
+      return;
+    }
+
+    const userData = await getUser(req);
+    console.log(userData);
+
+    if (!userData.isAdmin) {
+      console.log("not admin");
+      res.status(401).json({
+        message:
+          "Not Authorized. You do not have permission to perform this operation.",
+      });
+      return;
+    }
+    console.log(req.body);
+    const { name, name_english, ingredients, subtitle, price, type, types } =
+      req.body;
+    console.log(name, name_english, ingredients, subtitle, price, type, types);
     try {
-      /**
-       * @desc Get user session
-       */
-      const session = await getSession({ req });
-      /**
-       * @desc check to see if their is a user session
-       */
-      if (!session) {
-        res.status(401).json({ message: "Not Authorized" });
-        return;
-      }
-
-      const userData = await getUser(req);
-
-      if (!userData.isAdmin) {
-        res.status(401).json({
-          message:
-            "Not Authorized. You do not have permission to perform this operation.",
-        });
-        return;
-      }
-
-      const { menuDetails } = req.body;
       await db.connectDB();
-      if (menuDetails.type === "antipasti") {
+      if (type === "antipasti") {
         const antipasti = new Antipasti({
-          name: menuDetails.name,
-          name_english: menuDetails.name_english,
-          price: menuDetails.price,
+          name: name,
+          name_english: name_english,
+          price: price,
         });
         const createdAntipasti = await antipasti.save();
         await db.disconnect();
         res.status(200).json(createdAntipasti);
       }
-      if (menuDetails.type === "contorni") {
+      if (type === "contorni") {
         const contorni = new Contorni({
-          name: menuDetails.name,
-          name_english: menuDetails.name_english,
-          price: menuDetails.price,
+          name: name,
+          name_english: name_english,
+          price: price,
         });
         const createdContorni = await contorni.save();
         await db.disconnect();
         res.status(200).json(createdContorni);
       }
-      if (menuDetails.type === "letempure") {
+      if (type === "letempure") {
         const letempure = new Letempure({
-          name: menuDetails.name,
-          name_english: menuDetails.name_english,
-          price: menuDetails.price,
+          name: name,
+          name_english: name_english,
+          price: price,
         });
         const createdLetempure = await letempure.save();
         await db.disconnect();
         res.status(200).json(createdLetempure);
       }
-      if (menuDetails.type === "secondi") {
+      if (type === "secondi") {
         const secondi = new Secondi({
-          name: menuDetails.name,
-          name_english: menuDetails.name_english,
-          price: menuDetails.price,
+          name: name,
+          name_english: name_english,
+          price: price,
         });
         const createdSecondi = await secondi.save();
         await db.disconnect();
         res.status(200).json(createdSecondi);
       }
 
-      if (menuDetails.type === "desserts") {
+      if (type === "desserts") {
         const desserts = new Desserts({
-          name: menuDetails.name,
-          price: menuDetails.price,
+          name: name,
+          price: price,
         });
         const createdDesserts = await desserts.save();
         await db.disconnect();
         res.status(200).json(createdDesserts);
       }
 
-      if (menuDetails.type === "gourmetPizza") {
+      if (type === "gourmetPizza") {
         const gourmetPizza = new GourmetPizza({
-          name: menuDetails.name,
-          price: menuDetails.price,
-          ingredients: menuDetails.ingredients,
+          name: name,
+          price: price,
+          ingredients: ingredients,
         });
         const createdGourmetPizza = await gourmetPizza.save();
         await db.disconnect();
         res.status(200).json(createdGourmetPizza);
       }
 
-      if (menuDetails.type === "pizzaSpeciali") {
+      if (type === "pizzaSpeciali") {
         const pizzaSpeciali = new PizzaSpeciali({
-          name: menuDetails.name,
-          price: menuDetails.price,
-          ingredients: menuDetails.ingredients,
+          name: name,
+          price: price,
+          ingredients: ingredients,
         });
         const createdPizzaSpeciali = await pizzaSpeciali.save();
         await db.disconnect();
         res.status(200).json(createdPizzaSpeciali);
       }
 
-      if (menuDetails.type === "pizzas") {
+      if (type === "pizzas") {
         const pizzas = new Pizzas({
-          name: menuDetails.name,
-          price: menuDetails.price,
-          ingredients: menuDetails.ingredients,
+          name: name,
+          price: price,
+          ingredients: ingredients,
         });
         const createdPizzas = await pizzas.save();
         await db.disconnect();
         res.status(200).json(createdPizzas);
       }
-      if (menuDetails.type === "cantina") {
+      if (type === "cantina") {
         const cantina = new Cantina({
-          subtitle: menuDetails.subtitle,
-          types: menuDetails.types,
+          subtitle: subtitle,
+          types: types,
         });
         const createdCantina = await cantina.save();
         await db.disconnect();
         res.status(200).json(createdCantina);
       }
-      if (menuDetails.type === "bianche") {
+      if (type === "bianche") {
         const bianche = new Bianche({
-          name: menuDetails.name,
-          price: menuDetails.price,
-          ingredients: menuDetails.ingredients,
+          name: name,
+          price: price,
+          ingredients: ingredients,
         });
         const createdBianche = await bianche.save();
         await db.disconnect();
@@ -238,7 +244,7 @@ export default async function handler(
       return;
     }
   } else {
-    res.setHeader("Allow", ["GET"]);
+    res.setHeader("Allow", ["GET", "POST"]);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
   }
 }

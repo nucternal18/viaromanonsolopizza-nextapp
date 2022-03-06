@@ -111,7 +111,7 @@ export default async function handler(
       await db.connectDB();
       const { menuDetails } = req.body;
       await db.connectDB();
-      if (type === "Antipasti") {
+      if (type === "antipasti") {
         const antipasti = await Antipasti.findById(id);
         if (antipasti) {
           antipasti.name = menuDetails.name;
@@ -122,7 +122,7 @@ export default async function handler(
           res.status(201).json({ message: "Menu item updated successfully" });
         }
       }
-      if (type === "Contorni") {
+      if (type === "contorni") {
         const contorni = await Contorni.findById(id);
         if (contorni) {
           contorni.name = menuDetails.name;
@@ -133,7 +133,7 @@ export default async function handler(
           res.status(201).json({ message: "Menu item updated successfully" });
         }
       }
-      if (type === "Letempure") {
+      if (type === "letempure") {
         const letempure = await Letempure.findById(id);
         if (letempure) {
           letempure.name = menuDetails.name;
@@ -144,7 +144,7 @@ export default async function handler(
           res.status(201).json({ message: "Menu item updated successfully" });
         }
       }
-      if (type === "Secondi") {
+      if (type === "secondi") {
         const secondi = await Secondi.findById(id);
         if (secondi) {
           secondi.name = menuDetails.name;
@@ -156,7 +156,7 @@ export default async function handler(
         }
       }
 
-      if (type === "Desserts") {
+      if (type === "desserts") {
         const desserts = await Desserts.findById(id);
         if (desserts) {
           desserts.name = menuDetails.name;
@@ -167,7 +167,7 @@ export default async function handler(
         }
       }
 
-      if (type === "GourmetPizza") {
+      if (type === "gourmetPizza") {
         const gourmetPizza = await GourmetPizza.findById(id);
         if (gourmetPizza) {
           gourmetPizza.name = menuDetails.name;
@@ -179,7 +179,7 @@ export default async function handler(
         }
       }
 
-      if (type === "Pizzas") {
+      if (type === "pizzas") {
         const pizzas = await Pizzas.findById(id);
         if (pizzas) {
           pizzas.name = menuDetails.name;
@@ -191,7 +191,7 @@ export default async function handler(
         }
         await db.disconnect();
       }
-      if (type === "Cantina") {
+      if (type === "cantina") {
         const cantina = await Cantina.findById(id);
         if (cantina) {
           cantina.types.id(typesId).name = menuDetails.name;
@@ -202,7 +202,7 @@ export default async function handler(
           res.status(201).json({ message: "Menu item updated successfully" });
         }
       }
-      if (type === "Bianche") {
+      if (type === "bianche") {
         const bianche = await Bianche.findById(id);
         if (bianche) {
           bianche.name = menuDetails.name;
@@ -228,7 +228,7 @@ export default async function handler(
      */
     try {
       await db.connectDB();
-      if (type === "Antipasti") {
+      if (type === "antipasti") {
         const antipasti = await Antipasti.findById(id);
         if (antipasti) {
           await antipasti.remove();
@@ -236,7 +236,7 @@ export default async function handler(
           res.status(201).json({ message: "Menu item deleted successfully" });
         }
       }
-      if (type === "Contorni") {
+      if (type === "contorni") {
         const contorni = await Contorni.findById(id);
         if (contorni) {
           await contorni.remove();
@@ -244,7 +244,7 @@ export default async function handler(
           res.status(201).json({ message: "Menu item deleted successfully" });
         }
       }
-      if (type === "Letempure") {
+      if (type === "letempure") {
         const letempure = await Letempure.findById(id);
         if (letempure) {
           await letempure.remove();
@@ -252,7 +252,7 @@ export default async function handler(
           res.status(201).json({ message: "Menu item deleted successfully" });
         }
       }
-      if (type === "Secondi") {
+      if (type === "secondi") {
         const secondi = await Secondi.findById(id);
         if (secondi) {
           await secondi.remove();
@@ -261,7 +261,7 @@ export default async function handler(
         }
       }
 
-      if (type === "Desserts") {
+      if (type === "desserts") {
         const desserts = await Desserts.findById(id);
         if (desserts) {
           await desserts.remove();
@@ -270,7 +270,7 @@ export default async function handler(
         }
       }
 
-      if (type === "GourmetPizza") {
+      if (type === "gourmetPizza") {
         const gourmetPizza = await GourmetPizza.findById(id);
         if (gourmetPizza) {
           await gourmetPizza.remove();
@@ -279,7 +279,7 @@ export default async function handler(
         }
       }
 
-      if (type === "Pizzas") {
+      if (type === "pizzas") {
         const pizzas = await Pizzas.findById(id);
         if (pizzas) {
           await pizzas.remove();
@@ -287,7 +287,7 @@ export default async function handler(
           res.status(201).json({ message: "Menu item deleted successfully" });
         }
       }
-      if (type === "Cantina") {
+      if (type === "cantina") {
         await Cantina.findOneAndUpdate(
           { _id: id },
           {
@@ -298,7 +298,7 @@ export default async function handler(
         res.status(201).json({ message: "Menu item deleted successfully" });
         await db.disconnect();
       }
-      if (type === "Bianche") {
+      if (type === "bianche") {
         const bianche = await Bianche.findById(id);
         if (bianche) {
           await bianche.remove();

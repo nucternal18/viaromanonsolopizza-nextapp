@@ -1,94 +1,12 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, { createContext, useContext, useReducer } from "react";
 
 import { NEXT_URL } from "../config";
-
-export type MenuProps = {
-  antipasti: {
-    _id: string;
-    name: string;
-    name_english: string;
-    price: string;
-    type?: string;
-  }[];
-  contorni: {
-    _id: string;
-    name: string;
-    name_english: string;
-    price: string;
-    type?: string;
-  }[];
-  letempure: {
-    _id: string;
-    name: string;
-    name_english: string;
-    price: string;
-    type?: string;
-  }[];
-  secondi: {
-    _id: string;
-    name: string;
-    name_english: string;
-    price: string;
-    type?: string;
-  }[];
-  desserts: {
-    _id: string;
-    price: string;
-    name: string;
-    type?: string;
-  }[];
-  gourmetPizza: {
-    _id: string;
-    price: string;
-    name: string;
-    ingredients: string[];
-    type?: string;
-  }[];
-  pizzaSpeciali: {
-    _id: string;
-    price: string;
-    name: string;
-    ingredients: string[];
-    type?: string;
-  }[];
-  pizzas: {
-    _id: string;
-    price: string;
-    name: string;
-    ingredients: string[];
-    type?: string;
-  }[];
-
-  cantina: {
-    _id: string;
-    subtitle: string;
-    types: { name: string; Bottiglia: string; Calice: string }[];
-    type?: string;
-  }[];
-
-  bianche: {
-    _id: string;
-    price: string;
-    name: string;
-    ingredients: string[];
-    type?: string;
-  }[];
-};
-
-type MenuDetails = {
-  name: string;
-  price: string;
-  Bottiglia: string;
-  Calice: string;
-  name_english: string;
-  ingredients: string[];
-  typesId: string | string[];
-  menuType: string;
-};
+import { MenuDetails, MenuProps } from "../lib/types";
 
 interface InitialMenuState {
   loading: boolean;
   error: Error;
+  isError: boolean;
   success: boolean;
   menu: MenuProps;
   message: string;
@@ -127,6 +45,7 @@ const menuTypeItemFromStorage =
 const initialState = {
   loading: false,
   error: null,
+  isError: false,
   menu: {
     antipasti: [],
     contorni: [],
@@ -162,9 +81,14 @@ const initialState = {
 const MenuContext = createContext<{
   state: InitialMenuState;
   dispatch: React.Dispatch<any>;
-  addMenuItem: (menuDetails) => void;
-  updateMenuItem: (menuType: string, id: string, menuDetails) => void;
-  deleteMenuItem: (menuType: string, id: string) => void;
+  addMenuItem: (menuDetails: Partial<MenuDetails>, cookies: string) => void;
+  updateMenuItem: (
+    menuType: string,
+    id: string,
+    menuDetails: Partial<MenuDetails>,
+    cookies: string
+  ) => void;
+  deleteMenuItem: (menuType: string, id: string, cookie: string) => void;
   deleteCantinaMenuItem: (
     menuType: string,
     id: string,
@@ -185,7 +109,7 @@ const menuReducer = (state: InitialMenuState, action) => {
     case ActionType.MENU_ACTION_REQUEST:
       return { ...state, loading: true };
     case ActionType.MENU_ACTION_FAIL:
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, loading: false, isError: true, error: action.payload };
     case ActionType.MENU_ITEM_FETCH_SUCCESS:
       return { ...state, loading: false, menu: action.payload, success: true };
     case ActionType.MENU_ITEM_UPDATE_SUCESS:
@@ -219,14 +143,16 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(menuReducer, initialState);
 
   const addMenuItem = async (
-    menuDetails: Partial<MenuDetails>
+    menuDetails: Partial<MenuDetails>,
+    cookies: string
   ): Promise<void> => {
     try {
       dispatch({ type: ActionType.MENU_ACTION_REQUEST });
       const res = await fetch(`${NEXT_URL}/api/menu`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-type": "application/json",
+          cookie: cookies,
         },
         body: JSON.stringify(menuDetails),
       });
@@ -242,7 +168,8 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
   const updateMenuItem = async (
     menuType: string,
     id: string,
-    menuDetails: Partial<MenuDetails>
+    menuDetails: Partial<MenuDetails>,
+    cookies: string
   ): Promise<void> => {
     try {
       dispatch({ type: ActionType.MENU_ACTION_REQUEST });
@@ -252,6 +179,7 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            cookie: cookies,
           },
           body: JSON.stringify(menuDetails),
         }
@@ -267,12 +195,16 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
   };
   const deleteMenuItem = async (
     menuType: string,
-    id: string
+    id: string,
+    cookie: string
   ): Promise<void> => {
     try {
       dispatch({ type: ActionType.MENU_ACTION_REQUEST });
       const res = await fetch(`${NEXT_URL}/api/menu/${id}?type=${menuType}`, {
         method: "DELETE",
+        headers: {
+          cookie: cookie,
+        },
       });
       const data = await res.json();
       dispatch({

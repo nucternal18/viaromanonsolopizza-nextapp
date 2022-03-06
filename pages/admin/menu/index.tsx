@@ -17,10 +17,11 @@ import { useMenu } from "../../../context/menuContext";
 import { NEXT_URL } from "../../../config";
 import getUser from "../../../lib/getUser";
 import { IFormData } from "../../../lib/types";
+import { toast } from "react-toastify";
 
 function ManageMenu({ menu, cookie }) {
   const router = useRouter();
-  const { state, deleteCantinaMenuItem } = useMenu();
+  const { state, deleteCantinaMenuItem, deleteMenuItem } = useMenu();
 
   const page = state?.page || 1;
   const {
@@ -45,6 +46,15 @@ function ManageMenu({ menu, cookie }) {
     return () => subscribe.unsubscribe();
   }, [watch, page]);
 
+  useEffect(() => {
+    if (state?.success) {
+      toast(state?.message);
+      router.replace(
+        `/admin/menu?page=1&sort=latest&menuType=${state?.menuType}`
+      );
+    }
+  }, []);
+
   return (
     <AdminLayout title="Manage menu">
       <section className=" flex-grow w-full h-screen mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-4">
@@ -57,9 +67,15 @@ function ManageMenu({ menu, cookie }) {
                 data={menu}
                 deleteItem={deleteCantinaMenuItem}
                 cookie={cookie}
+                menuType={state?.menuType}
               />
             ) : (
-              <Table data={menu} menuType={state?.menuType} />
+              <Table
+                data={menu}
+                menuType={state?.menuType}
+                deleteItem={deleteMenuItem}
+                cookie={cookie}
+              />
             )}
           </div>
         </div>

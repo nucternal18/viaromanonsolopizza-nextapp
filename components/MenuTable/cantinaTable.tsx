@@ -1,11 +1,10 @@
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/router";
 
-function CantinaTable({ data, deleteItem, cookie }) {
+function CantinaTable({ data, deleteItem, cookie, menuType }) {
   const router = useRouter();
   const handleDelete = (id, typesId) => {
-    deleteItem(id, "Cantina", typesId, cookie);
-    router.replace("/admin/menu?page=1&sort=latest&menuType=cantina");
+    deleteItem(id, menuType, typesId, cookie);
   };
   return (
     <div>

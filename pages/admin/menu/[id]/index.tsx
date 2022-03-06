@@ -1,11 +1,7 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import {
-  useForm,
-  SubmitHandler,
-  useFieldArray,
-  Control,
-} from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { useRouter } from "next/router";
 
 // components
@@ -20,8 +16,9 @@ import { useMenu } from "../../../../context/menuContext";
 import { NEXT_URL } from "../../../../config";
 import getUser from "../../../../lib/getUser";
 import { IFormData } from "../../../../lib/types";
+import { toast } from "react-toastify";
 
-function EditMenuItem({ menuItem, menuType, id }) {
+function EditMenuItem({ menuItem, menuType, id, cookies }) {
   const router = useRouter();
   const { state, updateMenuItem } = useMenu();
   const {
@@ -45,6 +42,16 @@ function EditMenuItem({ menuItem, menuType, id }) {
     name: "ingredients",
   });
 
+  useEffect(() => {
+    if (state?.isError) {
+      toast.error(state?.error);
+    }
+    if (state.success) {
+      toast(state.message);
+      router.push(`/admin/menu?page=1&sort=latest&menuType=${menuType}`);
+    }
+  }, [state?.success, state?.message, state?.isError, state?.error]);
+
   const onSubmit: SubmitHandler<IFormData> = async (data) => {
     const menuDetails = {
       name: data.name,
@@ -52,8 +59,7 @@ function EditMenuItem({ menuItem, menuType, id }) {
       ingredients: data.ingredients,
       price: data.price,
     };
-    console.log(menuDetails);
-    // updateMenuItem(menuType, id, menuDetails);
+    updateMenuItem(menuType, id, menuDetails, cookies);
   };
   return (
     <AdminLayout>
@@ -124,7 +130,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const data = await res.json();
 
   return {
-    props: { menuItem: data, menuType: type, id },
+    props: { menuItem: data, menuType: type, id, cookies: req.headers.cookie },
   };
 };
 

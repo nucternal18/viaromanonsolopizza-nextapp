@@ -16,8 +16,7 @@ import getUser from "../../../../lib/getUser";
 import EditMenuItemForm from "../../../../components/form/EditMenuItemForm";
 import { IFormData } from "../../../../lib/types";
 
-function EditMenuItem({ menuItem, menuType, typesId, id }) {
-  console.log(menuItem);
+function EditMenuItem({ menuItem, menuType, typesId, id, cookies }) {
   const router = useRouter();
   const { state, updateMenuItem } = useMenu();
   const {
@@ -35,11 +34,14 @@ function EditMenuItem({ menuItem, menuType, typesId, id }) {
   });
 
   useEffect(() => {
+    if (state?.isError) {
+      toast.error(state?.error);
+    }
     if (state.success) {
       toast(state.message);
-      router.push(`/admin/menu`);
+      router.push(`/admin/menu?page=1&sort=latest&menuType=${menuType}`);
     }
-  }, []);
+  }, [state?.success, state?.message, state?.isError, state?.error]);
 
   const onSubmit: SubmitHandler<IFormData> = async (data) => {
     const menuDetails = {
@@ -48,7 +50,7 @@ function EditMenuItem({ menuItem, menuType, typesId, id }) {
       Calice: data.Calice,
       typesId,
     };
-    updateMenuItem(menuType, id, menuDetails);
+    updateMenuItem(menuType, id, menuDetails, cookies);
   };
   return (
     <AdminLayout>
@@ -114,7 +116,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const data = await res.json();
 
   return {
-    props: { menuItem: data, menuType: type, id, typesId },
+    props: {
+      menuItem: data,
+      menuType: type,
+      id,
+      typesId,
+      cookies: req.headers.cookie,
+    },
   };
 };
 

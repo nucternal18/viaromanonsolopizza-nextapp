@@ -1,12 +1,14 @@
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/router";
 
-function Table({ data, menuType }) {
+function Table({ data, menuType, deleteItem, cookie }) {
   const router = useRouter();
-
+  const handleDelete = (id) => {
+    deleteItem(id, menuType, cookie);
+  };
   return (
     <table className="w-full sm:shadow-xl sm:rounded-2xl  md:table">
-      <thead className="bg-gray-50 dark:bg-yellow-500  hidden md:table-header-group">
+      <thead className="bg-gray-50 dark:bg-red-500  hidden md:table-header-group">
         <tr className="md:table-row absolute  -top-full md:top-auto gap-2 -left-full md:left-auto  md:relative">
           <th
             scope="col"
@@ -162,7 +164,11 @@ function Table({ data, menuType }) {
                 >
                   <FaEdit fontSize={21} />
                 </button>
-                <button type="button" className="text-red-500">
+                <button
+                  type="button"
+                  className="text-red-500"
+                  onClick={() => handleDelete(item._id)}
+                >
                   <FaTrash fontSize={20} />
                 </button>
               </div>
