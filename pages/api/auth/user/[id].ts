@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
      * @desc check to see if their is a user session
      */
     if (!session) {
-      res.status(401).json({ message: "Not Authorized" });
+      res.status(401).json({ message: "Non autorizzato" });
       return;
     }
 
@@ -41,7 +41,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         image: updatedUser.image,
         email: updatedUser.email,
         isAdmin: updatedUser.isAdmin,
-        shippingAddress: updatedUser.shippingAddress,
       });
     } else {
       await db.disconnect();

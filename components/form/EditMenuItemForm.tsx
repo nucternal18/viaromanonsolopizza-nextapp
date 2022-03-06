@@ -15,7 +15,9 @@ type ErrorProps = {
   Bottiglia?: FieldError;
   Calice?: FieldError;
   name_english?: FieldError;
-  ingredients?: FieldError[];
+  ingredients?: {
+    content?: FieldError;
+  }[];
   price?: FieldError;
   menuType?: FieldError;
 };
@@ -128,13 +130,13 @@ const EditMenuItemForm = ({
                     className="flex flex-row items-center gap-2 sm:gap-4"
                   >
                     <FormRowInput
-                      label=""
-                      {...register(`ingredients.${index}`)}
+                      placeholder="Ingredient"
+                      {...register(`ingredients.${index}.content`)}
                     />
                     <button
                       type="button"
                       onClick={() => remove(index)}
-                      className=" px-4 py-2 font-bold  text-white bg-red-500 rounded hover:bg-red-700 focus:outline-none focus:shadow-outline"
+                      className=" px-4 py-2 font-bold mb-2 text-white bg-red-500 rounded hover:bg-red-700 focus:outline-none focus:shadow-outline"
                     >
                       DELETE
                     </button>
@@ -144,7 +146,7 @@ const EditMenuItemForm = ({
                 type="button"
                 color="primary"
                 onClick={() => {
-                  append("New value");
+                  append("");
                 }}
               >
                 append

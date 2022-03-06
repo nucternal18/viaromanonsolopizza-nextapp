@@ -15,12 +15,15 @@ interface InitialMenuState {
   page: number;
   menuType: string;
   menuTypeOptions: string[];
+  subtitle: string;
+  subtitleOptions: string[];
 }
 
 export enum ActionType {
   MENU_ACTION_REQUEST = "MENU_ACTION_REQUEST",
   MENU_ACTION_FAIL = "MENU_ACTION_FAIL",
   MENU_ITEM_FETCH_SUCCESS = "MENU_ITEM_FETCH_SUCCESS",
+  MENU_ITEM_ADD_SUCCESS = "MENU_ITEM_ADD_SUCCESS",
   MENU_ITEM_UPDATE_SUCESS = "MENU_ITEM_UPDATE_SUCESS",
   MENU_ITEM_UPDATE_TYPE = "MENU_ITEM_UPDATE_TYPE",
   MENU_ITEM_UPDATE_SORT = "MENU_ITEM_UPDATE_SORT",
@@ -76,6 +79,20 @@ const initialState = {
   ],
   menuType: menuTypeItemFromStorage,
   page: 1,
+  subtitle: "",
+  subtitleOptions: [
+    "BOLLICINE",
+    "VINI BIANCHI",
+    "VINI ROSSI",
+    "VINI ROSATI",
+    "VINI DOLCI",
+    "AMARI/GRAPPE/LIQUORI",
+    "BIRRA ALLA SPINA",
+    "BIRRA IN BOTTIGLIA",
+    "AQUA NATURALE/FRIZZANTE",
+    "BIBITE",
+    "CAFFETERIA",
+  ],
 };
 
 const MenuContext = createContext<{
@@ -112,6 +129,13 @@ const menuReducer = (state: InitialMenuState, action) => {
       return { ...state, loading: false, isError: true, error: action.payload };
     case ActionType.MENU_ITEM_FETCH_SUCCESS:
       return { ...state, loading: false, menu: action.payload, success: true };
+    case ActionType.MENU_ITEM_ADD_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        message: action.payload,
+        success: true,
+      };
     case ActionType.MENU_ITEM_UPDATE_SUCESS:
       return {
         ...state,
@@ -158,7 +182,7 @@ const MenuProvider = ({ children }: { children: JSX.Element }) => {
       });
       const data = await res.json();
       dispatch({
-        type: ActionType.MENU_ITEM_UPDATE_SUCESS,
+        type: ActionType.MENU_ITEM_ADD_SUCCESS,
         payload: data.message,
       });
     } catch (error) {

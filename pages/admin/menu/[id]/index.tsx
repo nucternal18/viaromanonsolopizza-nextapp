@@ -21,6 +21,12 @@ import { toast } from "react-toastify";
 function EditMenuItem({ menuItem, menuType, id, cookies }) {
   const router = useRouter();
   const { state, updateMenuItem } = useMenu();
+  const menuItemIngredients = menuItem.ingredients.map((ingredient) => {
+    return {
+      content: ingredient,
+    };
+  });
+
   const {
     register,
     reset,
@@ -31,7 +37,7 @@ function EditMenuItem({ menuItem, menuType, id, cookies }) {
     defaultValues: {
       name: menuItem?.name,
       name_english: menuItem?.name_english,
-      ingredients: menuItem?.ingredients,
+      ingredients: menuItemIngredients,
       price: menuItem?.price,
       menuType: menuType,
     },
@@ -53,10 +59,13 @@ function EditMenuItem({ menuItem, menuType, id, cookies }) {
   }, [state?.success, state?.message, state?.isError, state?.error]);
 
   const onSubmit: SubmitHandler<IFormData> = async (data) => {
+    const updatedIngredients = data?.ingredients?.map((ingredient) => {
+      return ingredient["content"];
+    });
     const menuDetails = {
       name: data.name,
       name_english: data.name_english,
-      ingredients: data.ingredients,
+      ingredients: updatedIngredients,
       price: data.price,
     };
     updateMenuItem(menuType, id, menuDetails, cookies);

@@ -11,6 +11,7 @@ const UploadForm = ({
   image,
   uploading,
   error,
+  cookies,
 }) => {
   const router = useRouter();
 
@@ -22,7 +23,7 @@ const UploadForm = ({
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = () => {
-        uploadGalleryImage(reader.result);
+        uploadGalleryImage(reader.result, cookies);
       };
       reader.onerror = () => {
         console.error("something went wrong!");
@@ -34,8 +35,7 @@ const UploadForm = ({
 
   const submitHandler = (e) => {
     e.preventDefault();
-    addPicture(image);
-    router.reload();
+    addPicture(image, cookies);
   };
 
   return (

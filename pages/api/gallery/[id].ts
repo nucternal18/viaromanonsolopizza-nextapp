@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
      * @desc check to see if their is a user session
      */
     if (!session) {
-      res.status(401).json({ message: "Not Authorized" });
+      res.status(401).json({ message: "Non autorizzato" });
       return;
     }
 
@@ -30,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
      * @desc check to see if logged in user is admin
      */
     if (!userData.isAdmin) {
-      res.status(401).json({ message: "Not Authorized" });
+      res.status(401).json({ message: "Non autorizzato" });
       return;
     }
 
@@ -41,7 +41,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       if (picture) {
         await picture.remove();
-        res.json({ message: "Picture removed" });
+        res.status(200).json({ message: "Picture removed" });
       }
     } catch (error) {
       res.status(404).json({ message: "Unable to delete picture" });

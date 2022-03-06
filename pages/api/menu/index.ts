@@ -112,26 +112,20 @@ export default async function handler(
      * @desc check to see if their is a user session
      */
     if (!session) {
-      console.log("no session");
-      res.status(401).json({ message: "Not Authorized" });
+      res.status(401).json({ message: "Non autorizzato" });
       return;
     }
 
     const userData = await getUser(req);
-    console.log(userData);
 
     if (!userData.isAdmin) {
-      console.log("not admin");
       res.status(401).json({
-        message:
-          "Not Authorized. You do not have permission to perform this operation.",
+        message: "Non autorizzato.",
       });
       return;
     }
-    console.log(req.body);
     const { name, name_english, ingredients, subtitle, price, type, types } =
       req.body;
-    console.log(name, name_english, ingredients, subtitle, price, type, types);
     try {
       await db.connectDB();
       if (type === "antipasti") {
@@ -140,9 +134,9 @@ export default async function handler(
           name_english: name_english,
           price: price,
         });
-        const createdAntipasti = await antipasti.save();
+        await antipasti.save();
         await db.disconnect();
-        res.status(200).json(createdAntipasti);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
       if (type === "contorni") {
         const contorni = new Contorni({
@@ -150,9 +144,9 @@ export default async function handler(
           name_english: name_english,
           price: price,
         });
-        const createdContorni = await contorni.save();
+        await contorni.save();
         await db.disconnect();
-        res.status(200).json(createdContorni);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
       if (type === "letempure") {
         const letempure = new Letempure({
@@ -160,9 +154,9 @@ export default async function handler(
           name_english: name_english,
           price: price,
         });
-        const createdLetempure = await letempure.save();
+        await letempure.save();
         await db.disconnect();
-        res.status(200).json(createdLetempure);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
       if (type === "secondi") {
         const secondi = new Secondi({
@@ -170,9 +164,9 @@ export default async function handler(
           name_english: name_english,
           price: price,
         });
-        const createdSecondi = await secondi.save();
+        await secondi.save();
         await db.disconnect();
-        res.status(200).json(createdSecondi);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
 
       if (type === "desserts") {
@@ -180,9 +174,9 @@ export default async function handler(
           name: name,
           price: price,
         });
-        const createdDesserts = await desserts.save();
+        await desserts.save();
         await db.disconnect();
-        res.status(200).json(createdDesserts);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
 
       if (type === "gourmetPizza") {
@@ -191,9 +185,9 @@ export default async function handler(
           price: price,
           ingredients: ingredients,
         });
-        const createdGourmetPizza = await gourmetPizza.save();
+        await gourmetPizza.save();
         await db.disconnect();
-        res.status(200).json(createdGourmetPizza);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
 
       if (type === "pizzaSpeciali") {
@@ -202,9 +196,9 @@ export default async function handler(
           price: price,
           ingredients: ingredients,
         });
-        const createdPizzaSpeciali = await pizzaSpeciali.save();
+        await pizzaSpeciali.save();
         await db.disconnect();
-        res.status(200).json(createdPizzaSpeciali);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
 
       if (type === "pizzas") {
@@ -213,18 +207,24 @@ export default async function handler(
           price: price,
           ingredients: ingredients,
         });
-        const createdPizzas = await pizzas.save();
+        await pizzas.save();
         await db.disconnect();
-        res.status(200).json(createdPizzas);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
       if (type === "cantina") {
-        const cantina = new Cantina({
-          subtitle: subtitle,
-          types: types,
-        });
-        const createdCantina = await cantina.save();
+        let cantina;
+        if (subtitle) {
+          cantina = await Cantina.findOne({ subtitle: subtitle });
+          cantina.types.push(types);
+        } else {
+          cantina = new Cantina({
+            subtitle: subtitle,
+            types: types,
+          });
+        }
+        await cantina.save();
         await db.disconnect();
-        res.status(200).json(createdCantina);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
       if (type === "bianche") {
         const bianche = new Bianche({
@@ -232,9 +232,9 @@ export default async function handler(
           price: price,
           ingredients: ingredients,
         });
-        const createdBianche = await bianche.save();
+        await bianche.save();
         await db.disconnect();
-        res.status(200).json(createdBianche);
+        res.status(200).json({ message: "Menu item created successfully" });
       }
     } catch (error) {
       res.status(401).json({

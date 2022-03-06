@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
 
     if (!session) {
-      res.status(401).json({ message: "Not Authorized" });
+      res.status(401).json({ message: "Non autorizzato" });
       return;
     }
 

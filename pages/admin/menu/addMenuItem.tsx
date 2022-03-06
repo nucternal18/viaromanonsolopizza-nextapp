@@ -13,6 +13,7 @@ import { useMenu } from "../../../context/menuContext";
 import getUser from "../../../lib/getUser";
 import { AddMenuItemForm } from "../../../components/form/AddMenuItemForm";
 import { IFormData } from "../../../lib/types";
+import { toast } from "react-toastify";
 
 function AddMenuItem({ cookies }) {
   const { state, addMenuItem } = useMenu();
@@ -29,8 +30,7 @@ function AddMenuItem({ cookies }) {
     defaultValues: {
       name: "",
       name_english: "",
-      ingredients: ["value"],
-      subtitle: "",
+      ingredients: [{ content: "" }],
       price: "0,00",
       types: [{ name: "", Bottiglia: "", Calice: "" }],
     },
@@ -61,19 +61,32 @@ function AddMenuItem({ cookies }) {
     name: "types",
   });
 
+  useEffect(() => {
+    if (state?.isError) {
+      toast.error(state?.error);
+    }
+    if (state?.success) {
+      toast.success(state?.message);
+    }
+  }, [state?.success, state?.isError, state?.error, state?.message]);
+
   const onSubmit: SubmitHandler<Partial<IFormData>> = (data) => {
+    const newIngredients = data?.ingredients?.map((ingredient) => {
+      return ingredient["content"];
+    });
+
     const menuDetails = {
       name: data?.name,
       name_english: data?.name_english,
-      ingredients: data?.ingredients,
+      ingredients: newIngredients,
       subtitle: data?.subtitle || "",
       price: data?.price,
       types: data?.types || [],
       type: data?.menuType,
     };
-    console.log(menuDetails);
-    // addMenuItem(menuDetails, cookies);
-    // reset();
+
+    addMenuItem(menuDetails, cookies);
+    reset();
   };
 
   return (
@@ -99,6 +112,7 @@ function AddMenuItem({ cookies }) {
             typesRemove={typesRemove}
             ingredientsRemove={ingredientsRemove}
             menuTypeOptions={state?.menuTypeOptions}
+            subtitleOptions={state?.subtitleOptions}
           />
         </div>
       </section>

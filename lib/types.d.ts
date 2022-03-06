@@ -1,17 +1,32 @@
+interface TypesProps {
+  name?: string;
+  Bottiglia?: string;
+  Calice?: string;
+}
+
+interface Ingredient {
+  content: string;
+}
 export interface IFormData {
   name?: string;
   Bottiglia?: string;
   Calice?: string;
   name_english?: string;
-  ingredients?: string[];
+  ingredients?: Ingredient[];
   price?: string;
   menuType?: string;
   sort?: string;
   subtitle?: string;
-  types: { name?: string; Bottiglia?: string; Calice?: string }[];
+  types: TypesProps[];
   sortOptions?: string[];
   menuType?: string;
   menuTypeOptions?: string[];
+}
+
+export interface IPicture {
+  pictures: { _id: string; image: string; createdAt: Date }[];
+  numberOfPages: number;
+  totalPictures: number;
 }
 
 export type MenuProps = {

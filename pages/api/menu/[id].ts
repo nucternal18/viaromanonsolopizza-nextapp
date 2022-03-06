@@ -1,3 +1,4 @@
+import { PizzaSpeciali } from "./../../../models/menuModel";
 import { NextApiRequest, NextApiResponse } from "next";
 import db from "../../../lib/db";
 import {
@@ -27,13 +28,13 @@ export default async function handler(
    * @desc check to see if their is a user session
    */
   if (!session) {
-    res.status(401).json({ message: "Not Authorized" });
+    res.status(401).json({ message: "Non autorizzato" });
     return;
   }
 
   const userData = await getUser(req);
   if (!userData.isAdmin) {
-    res.status(401).json({ message: "Not Authorized " });
+    res.status(401).json({ message: "Non autorizzato " });
     return;
   }
   const { id, type, typesId } = req.query;
@@ -77,6 +78,11 @@ export default async function handler(
         await db.disconnect();
         res.status(200).json(gourmetPizza);
       }
+      if (type === "pizzaSpeciali") {
+        const pizzaSpeciali = await PizzaSpeciali.findById(id);
+        await db.disconnect();
+        res.status(200).json(pizzaSpeciali);
+      }
       if (type === "pizzas") {
         const pizzas = await Pizzas.findById(id);
         await db.disconnect();
@@ -109,14 +115,15 @@ export default async function handler(
      */
     try {
       await db.connectDB();
-      const { menuDetails } = req.body;
+      const { name, name_english, ingredients, price, Bottiglia, Calice } =
+        req.body;
       await db.connectDB();
       if (type === "antipasti") {
         const antipasti = await Antipasti.findById(id);
         if (antipasti) {
-          antipasti.name = menuDetails.name;
-          antipasti.name_english = menuDetails.name_english;
-          antipasti.price = menuDetails.price;
+          antipasti.name = name;
+          antipasti.name_english = name_english;
+          antipasti.price = price;
           await antipasti.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });
@@ -125,9 +132,9 @@ export default async function handler(
       if (type === "contorni") {
         const contorni = await Contorni.findById(id);
         if (contorni) {
-          contorni.name = menuDetails.name;
-          contorni.name_english = menuDetails.name_english;
-          contorni.price = menuDetails.price;
+          contorni.name = name;
+          contorni.name_english = name_english;
+          contorni.price = price;
           await contorni.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });
@@ -136,9 +143,9 @@ export default async function handler(
       if (type === "letempure") {
         const letempure = await Letempure.findById(id);
         if (letempure) {
-          letempure.name = menuDetails.name;
-          letempure.name_english = menuDetails.name_english;
-          letempure.price = menuDetails.price;
+          letempure.name = name;
+          letempure.name_english = name_english;
+          letempure.price = price;
           await letempure.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });
@@ -147,9 +154,9 @@ export default async function handler(
       if (type === "secondi") {
         const secondi = await Secondi.findById(id);
         if (secondi) {
-          secondi.name = menuDetails.name;
-          secondi.name_english = menuDetails.name_english;
-          secondi.price = menuDetails.price;
+          secondi.name = name;
+          secondi.name_english = name_english;
+          secondi.price = price;
           await secondi.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });
@@ -159,8 +166,8 @@ export default async function handler(
       if (type === "desserts") {
         const desserts = await Desserts.findById(id);
         if (desserts) {
-          desserts.name = menuDetails.name;
-          desserts.price = menuDetails.price;
+          desserts.name = name;
+          desserts.price = price;
           await desserts.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });
@@ -170,10 +177,23 @@ export default async function handler(
       if (type === "gourmetPizza") {
         const gourmetPizza = await GourmetPizza.findById(id);
         if (gourmetPizza) {
-          gourmetPizza.name = menuDetails.name;
-          gourmetPizza.name_english = menuDetails.name_english;
-          gourmetPizza.price = menuDetails.price;
+          gourmetPizza.name = name;
+          gourmetPizza.name_english = name_english;
+          gourmetPizza.price = price;
+          gourmetPizza.ingredients = ingredients;
           await gourmetPizza.save();
+          await db.disconnect();
+          res.status(201).json({ message: "Menu item updated successfully" });
+        }
+      }
+      if (type === "pizzaSpeciali") {
+        const pizzaSpeciali = await PizzaSpeciali.findById(id);
+        if (pizzaSpeciali) {
+          pizzaSpeciali.name = name;
+          pizzaSpeciali.name_english = name_english;
+          pizzaSpeciali.price = price;
+          pizzaSpeciali.ingredients = ingredients;
+          await pizzaSpeciali.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });
         }
@@ -182,9 +202,10 @@ export default async function handler(
       if (type === "pizzas") {
         const pizzas = await Pizzas.findById(id);
         if (pizzas) {
-          pizzas.name = menuDetails.name;
-          pizzas.name_english = menuDetails.name_english;
-          pizzas.price = menuDetails.price;
+          pizzas.name = name;
+          pizzas.name_english = name_english;
+          pizzas.price = price;
+          pizzas.ingredients = ingredients;
           await pizzas.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });
@@ -194,9 +215,9 @@ export default async function handler(
       if (type === "cantina") {
         const cantina = await Cantina.findById(id);
         if (cantina) {
-          cantina.types.id(typesId).name = menuDetails.name;
-          cantina.types.id(typesId).Bottiglia = menuDetails.Bottiglia;
-          cantina.types.id(typesId).Calice = menuDetails.name;
+          cantina.types.id(typesId).name = name;
+          cantina.types.id(typesId).Bottiglia = Bottiglia;
+          cantina.types.id(typesId).Calice = Calice;
           await cantina.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });
@@ -205,9 +226,9 @@ export default async function handler(
       if (type === "bianche") {
         const bianche = await Bianche.findById(id);
         if (bianche) {
-          bianche.name = menuDetails.name;
-          bianche.name_english = menuDetails.name_english;
-          bianche.price = menuDetails.price;
+          bianche.name = name;
+          bianche.name_english = name_english;
+          bianche.price = price;
           await bianche.save();
           await db.disconnect();
           res.status(201).json({ message: "Menu item updated successfully" });

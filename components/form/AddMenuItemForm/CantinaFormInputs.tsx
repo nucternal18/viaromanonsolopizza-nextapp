@@ -17,13 +17,7 @@ export const CantinaFormInputs = ({
         <div>
           <FormRowInput
             placeholder="Name"
-            {...register(`types.${index}.name`, {
-              required: true,
-              pattern: {
-                value: /^[A-Za-z\s, -]+$/,
-                message: "Please enter a valid name",
-              },
-            })}
+            {...register(`types.${index}.name`)}
           />
           {errors && (
             <span id="name-error" className="text-gray-800 dark:text-red-500">

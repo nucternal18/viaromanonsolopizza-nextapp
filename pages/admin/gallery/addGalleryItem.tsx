@@ -10,8 +10,9 @@ import getUser from "../../../lib/getUser";
 // Context
 import { useGallery } from "../../../context/galleryContext";
 
-function AddGalleryItem() {
-  const { state, addPicture, deletePicture, uploadGalleryImage } = useGallery();
+function AddGalleryItem({ cookies }) {
+  const { state, addPicture, uploadGalleryImage } = useGallery();
+  console.log(state.image);
   return (
     <AdminLayout>
       <section className=" flex-grow w-full h-screen p-4 mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-10">
@@ -19,9 +20,10 @@ function AddGalleryItem() {
           <UploadForm
             addPicture={addPicture}
             uploadGalleryImage={uploadGalleryImage}
-            uploading={state.uploading}
-            error={state.error}
-            image={state.image.url}
+            uploading={state?.uploading}
+            error={state?.error}
+            image={state?.image}
+            cookies={cookies}
           />
         </div>
       </section>
@@ -41,33 +43,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-  try {
-    const user = await getUser(req);
 
-    if (!user.isAdmin) {
-      return {
-        redirect: {
-          destination: "/",
-          permanent: false,
-        },
-      };
-    }
+  const user = await getUser(req);
+
+  if (!user.isAdmin) {
     return {
-      props: {},
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
     };
-  } catch (error) {
-    // either the `token` cookie didn't exist
-    // or token verification failed
-    // either way: redirect to the login page
-    ctx.res.writeHead(302, { Location: "/auth/login" });
-    ctx.res.end();
-
-    // `as never` prevents inference issues
-    // with InferGetServerSidePropsType.
-    // The props returned here don't matter because we've
-    // already redirected the user.
-    return { props: {} as never };
   }
+  return {
+    props: { cookies: ctx.req.headers.cookie },
+  };
 };
 
 export default AddGalleryItem;
