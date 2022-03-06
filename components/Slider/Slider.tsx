@@ -1,7 +1,5 @@
 // import Image from 'next/image';
 
-import useFirestore from "../../lib/hooks/useFirestore";
-
 const shimmer = (w, h) => `
 <svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <defs>
@@ -22,8 +20,6 @@ const shimmer = (w, h) => `
 //     : window.btoa(str);
 
 function ImageSlider() {
-  const { docs } = useFirestore("sliderimages");
-
   return (
     <section className="relative flex items-center content-center justify-center h-screen pt-16 pb-32">
       <div className="absolute top-0 w-full h-full bg-center bg-cover">
