@@ -1,8 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
-import User from "../../../models/userModel";
-import db from "../../../lib/db";
 import prisma from "@lib/prisma";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
