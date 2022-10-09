@@ -1,16 +1,17 @@
+import bcrypt from "bcryptjs";
 /* eslint-disable import/no-anonymous-default-export */
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
-import User from "../../../../models/userModel";
-import db from "../../../../lib/db";
-import getUser from "../../../../lib/getUser";
+import { Session } from "next-auth";
+
+import prisma from "@lib/prisma";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "PUT") {
     /**
      * @desc Get user session
      */
-    const session = await getSession({ req });
+    const session: Session = await getSession({ req });
     /**
      * @desc check to see if their is a user session
      */
@@ -20,30 +21,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { id } = req.query;
-    await db.connectDB();
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        id: id as string,
+      },
+    });
 
-    const user = await User.findById(id);
+    if (!existingUser) {
+      res.status(404).json({ success: true, message: "Non autorizzato" });
+    }
 
+    const user = await prisma.user.update({
+      where: {
+        id: id as string,
+      },
+      data: {
+        name: req.body.user.displayName
+          ? req.body.user.displayName
+          : existingUser.name,
+        image: req.body.user.image ? req.body.user.image : existingUser.image,
+        email: req.body.user.email ? req.body.user.email : existingUser.email,
+        password: req.body.user && bcrypt.hashSync(req.body.user.password, 10),
+      },
+    });
+    await prisma.$disconnect();
     if (user) {
-      user.name = req.body.user.displayName || user.name;
-      user.image = req.body.user.image || user.image;
-      user.email = req.body.user.email || user.email;
-      if (req.body.password) {
-        user.password = req.body.user.password;
-      }
-
-      const updatedUser = await user.save();
-      await db.disconnect();
-
-      res.json({
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        image: updatedUser.image,
-        email: updatedUser.email,
-        isAdmin: updatedUser.isAdmin,
-      });
+      res.status(201).json(user);
     } else {
-      await db.disconnect();
       res.status(404);
       throw new Error("User not found");
     }
