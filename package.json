@@ -4,6 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "generate": "npx prisma generate",
     "lint": "next lint --no-cache",
     "test": "jest",
     "prepare": "husky install",
