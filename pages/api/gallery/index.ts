@@ -1,9 +1,9 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { NextApiRequest, NextApiResponse } from "next";
+import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
-import db from "../../../lib/db";
-import getUser from "../../../lib/getUser";
-import Picture from "../../../models/galleryModel";
+
+import prisma from "@lib/prisma";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   /**
@@ -15,36 +15,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     /**
      * @desc Get user session
      */
-    const session = await getSession({ req });
+    const session: Session = await getSession({ req });
     /**
      * @desc check to see if their is a user session
      */
     if (!session) {
-      res.status(401).json({ message: "Non autorizzato" });
+      res.status(401).json({ success: false, message: "Non autorizzato" });
       return;
     }
 
-    const userData = await getUser(req);
     /**
      * @desc check to see if logged in user is admin
      */
-    if (!userData.isAdmin) {
-      res.status(401).json({ message: "Non autorizzato" });
+    if (!session.user.isAdmin) {
+      res.status(401).json({ success: false, message: "Non autorizzato" });
       return;
     }
 
-    await db.connectDB();
-    console.log("Reached");
-    console.log(req.body);
     const { imageUrl } = req.body;
     if (!imageUrl) {
-      return res.status(400).send({ message: "Missing image url" });
+      res.status(400).send({ success: false, message: "Missing image url" });
+      return;
     }
-    const picture = new Picture({
-      image: imageUrl,
+    await prisma.pictures.create({
+      data: {
+        image: imageUrl,
+      },
     });
-    await picture.save();
-    res.status(201).json({ message: "Immagine aggiunta con successo" });
+    res
+      .status(201)
+      .json({ success: true, message: "Immagine aggiunta con successo" });
   } else if (req.method === "GET") {
     /**
      * @desc GET all pictures.
@@ -54,18 +54,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { sort } = req.query;
 
-    await db.connectDB();
-
-    // No await here because we don't need to wait for the query to finish
-    let result = Picture.find({});
     let page: number;
     // Chain sort conditions
-    if (sort === "latest") {
-      result = result.sort("-createdAt");
-    }
-    if (sort === "oldest") {
-      result = result.sort("createdAt");
-    }
 
     //Pagination
 
@@ -76,19 +66,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    result = result.skip(skip).limit(limit);
-
-    const pictures = await result;
-
-    const totalPictures = await Picture.countDocuments();
+    // No await here because we don't need to wait for the query to finish
+    const pictures = await prisma.pictures.findMany({
+      orderBy: {
+        createdAt: sort === "oldest" ? "asc" : "desc",
+      },
+      skip: skip,
+      take: limit,
+    });
+    await prisma.$disconnect();
+    const totalPictures = pictures.length;
     const numberOfPages = Math.ceil(totalPictures / limit);
-
-    await db.disconnect();
 
     res.status(200).json({ pictures, totalPictures, numberOfPages });
   } else {
     res.setHeader("Allow", ["GET"]);
-    res.status(405).json({ message: `Method ${req.method} not allowed` });
+    res
+      .status(405)
+      .json({ success: false, message: `Method ${req.method} not allowed` });
   }
 };
 

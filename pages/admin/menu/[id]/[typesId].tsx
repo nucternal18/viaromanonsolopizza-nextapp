@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -8,17 +8,19 @@ import { useRouter } from "next/router";
 // components
 import { Button } from "../../../../components";
 import AdminLayout from "../../../../components/layout/AdminLayout";
+import EditMenuItemForm from "../../../../components/form/EditMenuItemForm";
 
 // utils
 import { NEXT_URL } from "../../../../config";
-import { useMenu } from "../../../../context/menuContext";
 import getUser from "../../../../lib/getUser";
-import EditMenuItemForm from "../../../../components/form/EditMenuItemForm";
 import { IFormData } from "../../../../lib/types";
+
+// redux
+import { useUpdateMenuMutation } from "@features/menu/menuApiSlice";
 
 function EditMenuItem({ menuItem, menuType, typesId, id, cookies }) {
   const router = useRouter();
-  const { state, updateMenuItem } = useMenu();
+  const [updateMenu, { isLoading }] = useUpdateMenuMutation();
   const {
     register,
     reset,
@@ -33,25 +35,31 @@ function EditMenuItem({ menuItem, menuType, typesId, id, cookies }) {
     },
   });
 
-  useEffect(() => {
-    if (state?.isError) {
-      toast.error(state?.error);
-    }
-    if (state.success) {
-      toast(state.message);
-      router.push(`/admin/menu?page=1&sort=latest&menuType=${menuType}`);
-    }
-  }, [state?.success, state?.message, state?.isError, state?.error]);
-
-  const onSubmit: SubmitHandler<IFormData> = async (data) => {
+  const onSubmit: SubmitHandler<IFormData> = useCallback(async (data) => {
     const menuDetails = {
       name: data.name,
       Bottiglia: data.Bottiglia,
       Calice: data.Calice,
       typesId,
     };
-    updateMenuItem(menuType, id, menuDetails, cookies);
-  };
+    try {
+      const response = await updateMenu({
+        id: id,
+        menuDetails: menuDetails,
+      }).unwrap();
+      if (response.success) {
+        toast.success(response.message ?? "Menu aggiornato con successo", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        router.push("/admin/menu");
+      }
+    } catch (error) {
+      toast.error(error.message ?? "Errore durante l'aggiornamento del menu", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    }
+  }, []);
+
   return (
     <AdminLayout>
       <section className=" flex-grow w-full h-screen mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-4">
@@ -73,6 +81,7 @@ function EditMenuItem({ menuItem, menuType, typesId, id, cookies }) {
             onSubmit={onSubmit}
             reset={reset}
             menuType={menuType}
+            isLoading={isLoading}
           />
         </div>
       </section>

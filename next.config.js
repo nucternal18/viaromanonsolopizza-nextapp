@@ -1,4 +1,13 @@
-const withPWA = require("next-pwa");
+/* eslint-disable @typescript-eslint/no-var-requires */
+const runtimeCaching = require("next-pwa/cache");
+const withPWA = require("next-pwa")({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
+  runtimeCaching,
+  buildExcludes: [/middleware-manifest\.json$/, /_middleware\.js$/],
+});
 const headers = [
   {
     key: "X-DNS-Prefetch-Control",
@@ -35,15 +44,13 @@ module.exports = withPWA({
   images: {
     domains: ["firebasestorage.googleapis.com", "res.cloudinary.com"],
   },
-  pwa: {
-    dest: "public",
-    register: true,
-    skipWaiting: true,
-    disable: process.env.NODE_ENV === "development",
-  },
   eslint: {
     dirs: ["pages", "lib", "context", "components", "config"],
   },
+  experimental: {
+    esmExternals: true,
+  },
+  swcMinify: true,
   async headers() {
     return [
       {

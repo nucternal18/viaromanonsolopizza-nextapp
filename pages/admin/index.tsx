@@ -1,4 +1,5 @@
 import { GetServerSideProps } from "next";
+import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
 
 import AdminLayout from "../../components/layout/AdminLayout";
@@ -18,7 +19,7 @@ function Admin() {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const req = ctx.req;
-  const session = await getSession({ req });
+  const session: Session = await getSession({ req });
   if (!session) {
     // If no token is present redirect user to the login page
     return {
@@ -29,9 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
   try {
-    const user = await getUser(req);
-
-    if (!user.isAdmin) {
+    if (!session.user?.isAdmin) {
       return {
         redirect: {
           destination: "/",

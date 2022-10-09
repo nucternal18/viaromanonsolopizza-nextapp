@@ -1,7 +1,18 @@
-import { useState } from "react";
-import { MenuProps } from "../../lib/types";
+import { FC } from "react";
+import { MenuProps } from "../../../lib/types";
 
-import Loader from "../Loader";
+import Loader from "../../Loader";
+import MenuItemButton from "./MenuItemButton";
+
+// redux
+import { useAppSelector } from "@app/hooks";
+import { menuSelector } from "@features/menu/menuSlice";
+
+type MenuItemButtonNameProps =
+  | "Cuccina"
+  | "Pizze"
+  | "Dessert"
+  | "La Nostra Cantina";
 
 function Menu({
   menu,
@@ -10,40 +21,17 @@ function Menu({
   menu: MenuProps;
   loading: boolean;
 }): JSX.Element {
-  const [selectedMain, setSelectedMain] = useState(false);
-  const [selectedPizza, SetSelectedPizza] = useState(true);
-  const [selectedDesserts, SetSelectedDesserts] = useState(false);
-  const [selectedDrinks, SetSelectedDrinks] = useState(false);
+  const { selectedMenu } = useAppSelector(menuSelector);
 
-  const handleSelectedMain = () => {
-    setSelectedMain(true);
-    SetSelectedPizza(false);
-    SetSelectedDesserts(false);
-    SetSelectedDrinks(false);
-  };
-  const handleSelectedPizza = () => {
-    SetSelectedPizza(true);
-    setSelectedMain(false);
-    SetSelectedDesserts(false);
-    SetSelectedDrinks(false);
-  };
-
-  const handleSelectedDesserts = () => {
-    SetSelectedDesserts(true);
-    setSelectedMain(false);
-    SetSelectedPizza(false);
-    SetSelectedDrinks(false);
-  };
-
-  const handleSelectedDrinks = () => {
-    SetSelectedDrinks(true);
-    setSelectedMain(false);
-    SetSelectedPizza(false);
-    SetSelectedDesserts(false);
-  };
+  const menuButtons: Array<string> = [
+    "Cuccina",
+    "Pizze",
+    "Dessert",
+    "La Nostra Cantina",
+  ];
 
   return (
-    <section className="px-2 sm:px-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+    <section className="px-2 mb-4 dark:bg-gray-900 text-gray-900 dark:text-gray-200">
       <div className="w-full py-8 flex flex-col flex-grow overflow-hidden">
         <div className="container w-full mx-auto">
           <div className="container-md mb-8">
@@ -57,73 +45,27 @@ function Menu({
           </div>
 
           <div className="flex flex-col md:flex-row mx-auto text-center w-11/12 md:w-2/4 mb-8">
-            <button
-              onClick={handleSelectedMain}
-              className={
-                selectedMain
-                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 drop-shadow-xl  focus:outline-none  w-3/4"
-                  : "bg-white hover:bg-red-700 hover:text-white text-gray-800 font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-md  focus:outline-none  w-3/4"
-              }
-              role="tab"
-              aria-controls="v-main"
-              aria-selected={selectedMain}
-            >
-              Cucina
-            </button>
-            <button
-              onClick={handleSelectedPizza}
-              className={
-                selectedPizza
-                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 drop-shadow-xl  focus:outline-none  w-3/4"
-                  : "bg-white hover:bg-red-700 hover:text-white text-gray-800 font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-md  focus:outline-none  w-3/4"
-              }
-              role="tab"
-              aria-controls="v-pizza"
-              aria-selected={selectedPizza}
-            >
-              Pizze
-            </button>
-            <button
-              onClick={handleSelectedDesserts}
-              className={
-                selectedDesserts
-                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 drop-shadow-xl  focus:outline-none  w-3/4"
-                  : "bg-white hover:bg-red-700 hover:text-white text-gray-800 font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-md  focus:outline-none  w-3/4"
-              }
-              role="tab"
-              aria-controls="v-dessert"
-              aria-selected={selectedDesserts}
-            >
-              Dessert
-            </button>
-            <button
-              onClick={handleSelectedDrinks}
-              className={
-                selectedDrinks
-                  ? "bg-red-700 text-white font-semibold py-2 px-4 border-none mx-auto md:mx-2 drop-shadow-xl  focus:outline-none  w-3/4"
-                  : "bg-white hover:bg-red-700 hover:text-white text-gray-800 font-semibold py-2 px-4 border-none mx-auto md:mx-2 shadow-md  focus:outline-none  w-3/4"
-              }
-              role="tab"
-              aria-controls="v-drinks"
-              aria-selected={selectedDrinks}
-            >
-              La Nostra Cantina
-            </button>
+            {menuButtons.map((name, index) => (
+              <MenuItemButton
+                key={`${name}-${index}`}
+                name={name as MenuItemButtonNameProps}
+              />
+            ))}
           </div>
         </div>
       </div>
 
       {/* Main Menu Card */}
       {loading ? (
-        <div className="mx-auto w-full py-10">
+        <div className="mx-auto h-[300px] flex items-center justify-center w-full py-10">
           <Loader classes="w-6 h-6" />
         </div>
       ) : (
         <div
           id="v-main"
           className={
-            selectedMain
-              ? "block sm:w-3/5   text-left mx-auto p-2  overflow-hidden drop-shadow-2xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
+            selectedMenu === "Cuccina"
+              ? "block sm:w-3/5   text-left mx-auto p-2  overflow-hidden drop-shadow-2xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200"
               : "hidden"
           }
         >
@@ -138,7 +80,7 @@ function Menu({
               </h1>
               {menu.antipasti?.map((ant) => (
                 <div
-                  key={ant._id}
+                  key={ant.id}
                   className=" w-full  flex justify-between  mb-4"
                 >
                   <div className="rounded-b w-2/4 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r flex flex-col">
@@ -157,18 +99,26 @@ function Menu({
               ))}
             </div>
             <div>
-              <h1 className="text-2xl  text-center font-light mb-6 border border-red-200">
-                SECONDI COTTI ALLA BRACE
-              </h1>
+              <div className="mb-6 border border-red-200">
+                <h1 className="text-2xl  text-center font-light mb-1 ">
+                  SECONDI
+                </h1>
+                <h1 className="text-2xl  text-center font-light">
+                  I NOSTRI HAMBURGER
+                </h1>
+              </div>
+
               {menu.secondi?.map((sec, i) => (
-                <div
-                  key={sec._id}
-                  className=" w-full flex justify-between mb-4"
-                >
+                <div key={sec.id} className=" w-full flex justify-between mb-4">
                   <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                     <div className="mb-2">
                       <div className="font-light text-base sm:text-xl mb-2 text-left ">
-                        {sec.name}
+                        {sec.name}{" "}
+                        {sec?.ingredients.length > 0 && (
+                          <span>
+                            : {sec?.ingredients.map((ing) => ing).join(", ")}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -185,10 +135,7 @@ function Menu({
                 LE TEMPURE
               </h1>
               {menu.letempure?.map((sec) => (
-                <div
-                  key={sec._id}
-                  className=" w-full flex justify-between mb-4"
-                >
+                <div key={sec.id} className=" w-full flex justify-between mb-4">
                   <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
                     <div className="mb-2">
                       <div className="font-light text-base sm:text-xl mb-2 text-left ">
@@ -210,7 +157,7 @@ function Menu({
               </h1>
               {menu.contorni?.map((cont, i) => (
                 <div
-                  key={cont._id}
+                  key={cont.id}
                   className=" w-full flex justify-between mb-4"
                 >
                   <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
@@ -234,15 +181,15 @@ function Menu({
 
       {/* Pizza menu card */}
       {loading ? (
-        <div className="mx-auto w-full py-10">
+        <div className="mx-auto h-[300px] flex items-center justify-center w-full py-10">
           <Loader classes="w-6 h-6" />
         </div>
       ) : (
         <div
           id="v-pizza"
           className={
-            selectedPizza
-              ? "block container md:w-full mx-auto p-2  overflow-hidden drop-shadow-2xl max-w-screen-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
+            selectedMenu === "Pizze"
+              ? "block container md:w-full mx-auto p-2  overflow-hidden drop-shadow-2xl max-w-screen-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200"
               : "hidden"
           }
         >
@@ -255,7 +202,7 @@ function Menu({
           <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">
             {menu.gourmetPizza?.map((pizza) => (
               <div
-                key={pizza._id}
+                key={pizza.id}
                 className=" w-full lg:w-3/6 flex justify-between px-1 mb-4"
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
@@ -286,7 +233,7 @@ function Menu({
           <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">
             {menu.pizzaSpeciali?.map((pizza) => (
               <div
-                key={pizza._id}
+                key={pizza.id}
                 className=" w-full lg:w-3/6 flex justify-between px-1 mb-4"
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
@@ -317,7 +264,7 @@ function Menu({
           <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">
             {menu.bianche.map((item) => (
               <div
-                key={item._id}
+                key={item.id}
                 className=" w-full lg:w-3/6 flex justify-between px-1 mb-4"
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
@@ -348,7 +295,7 @@ function Menu({
           <div className="md:w-full flex flex-row flex-wrap mx-auto p-2 mb-4 overflow-hidden ">
             {menu.pizzas?.map((pizza, i) => (
               <div
-                key={pizza._id}
+                key={pizza.id}
                 className=" w-full lg:w-3/6 flex justify-between px-1 mb-4"
               >
                 <div className="rounded-b w-2/3 sm:w-3/4 lg:rounded-b-none justify-start lg:rounded-r p-2 flex flex-col">
@@ -380,7 +327,7 @@ function Menu({
             </p>
             <p className=" font-light text-base sm:text-xl mb-4  text-left">
               Tutte le nostre pizze possono essere prodotte con impasto per
-              celiaci +2,00 Ingredienti extra da &euro; 2,00 a &euro; 3,00
+              celiaci +3,00 Ingredienti extra da &euro; 2,00 a &euro; 3,00
             </p>
 
             <p className=" font-light text-base sm:text-xl mb-2  text-left">
@@ -393,23 +340,20 @@ function Menu({
       )}
       {/* Desserts card */}
       {loading ? (
-        <div className="mx-auto w-full py-10">
+        <div className="mx-auto h-[300px] flex items-center justify-center w-full py-10">
           <Loader classes="w-6 h-6" />
         </div>
       ) : (
         <div
           id="v-dessert"
           className={
-            selectedDesserts
-              ? "block w-11/12 md:w-3/5   text-left mx-auto p-2  overflow-hidden drop-shadow-2xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
+            selectedMenu === "Dessert"
+              ? "block w-11/12 md:w-3/5   text-left mx-auto p-2  overflow-hidden drop-shadow-2xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200"
               : "hidden"
           }
         >
           {menu.desserts?.map((dessert, i) => (
-            <div
-              key={dessert._id}
-              className=" w-full flex justify-between mb-4"
-            >
+            <div key={dessert.id} className=" w-full flex justify-between mb-4">
               <div className="rounded-b lg:rounded-b-none justify-start lg:rounded-r p-1 md:p-2 w-4/6">
                 <div className="mb-2">
                   <div className=" font-light text-lg md:text-xl mb-2 text-left break-all ">
@@ -430,33 +374,33 @@ function Menu({
               alcolici &euro;1,00{" "}
             </p>
             <p className=" font-light text-lg md:text-xl mb-2  text-left">
-              Coperto &euro;2,00
+              Coperto &euro;2,50
             </p>
           </div>
         </div>
       )}
       {/* Cantina Card */}
       {loading ? (
-        <div className="mx-auto w-full py-10">
+        <div className="mx-auto h-[300px] flex items-center justify-center w-full py-10">
           <Loader classes="w-6 h-6" />
         </div>
       ) : (
         <div
           id="v-drinks"
           className={
-            selectedDrinks
-              ? "block container-md  md:w-3/5   p-2 mx-auto overflow-hidden drop-shadow-2xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200"
+            selectedMenu === "La Nostra Cantina"
+              ? "block container-md  md:w-3/5   p-2 mx-auto overflow-hidden drop-shadow-2xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-200"
               : "hidden"
           }
         >
           <div className="w-full flex flex-row justify-between">
             <p className="px-2 py-2">{""}</p>
-            <p className=" py-2 ml-24 sm:ml-48 font-bold">Calice</p>
+            <p className=" py-2 ml-24 sm:ml-36 font-bold">Calice</p>
             <p className="px-2 py-2 font-bold">Bottiglia</p>
           </div>
           {menu.cantina?.map((drink, i) => (
             <div
-              key={drink._id}
+              key={drink.id}
               className="w-full table flex-col justify-between table-auto px-1"
             >
               <div>

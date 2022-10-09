@@ -7,9 +7,6 @@ import { toast } from "react-toastify";
 import Layout from "../../components/layout/Layout";
 import LoginForm from "../../components/form/LoginForm";
 
-//context
-import { ActionType, useAuth } from "../../context/authContext";
-
 type IFormInputs = {
   email: string;
   password: string;
@@ -17,8 +14,6 @@ type IFormInputs = {
 
 const Login = (props) => {
   const router = useRouter();
-
-  const { state, dispatch } = useAuth();
 
   const {
     register,
@@ -37,12 +32,6 @@ const Login = (props) => {
       toast.error("Invalid email or password");
     }
     if (result.ok) {
-      const session = await getSession();
-
-      dispatch({
-        type: ActionType.FETCH_USER_SUCCESS,
-        payload: session.user,
-      });
       router.push("/admin");
     }
   };

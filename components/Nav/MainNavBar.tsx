@@ -3,14 +3,17 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FaTimes, FaUser } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import { FiLogIn, FiLogOut, FiMoon, FiSun } from "react-icons/fi";
 import { RiAdminFill } from "react-icons/ri";
 import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
+import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
-// context
-import { ActionType, useAuth } from "../../context/authContext";
+// redux
+import { useAppDispatch } from "@app/hooks";
+import { userApiSlice } from "@app/apiSlice";
 
 // navlinks
 const navLink = [
@@ -38,12 +41,15 @@ const navLink = [
 
 const MainNavbar = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const { theme, setTheme } = useTheme();
   const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
   const [visible, setVisible] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
-  const { state, dispatch } = useAuth();
+
+  const { data } = useSession();
+  const session: Session = data;
 
   // mobile nav bar ref
   const mobileNavRef = useRef<HTMLElement>();
@@ -98,10 +104,12 @@ const MainNavbar = () => {
     return () => window.removeEventListener("scroll", handleScroll2);
   }, [prevScrollPos, visible, handleScroll2]);
 
-  // toggle the mobile navigation bar and the user dropdown list
+  // toggle the mobile navigation bar
   const toggle = () => {
     setIsOpen(!isOpen);
   };
+
+  // toggle the user dropdown list
   const toggleUserDropdown = () => {
     setIsDropDownOpen(!isDropDownOpen);
   };
@@ -109,7 +117,7 @@ const MainNavbar = () => {
   // logout handler
   const logoutHandler = () => {
     signOut();
-    dispatch({ type: ActionType.USER_LOGOUT_SUCCESS });
+    dispatch(userApiSlice.util.resetApiState());
     router.push("/");
   };
 
@@ -119,8 +127,8 @@ const MainNavbar = () => {
         router.asPath === "/" && visible
           ? "bg-transparent absolute"
           : visible
-          ? "absolute bg-white dark:bg-gray-900"
-          : "fixed shadow-2xl bg-white dark:bg-gray-900"
+          ? "absolute bg-gray-100 dark:bg-gray-900"
+          : "fixed shadow-2xl bg-gray-100 dark:bg-gray-900"
       }  navbar-expand-lg `}
     >
       <div className="container flex items-center justify-between px-1 mx-auto font-light text-gray-600 md:relative sm:px-1 md:px-0 md:flex-row max-w-screen-lg">
@@ -140,14 +148,14 @@ const MainNavbar = () => {
         {/* Mobile Nav menu button */}
         <div className="flex items-center justify-center mb-2">
           <div className="flex items-center lg:hidden mx-2">
-            {state.isAuthenticated && (
+            {session?.user && (
               <button
                 className="flex items-center  bg-gray-200 border-2 border-red-500 rounded-full"
                 disabled
               >
                 <Image
-                  src={state.userData?.image}
-                  alt={state.userData?.name}
+                  src={session.user?.image}
+                  alt={session.user?.name}
                   width={30}
                   height={30}
                   className="rounded-full"
@@ -204,15 +212,15 @@ const MainNavbar = () => {
               )}
             </button>
           </li>
-          {state.isAuthenticated && (
+          {session?.user.isAdmin && (
             <li className="px-1 m-0 text-base list-none">
               <button
                 className="flex items-center bg-white border-2 border-red-500 rounded-full"
                 onClick={toggleUserDropdown}
               >
                 <Image
-                  src={state.userData?.image}
-                  alt={state.userData?.name}
+                  src={session.user?.image}
+                  alt={session.user?.name}
                   width={30}
                   height={30}
                   className="rounded-full"
@@ -266,7 +274,7 @@ const MainNavbar = () => {
             <div>
               <button
                 aria-label="Close"
-                className=" py-1  text-4xl text-gray-900 cursor-pointer focus:outline-none"
+                className=" py-1  text-4xl  cursor-pointer focus:outline-none"
                 onClick={toggle}
               >
                 <FaTimes fontSize={21} />
@@ -276,7 +284,7 @@ const MainNavbar = () => {
               <button
                 type="button"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="flex p-1 text-gray-900 font-medium list-none border-2 border-current rounded-full cursor-pointer md:block lg:ml-0 lg:mb-0 lg:p-1 lg:px-1 focus:outline-none focus:ring-2 focus:ring-current dark:focus:ring-red-500 focus:border-transparent"
+                className="flex p-1  font-medium list-none border-2 border-current rounded-full cursor-pointer md:block lg:ml-0 lg:mb-0 lg:p-1 lg:px-1 focus:outline-none focus:ring-2 focus:ring-current dark:focus:ring-red-500 focus:border-transparent"
               >
                 {theme === "light" ? (
                   <FiSun fontSize={18} className="font-bold " />
@@ -307,7 +315,7 @@ const MainNavbar = () => {
                 </li>
               ))}
 
-              {state.isAuthenticated ? (
+              {session?.user.isAdmin ? (
                 <>
                   <li className="px-1 m-0 text-base list-none text-md">
                     <button className="flex items-center py-1.5  px-2 mb-2 ml-4 space-x-2">

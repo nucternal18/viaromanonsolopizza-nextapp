@@ -2,19 +2,25 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { FaPlusCircle } from "react-icons/fa";
+
+// components
 import Button from "../Button/GlobalButton";
 import Loader from "../Loader";
 
-const UploadForm = ({
-  addPicture,
-  uploadGalleryImage,
-  image,
-  uploading,
-  error,
-  cookies,
-}) => {
-  const router = useRouter();
+// redux
+import { useAppSelector } from "@app/hooks";
+import { gallerySelector } from "@features/gallery/gallerySlice";
+import {
+  useAddImageMutation,
+  useUploadGalleryImageMutation,
+} from "@features/gallery/galleryApiSlice";
 
+const UploadForm = () => {
+  const router = useRouter();
+  const { image } = useAppSelector(gallerySelector);
+  const [uploadGalleryImage, { isLoading: uploading, isError, error }] =
+    useUploadGalleryImageMutation();
+  const [addImage, { isLoading }] = useAddImageMutation();
   const types = ["image/png", "image/jpeg", "image/jpg"];
 
   const uploadFileHandler = async (e) => {
@@ -22,20 +28,21 @@ const UploadForm = ({
     if (file && types.includes(file.type)) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        uploadGalleryImage(reader.result, cookies);
+      reader.onloadend = async () => {
+        await uploadGalleryImage(reader.result).unwrap();
+        toast.success("Immagine caricata con successo");
       };
       reader.onerror = () => {
-        console.error("something went wrong!");
+        console.error("qualcosa è andato storto!");
       };
     } else {
-      toast.error("Please select an image file (png or jpeg)");
+      toast.error("Seleziona un file immagine (png o jpeg)");
     }
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
-    addPicture(image, cookies);
+    addImage(image);
   };
 
   return (
@@ -60,14 +67,16 @@ const UploadForm = ({
                 />
               </>
             )}
-            {error && <div className="justify-center">{error}</div>}
+            {isError && (
+              <div className="justify-center">qualcosa è andato storto!</div>
+            )}
           </label>
         </div>
         <div className="flex justify-center">
           {image && <Image src={image} alt="" width={100} height={100} />}
         </div>
         <div className="flex items-center justify-center px-4 pt-4 mb-4 border-t-4 border-current border-gray-200">
-          <Button type="submit" color="dark">
+          <Button type="submit" color="dark" disabled={isLoading}>
             Add Picture
           </Button>
         </div>

@@ -62,7 +62,7 @@ function Layout({ title, description, children }: ILayout): JSX.Element {
       </Head>
       <MainNavbar />
       <main
-        className={`relative bg-gray-100 ${
+        className={`relative bg-gray-100 dark:bg-gray-900 ${
           router.asPath === "/" ? "mt-0" : "mt-20"
         }`}
       >

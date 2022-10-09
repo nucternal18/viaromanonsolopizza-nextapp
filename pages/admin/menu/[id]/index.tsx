@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { useRouter } from "next/router";
 
@@ -9,9 +9,8 @@ import { Button } from "../../../../components";
 import AdminLayout from "../../../../components/layout/AdminLayout";
 import EditMenuItemForm from "../../../../components/form/EditMenuItemForm";
 
-// context
-import { useMenu } from "../../../../context/menuContext";
-
+// redux
+import { useUpdateMenuMutation } from "@features/menu/menuApiSlice";
 // utils
 import { NEXT_URL } from "../../../../config";
 import getUser from "../../../../lib/getUser";
@@ -20,8 +19,8 @@ import { toast } from "react-toastify";
 
 function EditMenuItem({ menuItem, menuType, id, cookies }) {
   const router = useRouter();
-  const { state, updateMenuItem } = useMenu();
-  const menuItemIngredients = menuItem.ingredients.map((ingredient) => {
+  const [updateMenu, { isLoading }] = useUpdateMenuMutation();
+  const menuItemIngredients = menuItem?.ingredients.map((ingredient) => {
     return {
       content: ingredient,
     };
@@ -48,17 +47,7 @@ function EditMenuItem({ menuItem, menuType, id, cookies }) {
     name: "ingredients",
   });
 
-  useEffect(() => {
-    if (state?.isError) {
-      toast.error(state?.error);
-    }
-    if (state.success) {
-      toast(state.message);
-      router.push(`/admin/menu?page=1&sort=latest&menuType=${menuType}`);
-    }
-  }, [state?.success, state?.message, state?.isError, state?.error]);
-
-  const onSubmit: SubmitHandler<IFormData> = async (data) => {
+  const onSubmit: SubmitHandler<IFormData> = useCallback(async (data) => {
     const updatedIngredients = data?.ingredients?.map((ingredient) => {
       return ingredient["content"];
     });
@@ -68,8 +57,23 @@ function EditMenuItem({ menuItem, menuType, id, cookies }) {
       ingredients: updatedIngredients,
       price: data.price,
     };
-    updateMenuItem(menuType, id, menuDetails, cookies);
-  };
+    try {
+      const response = await updateMenu({
+        id: id,
+        menuDetails: menuDetails,
+      }).unwrap();
+      if (response.success) {
+        toast.success(response.message ?? "Menu aggiornato con successo", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        router.push("/admin/menu");
+      }
+    } catch (error) {
+      toast.error(error.message ?? "Errore durante l'aggiornamento del menu", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    }
+  }, []);
   return (
     <AdminLayout>
       <section className=" flex-grow w-full h-screen  mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-4">
@@ -98,6 +102,7 @@ function EditMenuItem({ menuItem, menuType, id, cookies }) {
             fields={fields}
             remove={remove}
             append={append}
+            isLoading={isLoading}
           />
         </div>
       </section>

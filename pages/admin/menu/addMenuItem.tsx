@@ -1,23 +1,29 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
+import { toast } from "react-toastify";
+import { Session } from "next-auth";
+import { useRouter } from "next/router";
 
 // components
 import AdminLayout from "../../../components/layout/AdminLayout";
+import { AddMenuItemForm } from "../../../components/form/AddMenuItemForm";
 
-// context
-import { useMenu } from "../../../context/menuContext";
+// redux
+import { useAppDispatch, useAppSelector } from "@app/hooks";
+import { useAddMenuMutation } from "@features/menu/menuApiSlice";
+import { menuSelector, setMenuType } from "@features/menu/menuSlice";
 
 // utils
-import getUser from "../../../lib/getUser";
-import { AddMenuItemForm } from "../../../components/form/AddMenuItemForm";
 import { IFormData } from "../../../lib/types";
-import { toast } from "react-toastify";
 
-function AddMenuItem({ cookies }) {
-  const { state, addMenuItem } = useMenu();
-  const [type, setType] = useState("");
+function AddMenuItem() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { menuType, menuTypeOptions, subtitleOptions } =
+    useAppSelector(menuSelector);
+  const [addMenu, { isLoading }] = useAddMenuMutation();
 
   const {
     register,
@@ -39,7 +45,7 @@ function AddMenuItem({ cookies }) {
   useEffect(() => {
     const subscribe = watch((data) => {
       const { menuType } = data;
-      setType(menuType);
+      dispatch(setMenuType(menuType));
     });
     return () => subscribe.unsubscribe();
   }, [watch]);
@@ -61,33 +67,42 @@ function AddMenuItem({ cookies }) {
     name: "types",
   });
 
-  useEffect(() => {
-    if (state?.isError) {
-      toast.error(state?.error);
-    }
-    if (state?.success) {
-      toast.success(state?.message);
-    }
-  }, [state?.success, state?.isError, state?.error, state?.message]);
+  const onSubmit: SubmitHandler<Partial<IFormData>> = useCallback(
+    async (data) => {
+      const newIngredients = data?.ingredients?.map((ingredient) => {
+        return ingredient["content"];
+      });
 
-  const onSubmit: SubmitHandler<Partial<IFormData>> = (data) => {
-    const newIngredients = data?.ingredients?.map((ingredient) => {
-      return ingredient["content"];
-    });
+      const menuDetails = {
+        name: data?.name,
+        name_english: data?.name_english || "",
+        ingredients: newIngredients,
+        subtitle: data?.subtitle || "",
+        price: data?.price || "0,00",
+        types: data?.types || [],
+        type: data?.menuType,
+      };
 
-    const menuDetails = {
-      name: data?.name,
-      name_english: data?.name_english,
-      ingredients: newIngredients,
-      subtitle: data?.subtitle || "",
-      price: data?.price,
-      types: data?.types || [],
-      type: data?.menuType,
-    };
-
-    addMenuItem(menuDetails, cookies);
-    reset();
-  };
+      try {
+        const response = await addMenu(menuDetails).unwrap();
+        if (response.success) {
+          toast.success(
+            response.message ?? "Voce di menu aggiunta correttamente",
+            {
+              position: toast.POSITION.TOP_CENTER,
+            }
+          );
+          router.push("/admin/menu/addMenuItem");
+          reset();
+        }
+      } catch (error: any) {
+        toast.error(error.message ?? "Qualcosa è andato storto", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      }
+    },
+    []
+  );
 
   return (
     <AdminLayout>
@@ -99,7 +114,7 @@ function AddMenuItem({ cookies }) {
         </div>
         <div className="w-full max-w-screen-lg mx-auto mt-4">
           <AddMenuItemForm
-            menuType={type}
+            menuType={menuType}
             register={register}
             errors={errors}
             handleSubmit={handleSubmit}
@@ -111,8 +126,9 @@ function AddMenuItem({ cookies }) {
             ingredientsAppend={ingredientsAppend}
             typesRemove={typesRemove}
             ingredientsRemove={ingredientsRemove}
-            menuTypeOptions={state?.menuTypeOptions}
-            subtitleOptions={state?.subtitleOptions}
+            menuTypeOptions={menuTypeOptions}
+            subtitleOptions={subtitleOptions}
+            isLoading={isLoading}
           />
         </div>
       </section>
@@ -122,7 +138,7 @@ function AddMenuItem({ cookies }) {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const req = ctx.req;
-  const session = await getSession({ req });
+  const session: Session = await getSession({ req });
   if (!session) {
     // If no token is present redirect user to the login page
     return {
@@ -133,9 +149,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
   try {
-    const user = await getUser(req);
-
-    if (!user.isAdmin) {
+    if (!session.user.isAdmin) {
       return {
         redirect: {
           destination: "/",
@@ -145,7 +159,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
 
     return {
-      props: { cookies: req.headers.cookie },
+      props: {},
     };
   } catch (error) {
     // either the `token` cookie didn't exist

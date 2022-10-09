@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import User from "../../../models/userModel";
 import db from "../../../lib/db";
+import prisma from "@lib/prisma";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   /**
@@ -14,29 +15,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
 
     if (!session) {
-      res.status(401).json({ message: "Non autorizzato" });
+      res.status(401).json({ success: false, message: "Non autorizzato" });
       return;
     }
 
-    await db.connectDB();
-
-    const user = await User.findOne({ email: session.user.email });
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
 
     if (user) {
       res.status(200).json({
-        _id: user._id,
+        id: user.id,
         image: user.image,
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin,
       });
     } else {
-      res.status(404).json({ message: "User not found" });
-      throw new Error("User not found");
+      res.status(404).json({ success: false, message: "User not found" });
     }
   } else {
     res.setHeader("Allow", ["GET"]);
-    res.status(405).json({ message: `Method ${req.method} not allowed` });
+    res
+      .status(405)
+      .json({ success: false, message: `Method ${req.method} not allowed` });
   }
 };
 

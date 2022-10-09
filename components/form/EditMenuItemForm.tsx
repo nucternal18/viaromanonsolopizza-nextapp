@@ -1,37 +1,48 @@
 import {
   FieldError,
+  FieldErrorsImpl,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
   UseFormHandleSubmit,
   UseFormRegister,
   UseFormReset,
 } from "react-hook-form";
-import { IFormData } from "../../lib/types";
+import { IFormData, Ingredient } from "../../lib/types";
 import Button from "../Button/GlobalButton";
 import FormRowInput from "./FormRowInput";
-
-type ErrorProps = {
-  name?: FieldError;
-  Bottiglia?: FieldError;
-  Calice?: FieldError;
-  name_english?: FieldError;
-  ingredients?: {
-    content?: FieldError;
-  }[];
-  price?: FieldError;
-  menuType?: FieldError;
-};
 
 interface IFormProps {
   onSubmit: (data: IFormData) => void;
   menuType: string;
+  isLoading: boolean;
   handleSubmit: UseFormHandleSubmit<IFormData>;
   reset: UseFormReset<IFormData>;
   register: UseFormRegister<IFormData>;
-  errors: ErrorProps;
+  errors: Partial<
+    FieldErrorsImpl<{
+      name: string;
+      Bottiglia: string;
+      Calice: string;
+      name_english: string;
+      ingredients: {
+        content: string;
+      }[];
+      price: string;
+      menuType: string;
+      sort: string;
+      subtitle: string;
+      types: {
+        name: string;
+        Bottiglia: string;
+        Calice: string;
+      }[];
+      sortOptions: string[];
+      menuTypeOptions: string[];
+    }>
+  >;
   fields?: Record<"id", string>[];
   remove?: UseFieldArrayRemove;
-  append?: UseFieldArrayAppend<IFormData, never>;
+  append?: UseFieldArrayAppend<IFormData, "ingredients">;
 }
 
 const EditMenuItemForm = ({
@@ -44,6 +55,7 @@ const EditMenuItemForm = ({
   fields,
   remove,
   append,
+  isLoading,
 }: IFormProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -55,10 +67,6 @@ const EditMenuItemForm = ({
                 label="Name"
                 {...register("name", {
                   required: true,
-                  pattern: {
-                    value: /^[A-Za-z\s, -]+$/,
-                    message: "Please enter a valid name",
-                  },
                 })}
               />
               {errors && (
@@ -84,10 +92,6 @@ const EditMenuItemForm = ({
                 label="Name"
                 {...register("name", {
                   required: true,
-                  pattern: {
-                    value: /^[A-Za-z\s, -]+$/,
-                    message: "Please enter a valid name",
-                  },
                 })}
               />
               {errors && (
@@ -112,12 +116,12 @@ const EditMenuItemForm = ({
                   required: true,
                 })}
               />
-              {errors && (
+              {errors.price && (
                 <span
                   id="price-error"
                   className="text-gray-800 dark:text-red-500"
                 >
-                  {errors?.price}
+                  {errors?.price?.message}
                 </span>
               )}
             </div>
@@ -146,7 +150,7 @@ const EditMenuItemForm = ({
                 type="button"
                 color="primary"
                 onClick={() => {
-                  append("");
+                  append({ content: "" });
                 }}
               >
                 append
@@ -158,6 +162,7 @@ const EditMenuItemForm = ({
           <button
             className=" px-4 py-2 font-bold mt-4 text-white w-full bg-rose-500 rounded hover:bg-rose-700 focus:outline-none focus:shadow-outline"
             type="submit"
+            disabled={isLoading}
           >
             Update
           </button>

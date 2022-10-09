@@ -1,20 +1,26 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 
-// Context
-import { useGallery } from "../../../context/galleryContext";
+// redux
+import { useAppSelector } from "@app/hooks";
+import {
+  useDeleteImageMutation,
+  useGetImagesQuery,
+} from "@features/gallery/galleryApiSlice";
+import { gallerySelector } from "@features/gallery/gallerySlice";
 
 // Components
-
 import AdminLayout from "../../../components/layout/AdminLayout";
-import getUser from "../../../lib/getUser";
-import { NEXT_URL } from "../../../config";
 import GalleryFilterForm from "../../../components/form/GalleryFilterForm";
 import GalleryContainer from "../../../components/GalleryContainer";
+
+// utils & lib
+import { NEXT_URL } from "../../../config";
+import { Session } from "next-auth";
 
 interface IFormData {
   sort: string;
@@ -22,41 +28,44 @@ interface IFormData {
 }
 
 function ManageGallery({ pictures, loading }) {
-  const { state, deletePicture } = useGallery();
   const router = useRouter();
+  const { page, sort, sortOptions } = useAppSelector(gallerySelector);
+  const [deleteImage, { isLoading }] = useDeleteImageMutation();
   const { register, watch } = useForm<IFormData>({
     defaultValues: {
-      sort: state?.sort,
+      sort: sort,
     },
   });
 
   useEffect(() => {
-    const url = `${NEXT_URL}/admin/gallery?page=${state?.page}`;
-    router.replace(url);
-  }, [state?.page]);
-
-  useEffect(() => {
     const subscribe = watch((data) => {
-      const { sort } = data;
-      const url = `${NEXT_URL}/admin/gallery?page=${state?.page}&sort=${sort}`;
+      const url = `${NEXT_URL}/admin/gallery?page=${page}&sort=${data.sort}`;
       router.replace(url);
     });
     return () => subscribe.unsubscribe();
-  }, [watch, state?.page]);
+  }, [watch, page]);
 
-  const deleteHandler = (id: string) => {
-    deletePicture(id);
-    router.reload();
-  };
+  const deleteHandler = useCallback(async (id: string) => {
+    try {
+      const response = await deleteImage(id).unwrap();
+      toast.success(response.message ?? "Immagine cancellata con successo", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    } catch (error) {
+      toast.error(
+        error.message ?? "errore durante l'eliminazione dell'immagine",
+        {
+          position: toast.POSITION.TOP_CENTER,
+        }
+      );
+    }
+  }, []);
 
   return (
     <AdminLayout>
-      <section className=" flex-grow w-full h-screen p-4 mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-10">
+      <section className=" flex-grow w-full  p-4 mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200 md:p-10">
         <div className=" w-full min-h-full p-4 justify-center ">
-          <GalleryFilterForm
-            register={register}
-            sortOptions={state?.sortOptions}
-          />
+          <GalleryFilterForm register={register} sortOptions={sortOptions} />
           <GalleryContainer
             deleteHandler={deleteHandler}
             gallery={pictures}
@@ -71,7 +80,7 @@ function ManageGallery({ pictures, loading }) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const req = ctx.req;
   const { page, sort } = ctx.query;
-  const session = await getSession({ req });
+  const session: Session = await getSession({ req });
   if (!session) {
     // If no token is present redirect user to the login page
     return {
@@ -82,9 +91,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  const user = await getUser(req);
-
-  if (!user.isAdmin) {
+  if (!session.user.isAdmin) {
     return {
       redirect: {
         destination: "/",

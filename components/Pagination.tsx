@@ -1,25 +1,30 @@
 import React from "react";
 import { HiChevronDoubleRight, HiChevronDoubleLeft } from "react-icons/hi";
-import { useGallery, ActionType } from "../context/galleryContext";
+
+// redux
+import { useAppSelector, useAppDispatch } from "@app/hooks";
+import {
+  useDeleteImageMutation,
+  useGetImagesQuery,
+} from "@features/gallery/galleryApiSlice";
+import { gallerySelector, setPage } from "@features/gallery/gallerySlice";
 
 const PageBtnContainer = ({ numberOfPages }) => {
-  const { state, dispatch } = useGallery();
+  const dispatch = useAppDispatch();
+  const { page } = useAppSelector(gallerySelector);
   const pages = Array.from({ length: numberOfPages }, (_, i) => i + 1);
   const changePage = (page) => {
-    dispatch({
-      type: ActionType.CHANGE_PAGE,
-      payload: { page },
-    });
+    dispatch(setPage(page));
   };
   const prevPage = () => {
-    let newPage = state?.page - 1;
+    let newPage = page - 1;
     if (newPage < 1) {
       newPage = numberOfPages;
     }
     changePage(newPage);
   };
   const nextPage = () => {
-    let newPage = state?.page + 1;
+    let newPage = page + 1;
     if (newPage > numberOfPages) {
       newPage = 1;
     }
@@ -40,7 +45,7 @@ const PageBtnContainer = ({ numberOfPages }) => {
             <button
               type="button"
               className={`${
-                pageNumber === state?.page
+                pageNumber === page
                   ? "bg-rose-800 text-white rounded-md"
                   : "bg-rose-300 text-white"
               } py-2 px-4 gap-2  hover:bg-rose-400 shadow-md`}

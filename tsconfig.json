@@ -1,6 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"],
+      "@lib/*": ["lib/*"],
+      "@context/*": ["context/*"],
+      "@models/*": ["models/*"],
+      "@features/*": ["features/*"],
+      "@config/*": ["config/*"],
+      "@app/*": ["app/*"]
+    },
+    "target": "ES6",
+    "downlevelIteration": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -15,6 +27,16 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "tailwind.config.js",
+    "next.config.js",
+    ".eslintrc.js",
+    "jest.config.js",
+    "types/**/*.ts"
+  ],
+  "exclude": ["node_modules", "/pages/api/auth/[...nextauth].ts"],
+  "typeRoots": ["./node_modules/@types", "./types"]
 }

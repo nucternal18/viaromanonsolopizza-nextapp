@@ -8,17 +8,21 @@ import { FiLogOut } from "react-icons/fi";
 import { MdRestaurantMenu, MdLibraryAdd } from "react-icons/md";
 import { GrGallery } from "react-icons/gr";
 
+// components
 import ActiveLink from "./ActiveLink";
-import { ActionType, useAuth } from "../../context/authContext";
+
+// redux
+import { useAppDispatch } from "@app/hooks";
+import { userApiSlice } from "@app/apiSlice";
 
 const Sidebar = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [collapseShow, setCollapseShow] = useState("hidden");
-  const { state, dispatch } = useAuth();
 
   const handleLogout = () => {
     signOut();
-    dispatch({ type: ActionType.USER_LOGOUT_SUCCESS });
+    dispatch(userApiSlice.util.resetApiState());
     router.push("/");
   };
 
@@ -127,7 +131,7 @@ const Sidebar = () => {
               <hr className="my-4 md:min-w-full" />
               <div className="items-center">
                 <ActiveLink href="/admin/gallery">
-                  <GrGallery fontSize={18} />
+                  <GrGallery fontSize={18} className="dark:text-gray-200" />
                   <span>Gestisci immagini</span>
                 </ActiveLink>
                 <ActiveLink href="/admin/gallery/addGalleryItem">

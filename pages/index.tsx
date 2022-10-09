@@ -12,11 +12,11 @@ import { NEXT_URL } from "../config";
 import Contact from "../components/PageComponents/Contact";
 import Button from "../components/Button/GlobalButton";
 import Loader from "../components/Loader";
-import { seedDocuments } from "../lib/seedDatabase";
+
 const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
   ssr: false,
   loading: () => (
-    <div className="mx-auto w-full py-10">
+    <div className="mx-auto h-[500px] flex items-center justify-center w-full py-10">
       <Loader classes="w-6 h-6" />
     </div>
   ),

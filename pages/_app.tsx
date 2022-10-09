@@ -2,29 +2,30 @@ import type { AppProps } from "next/app";
 import { ToastContainer } from "react-toastify";
 import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
+import { Provider } from "react-redux";
 import CookieConsent from "react-cookie-consent";
 import Link from "next/link";
+
 import "tailwindcss/tailwind.css";
 import "react-toastify/dist/ReactToastify.css";
 
-import { AuthProvider } from "../context/authContext";
-import { MenuProvider } from "../context/menuContext";
-import { GalleryProvider } from "../context/galleryContext";
+import { store } from "@app/store";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <ThemeProvider attribute="class">
-        <SessionProvider session={pageProps.session}>
-          <AuthProvider>
-            <MenuProvider>
-              <GalleryProvider>
-                <Component {...pageProps} />
-              </GalleryProvider>
-            </MenuProvider>
-          </AuthProvider>
-        </SessionProvider>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider attribute="class">
+          <SessionProvider
+            session={pageProps.session}
+            refetchInterval={5 * 60}
+            // Re-fetches session when window is focused
+            refetchOnWindowFocus={true}
+          >
+            <Component {...pageProps} />
+          </SessionProvider>
+        </ThemeProvider>
+      </Provider>
       <ToastContainer
         position="top-right"
         autoClose={5000}

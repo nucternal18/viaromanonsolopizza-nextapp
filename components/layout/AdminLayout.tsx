@@ -45,7 +45,9 @@ function AdminLayout({ title, description, children }: ILayout): JSX.Element {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <Sidebar />
-      <main className={`relative bg-gray-100 md:ml-64`}>{children}</main>
+      <main className={`relative bg-gray-100 dark:bg-gray-900 md:ml-64`}>
+        {children}
+      </main>
       <ToastContainer autoClose={4000} />
     </div>
   );

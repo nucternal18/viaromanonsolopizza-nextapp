@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+type CantinasTypes {
+  Bottiglia String
+  Calice    String
+  id        String @map("_id") @db.ObjectId
+  name      String
+}
+
+model antipastis {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  v            Int?      @map("__v")
+  createdAt    DateTime @default(now())
+  name         String
+  name_english String
+  price        String
+  updatedAt    DateTime @default(now())
+}
+
+model bianches {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  v           Int?      @map("__v")
+  createdAt   DateTime @default(now())
+  ingredients String[]
+  name        String
+  price       String
+  updatedAt   DateTime @default(now())
+}
+
+model cantinas {
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int?             @map("__v")
+  createdAt DateTime        @default(now())
+  subtitle  String          @unique
+  types     CantinasTypes[]
+  updatedAt DateTime        @default(now())
+}
+
+model contornis {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  v            Int?      @map("__v")
+  createdAt    DateTime @default(now())
+  name         String
+  name_english String
+  price        String
+  updatedAt    DateTime @default(now())
+}
+
+model desserts {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int?      @map("__v")
+  createdAt DateTime @default(now())
+  name      String
+  price     String
+  updatedAt DateTime @default(now())
+}
+
+model gourmetpizzas {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  v           Int?      @map("__v")
+  createdAt   DateTime @default(now())
+  ingredients String[]
+  name        String
+  price       String
+  updatedAt   DateTime @default(now())
+}
+
+model letempures {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  v            Int?      @map("__v")
+  createdAt    DateTime @default(now())
+  name         String
+  name_english String
+  price        String
+  updatedAt    DateTime @default(now())
+}
+
+model pictures {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int?      @map("__v")
+  createdAt DateTime @default(now())
+  image     String
+  updatedAt DateTime @default(now())
+}
+
+model pizzas {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  v           Int?      @map("__v")
+  createdAt   DateTime @default(now())
+  ingredients String[]
+  name        String
+  price       String
+  updatedAt   DateTime @default(now())
+}
+
+model pizzaspecialis {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  v           Int?      @map("__v")
+  createdAt   DateTime @default(now())
+  ingredients String[]
+  name        String
+  price       String
+  updatedAt   DateTime @default(now())
+}
+
+model secondis {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  v            Int?      @map("__v")
+  createdAt    DateTime @default(now())
+  name         String
+  name_english String
+  price        String
+  updatedAt    DateTime @default(now())
+}
+
+model Menu {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  category     MenuCategory @default(ANTIPASTI)
+  createdAt    DateTime @default(now())
+  name         String?
+  name_english String?
+  price        String?
+  subtitle  String?          @unique
+  types     CantinasTypes[]
+  ingredients String[]
+  updatedAt    DateTime @default(now())
+
+  @@map("menu")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int?      @map("__v")
+  createdAt DateTime @default(now())
+  email     String   @unique(map: "email_1")
+  image     String
+  isAdmin   Boolean
+  name      String
+  password  String
+  updatedAt DateTime @default(now())
+   accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.String
+  access_token       String?  @db.String
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.String
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([id, token])
+
+  @@map("verificationTokens")
+}
+
+enum MenuCategory {
+  PIZZA
+  PIZZA_SPECIALI
+  ANTIPASTI
+  SECONDI
+  CONTORNI
+  BIANCHE
+  DESSERT
+  GOURMET_PIZZA
+  LETEMPURE
+  CANTINA
+}

@@ -1,6 +1,7 @@
 import {
   FieldArrayWithId,
   FieldError,
+  FieldErrorsImpl,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
   UseFormHandleSubmit,
@@ -13,15 +14,28 @@ import FormRowSelect from "../FormRowSelect";
 import { CantinaFormInputs } from "./CantinaFormInputs";
 import { FormInputs } from "./FormInputs";
 
-type ErrorProps = {
-  name?: FieldError;
-  Bottiglia?: FieldError;
-  Calice?: FieldError;
-  name_english?: FieldError;
-  ingredients?: { content?: FieldError }[];
-  price?: FieldError;
-  menuType?: FieldError;
-};
+type ErrorProps = Partial<
+  FieldErrorsImpl<{
+    name: string;
+    Bottiglia: string;
+    Calice: string;
+    name_english: string;
+    ingredients: {
+      content: string;
+    }[];
+    price: string;
+    menuType: string;
+    sort: string;
+    subtitle: string;
+    types: {
+      name: string;
+      Bottiglia: string;
+      Calice: string;
+    }[];
+    sortOptions: string[];
+    menuTypeOptions: string[];
+  }>
+>;
 
 interface IFormProps {
   onSubmit: (data: IFormData) => void;
@@ -30,6 +44,7 @@ interface IFormProps {
   reset: UseFormReset<IFormData>;
   register: UseFormRegister<Partial<IFormData>>;
   errors: ErrorProps;
+  isLoading: boolean;
   ingredientsFields?: FieldArrayWithId<
     Partial<IFormData>,
     "ingredients",
@@ -59,8 +74,8 @@ const AddMenuItemForm = ({
   typesField,
   menuTypeOptions,
   subtitleOptions,
+  isLoading,
 }: IFormProps) => {
-  console.log(menuType);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="relative p-2  max-w-screen-xl  bg-white font-mono dark:bg-gray-900 shadow-xl mt-5 mx-2 md:mx-auto md:p-4">
@@ -72,11 +87,13 @@ const AddMenuItemForm = ({
           />
           <FormRowSelect
             label="Cantina Subtitle"
-            list={subtitleOptions}
+            list={["", ...subtitleOptions]}
             {...register("subtitle")}
           />
         </div>
-
+        <h1 className="my-4">
+          Modulo per inserire le voci del menu della cantina
+        </h1>
         <CantinaFormInputs
           register={register}
           errors={errors}
@@ -84,7 +101,7 @@ const AddMenuItemForm = ({
           remove={typesRemove}
           append={typesAppend}
         />
-
+        <h1 className="my-4">Modulo per inserire le voci di menu</h1>
         <FormInputs
           register={register}
           errors={errors}
@@ -97,6 +114,7 @@ const AddMenuItemForm = ({
           <button
             className=" px-4 py-2 font-bold mt-4 text-white w-full bg-rose-500 rounded hover:bg-rose-700 focus:outline-none focus:shadow-outline"
             type="submit"
+            disabled={isLoading}
           >
             Submit
           </button>

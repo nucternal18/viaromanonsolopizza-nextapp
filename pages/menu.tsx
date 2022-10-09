@@ -1,11 +1,17 @@
+import Loader from "@components/Loader";
 import { GetServerSideProps } from "next";
 import dynamic from "next/dynamic";
+import { useEffect } from "react";
 import Layout from "../components/layout/Layout";
 import { NEXT_URL } from "../config";
 
 const Menu = dynamic(() => import("../components/PageComponents/Menu"), {
   ssr: false,
-  loading: () => <p>Loading...</p>,
+  loading: () => (
+    <div className="mx-auto h-[700px] flex items-center justify-center w-full py-10">
+      <Loader classes="w-12 h-12" />
+    </div>
+  ),
 });
 
 const MainMenu = ({ menu, loading }) => {

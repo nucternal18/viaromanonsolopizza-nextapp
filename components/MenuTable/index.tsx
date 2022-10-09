@@ -1,130 +1,99 @@
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
+import { toast } from "react-toastify";
+import { MenuItemProps } from "@lib/types";
 
-function Table({ data, menuType, deleteItem, cookie }) {
+interface TableProps {
+  data: Partial<MenuItemProps[]>;
+  handleDelete(id: string): void;
+  menuType: string;
+}
+
+function Table({ data, menuType, handleDelete }: TableProps) {
   const router = useRouter();
-  const handleDelete = (id) => {
-    deleteItem(id, menuType, cookie);
-  };
+
   return (
-    <table className="w-full sm:shadow-xl sm:rounded-2xl  md:table">
-      <thead className="bg-gray-50 dark:bg-red-500  hidden md:table-header-group">
-        <tr className="md:table-row absolute  -top-full md:top-auto gap-2 -left-full md:left-auto  md:relative">
-          <th
-            scope="col"
-            className="
-                  px-3
+    <div className="relative overflow-x-auto">
+      <table className="w-full shadow-xl rounded-2xl table">
+        <thead className="bg-gray-50 dark:bg-red-500  table-header-group">
+          <tr className="md:table-row top-auto gap-2 left-auto  relative">
+            {["Nome", "Nome Inglese", "Prezzo", "Creato a", "Azioni"].map(
+              (item) => {
+                if (item === "Azioni") {
+                  return (
+                    <th
+                      key={`cantina-table-${item}`}
+                      scope="col"
+                      className="
                   py-3
-                  text-left text-xs
+                  text-center 
+                  text-xs
                   font-medium
                   text-gray-800
                   dark:text-gray-100
                   uppercase
                   tracking-wider
-                  md:table-cell
+                  table-cell
                 "
-          >
-            Name
-          </th>
-          <th
-            scope="col"
-            className="
-                  px-3
+                    >
+                      {item}
+                    </th>
+                  );
+                } else {
+                  return (
+                    <th
+                      key={`cantina-table-${item}`}
+                      scope="col"
+                      className="
                   py-3
-                  text-left text-xs
+                  pl-2
+                  text-left 
+                  text-xs
                   font-medium
                   text-gray-800
                   dark:text-gray-100
                   uppercase
                   tracking-wider
-                  md:table-cell
+                  table-cell
+                  whitespace-nowrap
                 "
-          >
-            Name_English
-          </th>
-          <th
-            scope="col"
-            className="
-                  px-3
-                  py-3
-                  text-left text-xs
-                  font-medium
-                  text-gray-800
-                  dark:text-gray-100
-                  uppercase
-                  tracking-wider
-                  md:table-cell
-                "
-          >
-            Price
-          </th>
-          <th
-            scope="col"
-            className="
-                  px-3
-                  py-3
-                  text-left text-xs
-                  font-medium
-                  text-gray-800
-                  dark:text-gray-100
-                  uppercase
-                  tracking-wider
-                  md:table-cell
-                "
-          >
-            created at
-          </th>
-
-          <th
-            scope="col"
-            className="relative px-6 py-3  text-left text-xs
-                  font-medium
-                  text-gray-800
-                  dark:text-gray-100
-                  uppercase
-                  tracking-wider md:table-cell"
-          >
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody className=" block px-1 md:px-0  md:table-row-group">
-        {data?.menu?.map((item) => (
-          <tr
-            key={item._id}
-            className="bg-white text-gray-900 dark:text-gray-100 shadow-2xl md:shadow-none dark:bg-gray-700 rounded md:rounded-none overflow-hidden  mb-2 md:mb-0 md:border-none block md:table-row"
-          >
-            <td className="p-2 flex items-center text-left whitespace-nowrap md:table-cell gap-2">
-              <span className="inline-block w-1/3 md:hidden font-bold dark:text-yellow-500 font-mono">
-                Name
-              </span>
-              <div className="flex items-center">
-                <div className="text-sm font-medium text-ellipsis overflow-hidden">
-                  {item.name}
+                    >
+                      {item}
+                    </th>
+                  );
+                }
+              }
+            )}
+          </tr>
+        </thead>
+        <tbody className="px-0  table-row-group">
+          {data?.map((item) => (
+            <tr
+              key={item.id}
+              className="bg-white text-gray-900 dark:text-gray-100 shadow-none dark:bg-gray-700 rounded-none overflow-hidden  mb-0 border-none table-row"
+            >
+              <td className="p-2  items-center text-left whitespace-nowrap table-cell gap-2">
+                <div className="flex items-center">
+                  <div className="text-sm font-medium text-ellipsis overflow-hidden">
+                    {item.name}
+                  </div>
                 </div>
-              </div>
-            </td>
+              </td>
 
-            <td className=" p-2 flex items-center text-left whitespace-nowrap  md:table-cell gap-2">
-              <span className="inline-block w-1/3 md:hidden dark:text-yellow-500 font-bold font-mono">
-                Name_English
-              </span>
-              <div className="text-sm truncate w-2/4">{item.name_english}</div>
-            </td>
+              <td className=" p-2 items-center text-left whitespace-nowrap  table-cell gap-2">
+                <div className="text-sm truncate w-2/4">
+                  {item.name_english}
+                </div>
+              </td>
 
-            <td className=" p-2 flex items-center text-left whitespace-nowrap  md:table-cell gap-2">
-              <span className="inline-block w-1/3 md:hidden dark:text-yellow-500 font-bold font-mono">
-                Price
-              </span>
-              <div className="text-sm  w-2/4">{item.price}</div>
-            </td>
+              <td className=" p-2 items-center text-left whitespace-nowrap  table-cell gap-2">
+                <div className="text-sm  w-2/4">{item.price}</div>
+              </td>
 
-            <td className="p-2 flex items-center text-left whitespace-nowrap md:table-cell gap-2">
-              <span className="inline-block w-1/3 md:hidden uppercase font-bold dark:text-yellow-500 font-mono">
-                created at
-              </span>
-              <span
-                className="
+              <td className="p-2 items-center text-left whitespace-nowrap table-cell gap-2">
+                <span
+                  className="
                     px-2
                     inline-flex
                     text-xs
@@ -134,49 +103,47 @@ function Table({ data, menuType, deleteItem, cookie }) {
                     bg-green-100
                     text-green-800
                   "
-              >
-                {new Date(item.createdAt).toDateString()}
-              </span>
-            </td>
+                >
+                  {new Date(item.createdAt).toDateString()}
+                </span>
+              </td>
 
-            <td
-              className="
-                      flex items-center
+              <td
+                className="
+                  items-center
                   p-2
                     text-left 
                   whitespace-nowrap
                    text-sm
                   font-medium
-                  md:table-cell
+                  table-cell
                   gap-2
                 "
-            >
-              <span className="inline-block w-1/3 md:hidden font-bold dark:text-yellow-500 font-mono">
-                Action
-              </span>
-              <div className="flex items-center md:justify-around">
-                <button
-                  type="button"
-                  className="text-blue-500 mr-4 md:mr-0"
-                  onClick={() =>
-                    router.push(`/admin/menu/${item._id}?type=${menuType}`)
-                  }
-                >
-                  <FaEdit fontSize={21} />
-                </button>
-                <button
-                  type="button"
-                  className="text-red-500"
-                  onClick={() => handleDelete(item._id)}
-                >
-                  <FaTrash fontSize={20} />
-                </button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+              >
+                <div className="flex items-center justify-around">
+                  <button
+                    type="button"
+                    className="text-blue-500 mr-4 md:mr-0"
+                    onClick={() =>
+                      router.push(`/admin/menu/${item.id}?type=${menuType}`)
+                    }
+                  >
+                    <FaEdit fontSize={21} />
+                  </button>
+                  <button
+                    type="button"
+                    className="text-red-500"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    <FaTrash fontSize={20} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

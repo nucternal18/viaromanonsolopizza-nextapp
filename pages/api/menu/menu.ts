@@ -1,19 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 
-import db from "../../../lib/db";
-import {
-  Antipasti,
-  Contorni,
-  Letempure,
-  Secondi,
-  Desserts,
-  GourmetPizza,
-  Pizzas,
-  Cantina,
-  Bianche,
-  PizzaSpeciali,
-} from "../../../models/menuModel";
+import prisma from "@lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,18 +13,58 @@ export default async function handler(
      * @access Public
      */
 
-    await db.connectDB();
-    const antipasti = await Antipasti.find({});
-    const contorni = await Contorni.find({});
-    const letempure = await Letempure.find({});
-    const secondi = await Secondi.find({});
-    const desserts = await Desserts.find({});
-    const gourmetPizza = await GourmetPizza.find({});
-    const pizzas = await Pizzas.find({});
-    const cantina = await Cantina.find({});
-    const bianche = await Bianche.find({});
-    const pizzaSpeciali = await PizzaSpeciali.find({});
-    await db.disconnect();
+    const antipasti = await prisma.menu.findMany({
+      where: {
+        category: "ANTIPASTI",
+      },
+    });
+    const contorni = await prisma.menu.findMany({
+      where: {
+        category: "CONTORNI",
+      },
+    });
+    const letempure = await prisma.menu.findMany({
+      where: {
+        category: "LETEMPURE",
+      },
+    });
+    const secondi = await prisma.menu.findMany({
+      where: {
+        category: "SECONDI",
+      },
+    });
+    const desserts = await prisma.menu.findMany({
+      where: {
+        category: "DESSERT",
+      },
+    });
+    const gourmetPizza = await prisma.menu.findMany({
+      where: {
+        category: "GOURMET_PIZZA",
+      },
+    });
+    const pizzas = await prisma.menu.findMany({
+      where: {
+        category: "PIZZA",
+      },
+    });
+    const cantina = await prisma.menu.findMany({
+      where: {
+        category: "CANTINA",
+      },
+    });
+    const bianche = await prisma.menu.findMany({
+      where: {
+        category: "BIANCHE",
+      },
+    });
+    const pizzaSpeciali = await prisma.menu.findMany({
+      where: {
+        category: "PIZZA_SPECIALI",
+      },
+    });
+    await prisma.$disconnect();
+
     res.status(200).json({
       antipasti,
       contorni,
@@ -52,6 +79,8 @@ export default async function handler(
     });
   } else {
     res.setHeader("Allow", ["GET"]);
-    res.status(405).json({ message: `Method ${req.method} not allowed` });
+    res
+      .status(405)
+      .json({ success: false, message: `Method ${req.method} not allowed` });
   }
 }

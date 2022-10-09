@@ -1,3 +1,8 @@
+import {
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+} from "@reduxjs/toolkit/dist/query";
+
 interface TypesProps {
   name?: string;
   Bottiglia?: string;
@@ -24,62 +29,106 @@ export interface IFormData {
 }
 
 export interface IPicture {
-  pictures: { _id: string; image: string; createdAt: Date }[];
+  pictures: { id: string; image: string; createdAt: Date }[];
   numberOfPages: number;
   totalPictures: number;
 }
 
+interface RefreshResult {
+  error?: FetchBaseQueryError | undefined;
+  data?:
+    | {
+        token: string;
+      }
+    | undefined;
+  meta?: FetchBaseQueryMeta | undefined;
+}
+
+export type UserInfoProps = {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+  isAdmin: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export interface AuthState {
+  currentUser: UserInfoProps | null;
+  error: Error | undefined;
+  image?: string;
+  categoryOptions?: UserCategory[];
+}
+
+export interface AppError extends Error {
+  success: boolean;
+  message: string;
+}
+
+export type GalleryProps = {
+  id: string;
+  image: string;
+  admin?: Partial<UserInfoProps>;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type MenuProps = {
   antipasti: {
-    _id: string;
+    id: string;
     name: string;
     name_english: string;
     price: string;
     type?: string;
   }[];
   contorni: {
-    _id: string;
+    id: string;
     name: string;
     name_english: string;
+    ingredients?: string[];
     price: string;
     type?: string;
   }[];
   letempure: {
-    _id: string;
+    id: string;
     name: string;
     name_english: string;
+    ingredients?: string[];
     price: string;
     type?: string;
   }[];
   secondi: {
-    _id: string;
+    id: string;
     name: string;
     name_english: string;
+    ingredients?: string[];
     price: string;
     type?: string;
   }[];
   desserts: {
-    _id: string;
+    id: string;
     price: string;
     name: string;
+    ingredients?: string[];
     type?: string;
   }[];
   gourmetPizza: {
-    _id: string;
+    id: string;
     price: string;
     name: string;
     ingredients: string[];
     type?: string;
   }[];
   pizzaSpeciali: {
-    _id: string;
+    id: string;
     price: string;
     name: string;
     ingredients: string[];
     type?: string;
   }[];
   pizzas: {
-    _id: string;
+    id: string;
     price: string;
     name: string;
     ingredients: string[];
@@ -87,14 +136,14 @@ export type MenuProps = {
   }[];
 
   cantina: {
-    _id: string;
+    id: string;
     subtitle: string;
     types: { name: string; Bottiglia: string; Calice: string }[];
     type?: string;
   }[];
 
   bianche: {
-    _id: string;
+    id: string;
     price: string;
     name: string;
     ingredients: string[];
@@ -102,13 +151,16 @@ export type MenuProps = {
   }[];
 };
 
-type MenuDetails = {
-  name: string;
+type MenuItemProps = {
+  id: string;
+  v?: number;
+  name?: string;
   price: string;
-  Bottiglia: string;
-  Calice: string;
-  name_english: string;
-  ingredients: string[];
-  typesId: string | string[];
-  menuType: string;
+  name_english?: string;
+  ingredients?: string[];
+  subtitle?: string;
+  types?: { id?: string; name?: string; Bottiglia?: string; Calice?: string }[];
+  type?: string;
+  createdAt: string;
+  updatedAt: string;
 };

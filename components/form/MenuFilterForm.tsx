@@ -1,37 +1,34 @@
 import React from "react";
 import { FormRowSelect } from "..";
-import { ActionType, useMenu } from "../../context/menuContext";
+
+import { useAppDispatch, useAppSelector } from "@app/hooks";
+import { setMenuType, setSort, menuSelector } from "@features/menu/menuSlice";
 
 const MenuFilterForm = ({ register, errors, reset }) => {
-  const { state, dispatch } = useMenu();
+  const dispatch = useAppDispatch();
+  const { menuTypeOptions, sortOptions } = useAppSelector(menuSelector);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch({
-      type: ActionType.MENU_ITEM_UPDATE_SORT,
-      payload: e.target.value,
-    });
+    dispatch(setSort(e.target.value));
   };
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch({
-      type: ActionType.MENU_ITEM_UPDATE_TYPE,
-      payload: e.target.value,
-    });
+    dispatch(setMenuType(e.target.value));
   };
   return (
     <form>
-      <div className="relative p-2  max-w-screen-xl  bg-white font-mono dark:bg-gray-900 shadow-xl py-5 mx-2 md:mx-auto md:p-4">
+      <div className="relative p-2  max-w-screen-xl font-mono shadow-xl py-5 mx-2 md:mx-auto md:p-4">
         <h3 className="capitalize text-xl font-semibold  text-gray-900 dark:text-gray-200 mb-4">
           search form
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
           <FormRowSelect
             label="Menu Type"
-            list={state?.menuTypeOptions}
+            list={menuTypeOptions}
             {...register("menuType", { onChange: handleTypeChange })}
           />
           <FormRowSelect
             label="Sort"
-            list={state?.sortOptions}
+            list={sortOptions}
             {...register("sort", { onChange: handleSortChange })}
           />
 
